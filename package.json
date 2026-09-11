@@ -1,8 +1,8 @@
 {
-  "name": "aac-choice",
+  "name": "aac-games",
   "version": "0.1.0",
   "private": true,
-  "description": "Single-click AAC app: choose between two pictures by scanning.",
+  "description": "Single-click AAC picture games (scanning).",
   "type": "module",
   "scripts": {
     "start": "python3 -m http.server 8080",

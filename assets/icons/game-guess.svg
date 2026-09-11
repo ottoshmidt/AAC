@@ -1,0 +1,13 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 200 200" role="img" aria-label="Guess items">
+  <g fill="#f7f5ef" stroke="#c9ced8" stroke-width="4">
+    <rect x="22" y="22" width="72" height="72" rx="12"/>
+    <rect x="106" y="22" width="72" height="72" rx="12"/>
+    <rect x="22" y="106" width="72" height="72" rx="12"/>
+    <rect x="106" y="106" width="72" height="72" rx="12"/>
+  </g>
+  <rect x="106" y="22" width="72" height="72" rx="12" fill="#fff8cc" stroke="#ffd400" stroke-width="8"/>
+  <circle cx="58" cy="58" r="20" fill="#e2332f"/>
+  <circle cx="142" cy="58" r="20" fill="#ff9f1c"/>
+  <circle cx="58" cy="142" r="20" fill="#3d7eff"/>
+  <circle cx="142" cy="142" r="20" fill="#2fbf71"/>
+</svg>

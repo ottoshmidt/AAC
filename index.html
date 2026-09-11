@@ -3,8 +3,8 @@
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
-    <title>AAC Choice</title>
-    <meta name="description" content="Choose between two pictures with a single click." />
+    <title>AAC Games</title>
+    <meta name="description" content="Picture games for people who can only click." />
     <meta name="theme-color" content="#1f2430" />
     <link rel="manifest" href="manifest.webmanifest" />
     <link rel="icon" href="assets/icons/icon.svg" type="image/svg+xml" />
@@ -13,23 +13,33 @@
     <script type="module" src="js/main.js"></script>
   </head>
   <body>
-    <!-- Start screen: used by the caregiver to adjust settings and hand over.
-         Text comes from js/i18n.js via data-i18n. -->
+    <!-- Start screen: language and a menu of games. Text comes from js/i18n.js via data-i18n. -->
     <section id="start-screen" class="start-screen">
-      <div id="language-switch" class="language-switch" role="group" aria-label="Language / ენა"></div>
+      <div id="language-switch" class="language-switch" role="group" aria-label="Language / ენა / Язык"></div>
       <h1 data-i18n="title"></h1>
+      <p class="hint" data-i18n="chooseGame"></p>
+      <div id="game-menu" class="game-menu"></div>
+    </section>
+
+    <!-- Intro screen for the chosen game: description, Start and settings. -->
+    <section id="intro-screen" class="intro-screen" hidden>
+      <button id="back-button" class="back-button" type="button">‹ <span data-i18n="back"></span></button>
+      <img id="intro-icon" class="intro-icon" alt="" draggable="false" />
+      <h2 id="intro-name" class="intro-name"></h2>
+      <p id="intro-description" class="intro-description"></p>
       <button id="start-button" class="start-button" type="button" data-i18n="start"></button>
+      <p id="intro-help" class="hint"></p>
       <p class="hint" data-i18n="escHint"></p>
       <p id="voice-status" class="voice-status" hidden>
         <span id="voice-status-text"></span>
         <button id="voice-retry" class="link-button" type="button" data-i18n="retry" hidden></button>
       </p>
 
-      <details class="settings">
-        <summary data-i18n="settings"></summary>
+      <section class="settings">
+        <h3 data-i18n="settings"></h3>
         <form id="settings-form" class="settings-form">
-          <fieldset>
-            <legend data-i18n="game"></legend>
+          <fieldset data-game="guess">
+            <legend data-i18n="games.guess.name"></legend>
             <label>
               <span data-i18n="choicesPerRound"></span>
               <select name="choicesPerRound">
@@ -90,16 +100,13 @@
             <label class="check"><input name="fullscreen" type="checkbox" /> <span data-i18n="fullscreen"></span></label>
           </fieldset>
         </form>
-      </details>
+      </section>
     </section>
 
-    <!-- Game screen: a click anywhere selects the highlighted side. -->
+    <!-- Game screen: the running game fills #game-root. A click anywhere on
+         it counts as a press. -->
     <section id="game-screen" class="game-screen" hidden>
-      <div id="choices" class="choices"></div>
-      <div id="page-indicator" class="page-indicator" aria-live="polite" hidden></div>
-      <div id="pause-overlay" class="pause-overlay" hidden>
-        <p><span data-i18n="paused"></span><br /><span class="sub" data-i18n="clickToContinue"></span></p>
-      </div>
+      <div id="game-root" class="game-root"></div>
     </section>
 
     <noscript>This app needs JavaScript enabled. / აპლიკაციას JavaScript სჭირდება.</noscript>

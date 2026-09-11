@@ -1,7 +1,7 @@
 {
-  "name": "AAC Choice",
+  "name": "AAC Games",
   "short_name": "AAC",
-  "description": "Choose between two pictures with a single click.",
+  "description": "Picture games for people who can only click.",
   "start_url": "./",
   "scope": "./",
   "display": "fullscreen",

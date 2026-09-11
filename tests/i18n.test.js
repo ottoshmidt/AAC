@@ -16,7 +16,7 @@ describe('i18n', () => {
   });
 
   it('falls back to English, then to the key', () => {
-    assert.equal(t('xx', 'start'), 'Start');
+    assert.equal(t('xx', 'settings'), 'Settings');
     assert.equal(t('en', 'no-such-key'), 'no-such-key');
   });
 

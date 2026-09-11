@@ -1,9 +1,12 @@
 // @ts-check
+/**
+ * App shell: language, settings, voices and the game menu. Games live in
+ * js/games/; the shell starts the chosen one and forwards presses and keys.
+ */
+import { games } from './games/index.js';
 import { applyStrings, LANGUAGES, t } from './i18n.js';
 import { clipFor, items, labelFor } from './items.js';
 import { PIPER_VOICES, PiperVoice, piperDownloadBytes } from './piper.js';
-import { PageProgress } from './pages.js';
-import { Scanner } from './scanner.js';
 import { loadSettings, sanitize, saveSettings, VOICE_KEYS } from './settings.js';
 import { Speech } from './speech.js';
 import * as ui from './ui.js';
@@ -21,20 +24,6 @@ for (const id of Object.keys(PIPER_VOICES)) {
 let deviceVoices = /** @type {SpeechSynthesisVoice[]} */ ([]);
 /** False until voices have arrived or we've waited long enough to say there are none. */
 let deviceVoicesSettled = false;
-
-/** Current page and which of its pictures have been chosen. */
-const progress = new PageProgress(items.length, settings.choicesPerRound);
-const pageItems = () => progress.pictures.map((i) => items[i]);
-/** The scanner only visits pictures not chosen yet: scan index -> slot on the page. */
-let scanSlots = progress.remaining;
-
-const scanner = new Scanner({
-  itemCount: scanSlots.length,
-  intervalMs: settings.intervalMs,
-  cooldownMs: settings.cooldownMs,
-  debounceMs: settings.debounceMs,
-  maxCycles: settings.maxCycles,
-});
 
 // ---- Language and voice helpers -----------------------------------------------
 
@@ -68,98 +57,90 @@ function prepareInAppVoice() {
   piper.prepare(texts);
 }
 
-// ---- Scanner -> UI and sound -------------------------------------------------
+// ---- Games -------------------------------------------------------------------
 
-// Each round (game start, a page turn, and after every choice) moves on to the
-// next page if every picture has been chosen, then draws the page and scans
-// the pictures that are left, starting from the first.
-scanner.addEventListener('round', () => {
-  progress.startRound();
-  renderPage();
-});
+/** @type {import('./games/index.js').GameContext} */
+const gameContext = {
+  root: ui.elements.gameRoot,
+  settings: () => settings,
+  lang,
+  speech,
+  speakItem,
+  labelFor,
+  t: (key, vars) => t(lang(), key, vars),
+};
 
-scanner.addEventListener('highlight', (event) => {
-  const slot = scanSlots[/** @type {CustomEvent} */ (event).detail.index];
-  ui.setHighlight(slot);
-  if (settings.speakOnHighlight) speakItem(pageItems()[slot]);
-  else if (settings.highlightSound) speech.tick();
-});
+/** Game instances, created once and reused between runs. */
+const instances = new Map(games.map((info) => [info.id, info.create(gameContext)]));
+/** @type {import('./games/index.js').Game | null} the game on screen */
+let running = null;
+/** @type {import('./games/index.js').GameInfo | null} the game picked on the menu */
+let selected = null;
 
-scanner.addEventListener('select', (event) => {
-  const slot = scanSlots[/** @type {CustomEvent} */ (event).detail.index];
-  progress.choose(slot);
-  ui.setSelected(slot);
-  if (settings.speakOnSelect) speakItem(pageItems()[slot]);
-});
-
-function renderPage() {
-  scanSlots = progress.remaining;
-  scanner.updateOptions({ itemCount: scanSlots.length });
-  ui.renderChoices(pageItems(), lang(), settings.choicesPerRound, progress.chosen);
-  ui.setPageIndicator(progress.page + 1, progress.pageCount);
+/** @param {string} id */
+function openIntro(id) {
+  selected = games.find((g) => g.id === id) ?? null;
+  if (!selected) return;
+  ui.fillIntro(selected, lang());
+  ui.showScreen('intro');
+  window.scrollTo(0, 0);
+  ui.elements.startButton.focus({ preventScroll: true });
 }
 
-/** @param {number} delta +1 for the next page, -1 for the previous one */
-function turnPage(delta) {
-  progress.turn(delta);
+function closeIntro() {
+  const id = selected?.id;
+  selected = null;
+  ui.showScreen('start');
+  if (id) ui.focusMenu(id);
+}
+
+function startGame() {
+  const game = selected && instances.get(selected.id);
+  if (!game) return;
+  speech.unlock();
+  running = game;
+  ui.showScreen('game');
+  if (settings.fullscreen && document.fullscreenEnabled) {
+    document.documentElement.requestFullscreen().catch(() => {});
+  }
+  game.start();
+}
+
+function stopGame() {
+  running?.stop();
+  running = null;
   speech.cancel();
-  ui.showPaused(false);
-  scanner.start(); // emits 'round', which draws the new page
+  ui.showScreen('intro');
+  if (document.fullscreenElement) document.exitFullscreen().catch(() => {});
+  window.scrollTo(0, 0);
+  ui.elements.startButton.focus({ preventScroll: true });
 }
 
-scanner.addEventListener('pause', () => ui.showPaused(true));
-scanner.addEventListener('resume', () => ui.showPaused(false));
-
-// ---- User input --------------------------------------------------------------
+ui.elements.startButton.addEventListener('click', startGame);
+ui.elements.backButton.addEventListener('click', closeIntro);
 
 // Any button, anywhere on the game screen, counts as a press.
 // `pointerdown` also covers touch screens and pens.
 ui.elements.gameScreen.addEventListener('pointerdown', (event) => {
   event.preventDefault(); // no text selection, no middle-click autoscroll
-  scanner.press();
+  running?.press();
 });
 ui.elements.gameScreen.addEventListener('contextmenu', (event) => event.preventDefault());
 
-ui.elements.startButton.addEventListener('click', startGame);
-
-// Keyboard is for the caregiver: arrows turn pages, Escape returns to the
-// start screen. Only during the game, so arrows still work in the settings.
+// Keyboard is for the caregiver: Escape returns to the intro screen, other
+// keys go to the game. Only during a game, so keys still work in settings.
 document.addEventListener('keydown', (event) => {
-  if (ui.elements.gameScreen.hidden) return;
+  if (!running) return;
   if (event.key === 'Escape') stopGame();
-  else if (event.key === 'ArrowRight') turnPage(+1);
-  else if (event.key === 'ArrowLeft') turnPage(-1);
-  else return;
+  else if (!running.key(event)) return;
   event.preventDefault();
 });
 
 // Browsers exit fullscreen on Escape without always passing the key to the
-// page, so leaving fullscreen during a game also returns to the start screen.
+// page, so leaving fullscreen during a game also returns to the menu.
 document.addEventListener('fullscreenchange', () => {
-  if (!document.fullscreenElement && settings.fullscreen && !ui.elements.gameScreen.hidden) {
-    stopGame();
-  }
+  if (!document.fullscreenElement && settings.fullscreen && running) stopGame();
 });
-
-function startGame() {
-  speech.unlock();
-  ui.showScreen('game');
-  ui.showPaused(false);
-  if (settings.fullscreen && document.fullscreenEnabled) {
-    document.documentElement.requestFullscreen().catch(() => {});
-  }
-  scanner.start();
-}
-
-function stopGame() {
-  scanner.stop();
-  speech.cancel();
-  ui.setHighlight(-1);
-  ui.showPaused(false);
-  ui.showScreen('start');
-  if (document.fullscreenElement) document.exitFullscreen().catch(() => {});
-  ui.elements.startButton.focus();
-}
 
 // ---- Settings ----------------------------------------------------------------
 
@@ -170,15 +151,7 @@ function save() {
 ui.elements.settingsForm.addEventListener('change', () => {
   settings = sanitize(ui.readSettingsForm(settings));
   save();
-  progress.setPerPage(settings.choicesPerRound);
-  renderPage();
   ui.fillSettingsForm(settings); // show clamped values
-  scanner.updateOptions({
-    intervalMs: settings.intervalMs,
-    cooldownMs: settings.cooldownMs,
-    debounceMs: settings.debounceMs,
-    maxCycles: settings.maxCycles,
-  });
 });
 ui.elements.settingsForm.addEventListener('submit', (event) => event.preventDefault());
 
@@ -207,7 +180,8 @@ function setLanguage(language) {
 function applyLanguage() {
   applyStrings(lang());
   ui.setLanguageSwitch(lang());
-  renderPage();
+  ui.renderGameMenu(games, lang(), openIntro);
+  if (selected) ui.fillIntro(selected, lang());
   refreshVoiceSelect();
   refreshVoiceStatus();
   prepareInAppVoice();
@@ -280,7 +254,7 @@ ui.fillSettingsForm(settings);
 applyLanguage();
 ui.showScreen('start');
 
-// Warm the image cache so page turns appear without flicker.
+// Warm the image cache so pictures appear without flicker.
 for (const { image } of items) new Image().src = image;
 
 if (speech.speechSupported) {

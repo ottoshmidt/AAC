@@ -1,9 +1,10 @@
 // @ts-check
 /**
- * Everything that touches the DOM. main.js wires this to the scanner.
+ * The shell's DOM: start screen (menu, language, settings) and screen
+ * switching. Each game draws its own screen inside #game-root.
  */
 
-import { labelFor } from './items.js';
+import { t } from './i18n.js';
 
 /**
  * @param {string} selector
@@ -18,6 +19,13 @@ function $(selector) {
 export const elements = {
   startScreen: $('#start-screen'),
   languageSwitch: $('#language-switch'),
+  gameMenu: $('#game-menu'),
+  introScreen: $('#intro-screen'),
+  backButton: /** @type {HTMLButtonElement} */ ($('#back-button')),
+  introIcon: /** @type {HTMLImageElement} */ ($('#intro-icon')),
+  introName: $('#intro-name'),
+  introDescription: $('#intro-description'),
+  introHelp: $('#intro-help'),
   startButton: /** @type {HTMLButtonElement} */ ($('#start-button')),
   voiceStatus: $('#voice-status'),
   voiceStatusText: $('#voice-status-text'),
@@ -27,15 +35,30 @@ export const elements = {
   speechNote: $('#speech-note'),
   voiceLicense: $('#voice-license'),
   gameScreen: $('#game-screen'),
-  choices: $('#choices'),
-  pageIndicator: $('#page-indicator'),
-  pauseOverlay: $('#pause-overlay'),
+  gameRoot: $('#game-root'),
 };
 
-/** @param {'start' | 'game'} name */
+/** @param {'start' | 'intro' | 'game'} name */
 export function showScreen(name) {
   elements.startScreen.hidden = name !== 'start';
+  elements.introScreen.hidden = name !== 'intro';
   elements.gameScreen.hidden = name !== 'game';
+}
+
+/**
+ * Fill the intro screen for `game` and show only its own settings fieldset
+ * (fieldsets with `data-game`) next to the shared ones.
+ * @param {import('./games/index.js').GameInfo} game
+ * @param {string} lang
+ */
+export function fillIntro(game, lang) {
+  elements.introIcon.src = game.icon;
+  elements.introName.textContent = t(lang, `games.${game.id}.name`);
+  elements.introDescription.textContent = t(lang, `games.${game.id}.description`);
+  elements.introHelp.textContent = t(lang, `games.${game.id}.help`);
+  for (const fieldset of elements.settingsForm.querySelectorAll('fieldset[data-game]')) {
+    /** @type {HTMLElement} */ (fieldset).hidden = fieldset.getAttribute('data-game') !== game.id;
+  }
 }
 
 /**
@@ -65,72 +88,47 @@ export function setLanguageSwitch(lang) {
 }
 
 /**
- * @param {import('./items.js').Item[]} items
+ * One big card per game: icon, name and a short description. Clicking a card
+ * starts that game.
+ * @param {import('./games/index.js').GameInfo[]} games
  * @param {string} lang
- * @param {number} slots  pictures per page; picks the grid layout in CSS, so a
- *                        shorter last page keeps the same positions
- * @param {ReadonlySet<number>} [chosen]  positions already chosen: shown with a ✓
+ * @param {(id: string) => void} onPick
  */
-export function renderChoices(items, lang, slots, chosen = new Set()) {
-  elements.choices.dataset.count = String(slots);
-  elements.choices.replaceChildren(
-    ...items.map((item, index) => {
-      const label = labelFor(item, lang);
-      const figure = document.createElement('figure');
-      figure.className = 'choice';
-      figure.classList.toggle('done', chosen.has(index));
-      figure.dataset.index = String(index);
+export function renderGameMenu(games, lang, onPick) {
+  elements.gameMenu.replaceChildren(
+    ...games.map((game) => {
+      const card = document.createElement('button');
+      card.type = 'button';
+      card.className = 'game-card';
+      card.dataset.game = game.id;
 
       const img = document.createElement('img');
-      img.src = item.image;
-      img.alt = label;
+      img.src = game.icon;
+      img.alt = '';
       img.draggable = false;
 
-      const caption = document.createElement('figcaption');
-      caption.textContent = label;
+      const name = document.createElement('span');
+      name.className = 'game-name';
+      name.textContent = t(lang, `games.${game.id}.name`);
 
-      figure.append(img, caption);
-      return figure;
+      const description = document.createElement('span');
+      description.className = 'game-description';
+      description.textContent = t(lang, `games.${game.id}.description`);
+
+      const help = document.createElement('span');
+      help.className = 'game-help';
+      help.textContent = t(lang, `games.${game.id}.help`);
+
+      card.append(img, name, description, help);
+      card.addEventListener('click', () => onPick(game.id));
+      return card;
     }),
   );
 }
 
-function choiceElements() {
-  return /** @type {HTMLElement[]} */ ([...elements.choices.children]);
-}
-
-/** @param {number} index highlighted item, or -1 for none */
-export function setHighlight(index) {
-  for (const el of choiceElements()) {
-    el.classList.toggle('highlighted', Number(el.dataset.index) === index);
-    el.classList.remove('selected', 'not-selected');
-  }
-}
-
-/** @param {number} index */
-export function setSelected(index) {
-  for (const el of choiceElements()) {
-    const isSelected = Number(el.dataset.index) === index;
-    el.classList.remove('highlighted');
-    el.classList.toggle('selected', isSelected);
-    el.classList.toggle('not-selected', !isSelected);
-  }
-}
-
-/**
- * Small "2 / 6" in the corner of the game screen, for the caregiver.
- * @param {number} current 1-based
- * @param {number} count
- */
-export function setPageIndicator(current, count) {
-  elements.pageIndicator.textContent = `${current} / ${count}`;
-  elements.pageIndicator.hidden = count <= 1;
-}
-
-/** @param {boolean} paused */
-export function showPaused(paused) {
-  elements.pauseOverlay.hidden = !paused;
-  if (paused) setHighlight(-1);
+/** Focus the card of `id` on the menu (after going back from an intro). */
+export function focusMenu(id) {
+  /** @type {HTMLElement | null} */ (elements.gameMenu.querySelector(`[data-game="${id}"]`))?.focus();
 }
 
 // ---- Settings form ----------------------------------------------------------

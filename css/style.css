@@ -52,6 +52,53 @@ body {
   font-size: clamp(2rem, 6vw, 3.5rem);
 }
 
+/* ---- Intro screen ---------------------------------------------------------- */
+
+.intro-screen {
+  position: relative;
+  min-height: 100%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 1.25rem;
+  padding: 3rem 1rem;
+}
+
+.back-button {
+  position: absolute;
+  top: 1rem;
+  left: 1rem;
+  font: inherit;
+  padding: 0.5rem 1rem;
+  border: 2px solid #3a4152;
+  border-radius: 999px;
+  background: transparent;
+  color: var(--text);
+  cursor: pointer;
+}
+
+.back-button:focus-visible {
+  outline: 0.2rem solid var(--highlight);
+  outline-offset: 0.2rem;
+}
+
+.intro-icon {
+  width: clamp(6rem, 20vw, 9rem);
+  margin-top: 1.5rem;
+}
+
+.intro-name {
+  margin: 0;
+  font-size: clamp(2rem, 6vw, 3.5rem);
+  text-align: center;
+}
+
+.intro-description {
+  margin: 0;
+  max-width: 40rem;
+  text-align: center;
+}
+
 .start-button {
   font: inherit;
   font-size: clamp(2rem, 6vw, 3rem);
@@ -67,6 +114,69 @@ body {
 .start-button:focus-visible {
   outline: 0.3rem solid var(--highlight);
   outline-offset: 0.3rem;
+}
+
+.settings h3 {
+  margin: 0.25rem 0 0;
+  font-size: 1.1rem;
+}
+
+/* ---- Game menu ------------------------------------------------------------ */
+
+.game-menu {
+  width: min(56rem, 100%);
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(16rem, 1fr));
+  gap: 1.25rem;
+  justify-items: center;
+}
+
+.game-card {
+  width: 100%;
+  max-width: 22rem;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.6rem;
+  padding: 1.5rem 1.25rem;
+  border: 0.35rem solid transparent;
+  border-radius: 1.5rem;
+  background: var(--panel);
+  color: var(--text-dark);
+  font: inherit;
+  text-align: center;
+  cursor: pointer;
+  transition: transform 150ms ease, border-color 150ms ease;
+}
+
+.game-card:hover {
+  transform: translateY(-2px);
+}
+
+.game-card:focus-visible {
+  outline: none;
+  border-color: var(--highlight);
+}
+
+.game-card img {
+  width: clamp(6rem, 30%, 9rem);
+  aspect-ratio: 1;
+}
+
+.game-name {
+  font-size: clamp(1.5rem, 4vw, 2.25rem);
+  font-weight: 700;
+  color: var(--accent);
+}
+
+.game-description {
+  font-size: 1rem;
+  line-height: 1.35;
+}
+
+.game-help {
+  font-size: 0.9rem;
+  color: #5f6674;
 }
 
 .hint {
@@ -126,12 +236,6 @@ body {
   background: #2a3040;
   border-radius: 1rem;
   padding: 0.75rem 1.25rem;
-}
-
-.settings summary {
-  cursor: pointer;
-  font-weight: 600;
-  padding: 0.25rem 0;
 }
 
 .settings-form fieldset {
@@ -202,6 +306,10 @@ body {
   user-select: none;
   -webkit-user-select: none;
   touch-action: none;
+}
+
+.game-root {
+  height: 100%;
 }
 
 .choices {
