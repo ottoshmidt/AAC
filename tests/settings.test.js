@@ -1,6 +1,6 @@
 import assert from 'node:assert/strict';
 import { describe, it } from 'node:test';
-import { DEFAULTS, LIMITS, sanitize } from '../js/settings.js';
+import { DEFAULTS, detectLanguage, LIMITS, sanitize } from '../js/settings.js';
 
 describe('sanitize', () => {
   it('returns the defaults for missing or invalid input', () => {
@@ -28,6 +28,20 @@ describe('sanitize', () => {
     assert.equal(sanitize({ choicesPerRound: 2 }).choicesPerRound, 2);
     assert.equal(sanitize({ choicesPerRound: 3 }).choicesPerRound, 4);
     assert.equal(sanitize({ choicesPerRound: '2' }).choicesPerRound, 4);
+  });
+
+  it('detects the language from the browser, defaulting to English', () => {
+    assert.equal(detectLanguage('ru-RU'), 'ru');
+    assert.equal(detectLanguage('ru'), 'ru');
+    assert.equal(detectLanguage('ka-GE'), 'ka');
+    assert.equal(detectLanguage('en-GB'), 'en');
+    assert.equal(detectLanguage('de-DE'), 'en');
+    assert.equal(detectLanguage(undefined), 'en');
+  });
+
+  it('uses the device voice for Russian by default', () => {
+    assert.equal(DEFAULTS.voiceRu, '');
+    assert.equal(sanitize({ language: 'ru', voiceRu: 'piper:ru_RU-denis-medium' }).voiceRu, 'piper:ru_RU-denis-medium');
   });
 
   it('accepts only known languages', () => {

@@ -2,7 +2,8 @@ import assert from 'node:assert/strict';
 import { describe, it } from 'node:test';
 import { LANGUAGES, missingKeys, t } from '../js/i18n.js';
 import { clipFor, items, labelFor } from '../js/items.js';
-import { CHOICES, VOICE_KEYS } from '../js/settings.js';
+import { PIPER_VOICES } from '../js/piper.js';
+import { CHOICES, DEFAULTS, VOICE_KEYS } from '../js/settings.js';
 
 describe('i18n', () => {
   it('has every string in every language', () => {
@@ -22,6 +23,14 @@ describe('i18n', () => {
   it('agrees with settings about which languages exist', () => {
     assert.deepEqual(Object.keys(LANGUAGES).sort(), [...CHOICES.language].sort());
     assert.deepEqual(Object.keys(VOICE_KEYS).sort(), [...CHOICES.language].sort());
+  });
+
+  it('has in-app voices only for known languages, and valid default voices', () => {
+    for (const [id, voice] of Object.entries(PIPER_VOICES)) assert.ok(voice.lang in LANGUAGES, id);
+    for (const key of Object.values(VOICE_KEYS)) {
+      const voice = DEFAULTS[key];
+      if (voice.startsWith('piper:')) assert.ok(voice.slice(6) in PIPER_VOICES, `${key} = ${voice}`);
+    }
   });
 });
 

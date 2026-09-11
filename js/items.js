@@ -12,7 +12,7 @@
  *
  * Example with a Georgian recording:
  *   { id: 'ball', image: 'assets/images/ball.svg',
- *     label: { ka: 'ბურთი', en: 'Ball' },
+ *     label: { ka: 'ბურთი', en: 'Ball', ru: 'Мяч' },
  *     audio: { ka: 'assets/audio/ka/ball.mp3' } }
  *
  * Also add new files to the PRECACHE list in sw.js so they work offline.
@@ -27,45 +27,46 @@
  */
 
 /**
- * @param {string} id
+ * @param {string} id  also the image file name
  * @param {string} ka
  * @param {string} en
+ * @param {string} ru
  * @returns {Item}
  */
-const item = (id, ka, en) => ({ id, image: `assets/images/${id}.svg`, label: { ka, en } });
+const item = (id, ka, en, ru) => ({ id, image: `assets/images/${id}.svg`, label: { ka, en, ru } });
 
 /** @type {Item[]} */
 export const items = [
   // Page 1: fruit
-  item('apple', 'ვაშლი', 'Apple'),
-  item('banana', 'ბანანი', 'Banana'),
-  item('orange', 'ფორთოხალი', 'Orange'),
-  item('grapes', 'ყურძენი', 'Grapes'),
+  item('apple', 'ვაშლი', 'Apple', 'Яблоко'),
+  item('banana', 'ბანანი', 'Banana', 'Банан'),
+  item('orange', 'ფორთოხალი', 'Orange', 'Апельсин'),
+  item('grapes', 'ყურძენი', 'Grapes', 'Виноград'),
   // Page 2: food
-  item('strawberry', 'მარწყვი', 'Strawberry'),
-  item('carrot', 'სტაფილო', 'Carrot'),
-  item('bread', 'პური', 'Bread'),
-  item('cake', 'ტორტი', 'Cake'),
+  item('strawberry', 'მარწყვი', 'Strawberry', 'Клубника'),
+  item('carrot', 'სტაფილო', 'Carrot', 'Морковь'),
+  item('bread', 'პური', 'Bread', 'Хлеб'),
+  item('cake', 'ტორტი', 'Cake', 'Торт'),
   // Page 3: drinks and home
-  item('milk', 'რძე', 'Milk'),
-  item('water', 'წყალი', 'Water'),
-  item('bed', 'საწოლი', 'Bed'),
-  item('house', 'სახლი', 'House'),
+  item('milk', 'რძე', 'Milk', 'Молоко'),
+  item('water', 'წყალი', 'Water', 'Вода'),
+  item('bed', 'საწოლი', 'Bed', 'Кровать'),
+  item('house', 'სახლი', 'House', 'Дом'),
   // Page 4: toys
-  item('ball', 'ბურთი', 'Ball'),
-  item('balloon', 'ბუშტი', 'Balloon'),
-  item('car', 'მანქანა', 'Car'),
-  item('book', 'წიგნი', 'Book'),
+  item('ball', 'ბურთი', 'Ball', 'Мяч'),
+  item('balloon', 'ბუშტი', 'Balloon', 'Шарик'),
+  item('car', 'მანქანა', 'Car', 'Машина'),
+  item('book', 'წიგნი', 'Book', 'Книга'),
   // Page 5: sky and tree
-  item('sun', 'მზე', 'Sun'),
-  item('moon', 'მთვარე', 'Moon'),
-  item('star', 'ვარსკვლავი', 'Star'),
-  item('tree', 'ხე', 'Tree'),
+  item('sun', 'მზე', 'Sun', 'Солнце'),
+  item('moon', 'მთვარე', 'Moon', 'Луна'),
+  item('star', 'ვარსკვლავი', 'Star', 'Звезда'),
+  item('tree', 'ხე', 'Tree', 'Дерево'),
   // Page 6: flower and animals
-  item('flower', 'ყვავილი', 'Flower'),
-  item('fish', 'თევზი', 'Fish'),
-  item('cat', 'კატა', 'Cat'),
-  item('bird', 'ჩიტი', 'Bird'),
+  item('flower', 'ყვავილი', 'Flower', 'Цветок'),
+  item('fish', 'თევზი', 'Fish', 'Рыба'),
+  item('cat', 'კატა', 'Cat', 'Кошка'),
+  item('bird', 'ჩიტი', 'Bird', 'Птица'),
 ];
 
 /**

@@ -23,13 +23,25 @@ const STORAGE_KEY = 'aac.settings.v1';
  * @property {string}  language          interface and speech language, a key of LANGUAGES
  * @property {string}  voiceEn           voice for English (see below)
  * @property {string}  voiceKa           voice for Georgian (see below)
+ * @property {string}  voiceRu           voice for Russian (see below)
  *
  * A voice is '' for the browser default, a device voice name, or
  * 'piper:<id>' for an in-app Piper voice.
  */
 
 /** Settings key holding the voice for each language. */
-export const VOICE_KEYS = Object.freeze({ en: 'voiceEn', ka: 'voiceKa' });
+export const VOICE_KEYS = Object.freeze({ en: 'voiceEn', ka: 'voiceKa', ru: 'voiceRu' });
+
+const LANGUAGE_CODES = ['ka', 'en', 'ru'];
+
+/**
+ * The app language matching a browser language tag like 'ru-RU', else English.
+ * @param {string | undefined} browserLanguage
+ */
+export function detectLanguage(browserLanguage) {
+  const code = (browserLanguage ?? '').toLowerCase().split(/[-_]/)[0];
+  return LANGUAGE_CODES.includes(code) ? code : 'en';
+}
 
 /** @type {Readonly<Settings>} */
 export const DEFAULTS = Object.freeze({
@@ -42,16 +54,18 @@ export const DEFAULTS = Object.freeze({
   speakOnHighlight: false,
   highlightSound: true,
   fullscreen: true,
-  language: globalThis.navigator?.language?.toLowerCase().startsWith('ka') ? 'ka' : 'en',
+  language: detectLanguage(globalThis.navigator?.language),
   voiceEn: '',
   // Devices almost never ship a Georgian voice, so default to the in-app one.
   voiceKa: 'piper:ka_GE-natia-medium',
+  // Russian voices are common on devices; the in-app Denis voice is optional.
+  voiceRu: '',
 });
 
 /** Allowed values for settings that are a fixed choice. */
 export const CHOICES = Object.freeze({
   choicesPerRound: [2, 4],
-  language: ['ka', 'en'],
+  language: LANGUAGE_CODES,
 });
 
 /** Allowed ranges for numeric settings. */

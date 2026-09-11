@@ -52,7 +52,8 @@ const PIPER_VOICES_BASE =
  * @typedef {object} PiperVoiceInfo
  * @property {string} name     display name
  * @property {string} lang     app language code this voice speaks
- * @property {string} license  shown to the caregiver; all current voices are non-commercial
+ * @property {string} license  shown to the caregiver
+ * @property {boolean} nonCommercial  license forbids commercial use
  * @property {RemoteFile} model
  * @property {RemoteFile} config
  */
@@ -63,6 +64,7 @@ export const PIPER_VOICES = {
     name: 'Natia',
     lang: 'ka',
     license: 'RHVoice, CC BY-NC-SA 4.0',
+    nonCommercial: true,
     model: {
       url: `${PIPER_VOICES_BASE}/ka/ka_GE/natia/medium/ka_GE-natia-medium.onnx`,
       bytes: 63201294,
@@ -71,6 +73,23 @@ export const PIPER_VOICES = {
     config: {
       url: `${PIPER_VOICES_BASE}/ka/ka_GE/natia/medium/ka_GE-natia-medium.onnx.json`,
       bytes: 4842,
+      type: 'application/json',
+    },
+  },
+  // Russian devices usually have a voice already; this is the offline option.
+  'ru_RU-denis-medium': {
+    name: 'Denis',
+    lang: 'ru',
+    license: 'CC0',
+    nonCommercial: false,
+    model: {
+      url: `${PIPER_VOICES_BASE}/ru/ru_RU/denis/medium/ru_RU-denis-medium.onnx`,
+      bytes: 63201294,
+      type: 'application/octet-stream',
+    },
+    config: {
+      url: `${PIPER_VOICES_BASE}/ru/ru_RU/denis/medium/ru_RU-denis-medium.onnx.json`,
+      bytes: 4823,
       type: 'application/json',
     },
   },
@@ -145,9 +164,7 @@ export class PiperVoice extends EventTarget {
     this.#set('loading');
     this.config = JSON.parse(await config.text());
 
-    const ort = await import(ORT_MODULE);
-    ort.env.wasm.numThreads = self.crossOriginIsolated ? Math.min(4, navigator.hardwareConcurrency || 1) : 1;
-    ort.env.wasm.wasmPaths = { wasm: URL.createObjectURL(ortWasm) };
+    const ort = await loadOrt(ortWasm);
     this.ort = ort;
     this.session = await ort.InferenceSession.create(new Uint8Array(await model.arrayBuffer()));
 
@@ -308,6 +325,28 @@ async function fetchCached(file, onBytes) {
   return blob;
 }
 
+/** @type {Promise<any> | null} */
+let ortRuntime = null;
+
+/**
+ * Import and configure ONNX Runtime once; every voice shares it.
+ * @param {Blob} wasm  the runtime's WebAssembly binary
+ */
+function loadOrt(wasm) {
+  ortRuntime ??= import(ORT_MODULE).then(
+    (ort) => {
+      ort.env.wasm.numThreads = self.crossOriginIsolated ? Math.min(4, navigator.hardwareConcurrency || 1) : 1;
+      ort.env.wasm.wasmPaths = { wasm: URL.createObjectURL(wasm) };
+      return ort;
+    },
+    (error) => {
+      ortRuntime = null; // allow a retry
+      throw error;
+    },
+  );
+  return ortRuntime;
+}
+
 /** @type {Map<string, Promise<void>>} */
 const scripts = new Map();
 
@@ -319,7 +358,11 @@ function loadScript(src) {
       const script = document.createElement('script');
       script.src = src;
       script.onload = () => resolve();
-      script.onerror = () => reject(new Error(`Failed to load ${src}`));
+      script.onerror = () => {
+        scripts.delete(src); // allow a retry
+        script.remove();
+        reject(new Error(`Failed to load ${src}`));
+      };
       document.head.append(script);
     });
     scripts.set(src, promise);

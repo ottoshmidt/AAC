@@ -12,8 +12,8 @@ every picture on a page has been chosen, the game moves to the next page, and
 after the last one it starts over. The caregiver can also turn pages with the
 arrow keys.
 
-The interface and speech are available in **Georgian (ქართული)** and
-English.
+The interface and speech are available in **Georgian (ქართული)**,
+**Russian (Русский)** and English.
 
 Plain HTML, CSS and JavaScript: no framework, no build step, no npm
 dependencies.
@@ -53,9 +53,9 @@ Then open <http://localhost:8080>.
 | Speak the chosen picture | on | Recorded clip if there is one, otherwise the voice |
 | Speak each picture as highlighted | off | Auditory scanning; replaces the tick |
 | Tick when the highlight moves | on | Generated sound, no file needed |
-| Voice | Georgian: Natia (in-app); English: browser default | Chosen separately per language |
+| Voice | Georgian: Natia (in-app); Russian, English: browser default | Chosen separately per language |
 | Go fullscreen on start | on | Leaving fullscreen ends the game |
-| Language | browser language, else English | Buttons at the top of the start screen |
+| Language | browser language (ka, ru), else English | Buttons at the top of the start screen |
 
 Settings are saved in the browser (localStorage) per device.
 
@@ -80,6 +80,16 @@ voice that runs entirely in the browser.
 **CC BY-NC-SA 4.0**. It is free for personal, non-commercial use only;
 organizations need permission from the copyright holders. Recorded clips
 (below) avoid the restriction entirely and usually sound best.
+
+## Russian speech
+
+Most devices already have a Russian voice (Windows, macOS, iOS, Android,
+and Chrome's online "Google русский"), so Russian uses the device voice by
+default. For offline use, or where there is no Russian voice (e.g. Firefox on
+Linux without speech-dispatcher), choose the in-app **Denis** voice in
+Settings → Voice. It downloads like Natia; if Natia is already downloaded,
+only Denis's own 63 MB model is new. Denis is licensed **CC0**, free for any
+use.
 
 ## Changing the pictures
 
@@ -112,9 +122,10 @@ precached.
 ## Translations
 
 Interface text lives in `js/i18n.js`. To add a language, add it to
-`LANGUAGES` and `STRINGS` there, to `CHOICES.language` and `VOICE_KEYS` (plus
-a default voice) in `js/settings.js`, and a label to each item. `npm test`
-checks that no string is missing.
+`LANGUAGES` and `STRINGS` there, to `LANGUAGE_CODES` and `VOICE_KEYS` (plus
+a default voice) in `js/settings.js`, and a label to each item. Optionally
+add an in-app voice to `PIPER_VOICES` in `js/piper.js`. `npm test` checks
+that no string or label is missing.
 
 ## Project layout
 

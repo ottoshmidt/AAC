@@ -258,7 +258,7 @@ function refreshVoiceStatus() {
     error: piper.error?.message ?? '',
     license: piper.info.license,
   };
-  ui.setVoiceLicense(t(language, 'voiceLicense', vars));
+  ui.setVoiceLicense(t(language, piper.info.nonCommercial ? 'voiceLicense' : 'voiceLicenseFree', vars));
   switch (piper.status) {
     case 'downloading':
       return ui.setVoiceStatus(t(language, 'voiceDownloading', vars));
