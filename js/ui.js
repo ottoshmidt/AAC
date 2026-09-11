@@ -28,6 +28,7 @@ export const elements = {
   voiceLicense: $('#voice-license'),
   gameScreen: $('#game-screen'),
   choices: $('#choices'),
+  pageIndicator: $('#page-indicator'),
   pauseOverlay: $('#pause-overlay'),
 };
 
@@ -66,13 +67,18 @@ export function setLanguageSwitch(lang) {
 /**
  * @param {import('./items.js').Item[]} items
  * @param {string} lang
+ * @param {number} slots  pictures per page; picks the grid layout in CSS, so a
+ *                        shorter last page keeps the same positions
+ * @param {ReadonlySet<number>} [chosen]  positions already chosen: shown with a ✓
  */
-export function renderChoices(items, lang) {
+export function renderChoices(items, lang, slots, chosen = new Set()) {
+  elements.choices.dataset.count = String(slots);
   elements.choices.replaceChildren(
     ...items.map((item, index) => {
       const label = labelFor(item, lang);
       const figure = document.createElement('figure');
       figure.className = 'choice';
+      figure.classList.toggle('done', chosen.has(index));
       figure.dataset.index = String(index);
 
       const img = document.createElement('img');
@@ -109,6 +115,16 @@ export function setSelected(index) {
     el.classList.toggle('selected', isSelected);
     el.classList.toggle('not-selected', !isSelected);
   }
+}
+
+/**
+ * Small "2 / 6" in the corner of the game screen, for the caregiver.
+ * @param {number} current 1-based
+ * @param {number} count
+ */
+export function setPageIndicator(current, count) {
+  elements.pageIndicator.textContent = `${current} / ${count}`;
+  elements.pageIndicator.hidden = count <= 1;
 }
 
 /** @param {boolean} paused */
@@ -149,7 +165,7 @@ export function readSettingsForm(current) {
     if (!(el.name in current)) continue;
     if (el instanceof HTMLInputElement && el.type === 'checkbox') {
       next[el.name] = el.checked;
-    } else if (el instanceof HTMLInputElement && el.type === 'number') {
+    } else if (typeof next[el.name] === 'number') {
       next[el.name] = Math.round(Number(el.value) * Number(el.dataset.scale ?? 1));
     } else {
       next[el.name] = el.value;

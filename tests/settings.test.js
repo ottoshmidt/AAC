@@ -23,6 +23,13 @@ describe('sanitize', () => {
     assert.equal(sanitize({ maxCycles: -3 }).maxCycles, 0);
   });
 
+  it('allows only 2 or 4 pictures per round, defaulting to 4', () => {
+    assert.equal(DEFAULTS.choicesPerRound, 4);
+    assert.equal(sanitize({ choicesPerRound: 2 }).choicesPerRound, 2);
+    assert.equal(sanitize({ choicesPerRound: 3 }).choicesPerRound, 4);
+    assert.equal(sanitize({ choicesPerRound: '2' }).choicesPerRound, 4);
+  });
+
   it('accepts only known languages', () => {
     assert.equal(sanitize({ language: 'ka' }).language, 'ka');
     assert.equal(sanitize({ language: 'en' }).language, 'en');

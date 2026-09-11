@@ -1,0 +1,9 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 200 200" role="img" aria-label="Strawberry">
+  <path d="M100 184c-60-38-74-100-44-122 14-10 30-6 44 0 14-6 30-10 44 0 30 22 16 84-44 122z" fill="#e2332f" stroke="#b01e1b" stroke-width="4" stroke-linejoin="round"/>
+  <g fill="#ffe066">
+    <ellipse cx="72" cy="90" rx="3" ry="5"/><ellipse cx="100" cy="86" rx="3" ry="5"/><ellipse cx="128" cy="90" rx="3" ry="5"/>
+    <ellipse cx="84" cy="114" rx="3" ry="5"/><ellipse cx="116" cy="114" rx="3" ry="5"/><ellipse cx="66" cy="118" rx="3" ry="5"/><ellipse cx="134" cy="118" rx="3" ry="5"/>
+    <ellipse cx="100" cy="138" rx="3" ry="5"/><ellipse cx="80" cy="142" rx="3" ry="5"/><ellipse cx="120" cy="142" rx="3" ry="5"/><ellipse cx="100" cy="162" rx="3" ry="5"/>
+  </g>
+  <path d="M100 66l-34-6 20-8-14-16 26 10 2-22 8 22 22-12-12 18 22 6-32 8z" fill="#3fa34d" stroke="#2c7a37" stroke-width="3" stroke-linejoin="round"/>
+</svg>

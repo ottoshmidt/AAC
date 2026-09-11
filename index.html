@@ -29,6 +29,17 @@
         <summary data-i18n="settings"></summary>
         <form id="settings-form" class="settings-form">
           <fieldset>
+            <legend data-i18n="game"></legend>
+            <label>
+              <span data-i18n="choicesPerRound"></span>
+              <select name="choicesPerRound">
+                <option value="2">2</option>
+                <option value="4">4</option>
+              </select>
+            </label>
+          </fieldset>
+
+          <fieldset>
             <legend data-i18n="timing"></legend>
             <label>
               <span data-i18n="intervalBefore"></span>
@@ -85,6 +96,7 @@
     <!-- Game screen: a click anywhere selects the highlighted side. -->
     <section id="game-screen" class="game-screen" hidden>
       <div id="choices" class="choices"></div>
+      <div id="page-indicator" class="page-indicator" aria-live="polite" hidden></div>
       <div id="pause-overlay" class="pause-overlay" hidden>
         <p><span data-i18n="paused"></span><br /><span class="sub" data-i18n="clickToContinue"></span></p>
       </div>

@@ -7,7 +7,7 @@
 // Downloaded voices live in a separate cache managed by js/piper.js
 // ('aac-voices-…'); it is left alone here so updates never re-download them.
 
-const CACHE_NAME = 'aac-app-v2';
+const CACHE_NAME = 'aac-app-v4';
 const VOICE_CACHE_PREFIX = 'aac-voices-';
 
 const PRECACHE = [
@@ -19,6 +19,7 @@ const PRECACHE = [
   'js/i18n.js',
   'js/items.js',
   'js/piper.js',
+  'js/pages.js',
   'js/scanner.js',
   'js/settings.js',
   'js/speech.js',
@@ -26,8 +27,31 @@ const PRECACHE = [
   'js/wav.js',
   'vendor/onnxruntime-web/ort.wasm.bundle.min.mjs',
   'vendor/piper-wasm/piper_phonemize.js',
+  // Keep in sync with js/items.js (tests/items.test.js checks this).
   'assets/images/apple.svg',
   'assets/images/ball.svg',
+  'assets/images/balloon.svg',
+  'assets/images/banana.svg',
+  'assets/images/bed.svg',
+  'assets/images/bird.svg',
+  'assets/images/book.svg',
+  'assets/images/bread.svg',
+  'assets/images/cake.svg',
+  'assets/images/car.svg',
+  'assets/images/carrot.svg',
+  'assets/images/cat.svg',
+  'assets/images/fish.svg',
+  'assets/images/flower.svg',
+  'assets/images/grapes.svg',
+  'assets/images/house.svg',
+  'assets/images/milk.svg',
+  'assets/images/moon.svg',
+  'assets/images/orange.svg',
+  'assets/images/star.svg',
+  'assets/images/strawberry.svg',
+  'assets/images/sun.svg',
+  'assets/images/tree.svg',
+  'assets/images/water.svg',
   'assets/icons/icon.svg',
   'assets/icons/icon-192.png',
   'assets/icons/icon-512.png',

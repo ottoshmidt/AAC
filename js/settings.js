@@ -11,7 +11,8 @@ const STORAGE_KEY = 'aac.settings.v1';
 
 /**
  * @typedef {object} Settings
- * @property {number}  intervalMs        how long each side stays highlighted
+ * @property {number}  choicesPerRound   pictures shown at once: 2 (side by side) or 4 (2×2)
+ * @property {number}  intervalMs        how long each picture stays highlighted
  * @property {number}  cooldownMs        pause after a selection before scanning resumes
  * @property {number}  debounceMs        ignore presses closer together than this
  * @property {number}  maxCycles         pause after this many cycles without a selection (0 = never)
@@ -32,6 +33,7 @@ export const VOICE_KEYS = Object.freeze({ en: 'voiceEn', ka: 'voiceKa' });
 
 /** @type {Readonly<Settings>} */
 export const DEFAULTS = Object.freeze({
+  choicesPerRound: 4,
   intervalMs: 2000,
   cooldownMs: 2000,
   debounceMs: 300,
@@ -46,8 +48,9 @@ export const DEFAULTS = Object.freeze({
   voiceKa: 'piper:ka_GE-natia-medium',
 });
 
-/** Allowed values for string settings that are a fixed choice. */
+/** Allowed values for settings that are a fixed choice. */
 export const CHOICES = Object.freeze({
+  choicesPerRound: [2, 4],
   language: ['ka', 'en'],
 });
 
@@ -76,15 +79,11 @@ export function sanitize(raw) {
   for (const [key, fallback] of Object.entries(DEFAULTS)) {
     const value = input[key];
     if (typeof value !== typeof fallback) continue;
-    if (typeof value === 'number') {
-      if (!Number.isFinite(value)) continue;
-      const limit = /** @type {Record<string, {min: number, max: number}>} */ (LIMITS)[key];
-      out[key] = limit ? Math.min(limit.max, Math.max(limit.min, value)) : value;
-    } else {
-      const allowed = /** @type {Record<string, readonly string[]>} */ (CHOICES)[key];
-      if (allowed && !allowed.includes(/** @type {string} */ (value))) continue;
-      out[key] = value;
-    }
+    if (typeof value === 'number' && !Number.isFinite(value)) continue;
+    const allowed = /** @type {Record<string, readonly unknown[]>} */ (CHOICES)[key];
+    if (allowed && !allowed.includes(value)) continue;
+    const limit = /** @type {Record<string, {min: number, max: number}>} */ (LIMITS)[key];
+    out[key] = limit && typeof value === 'number' ? Math.min(limit.max, Math.max(limit.min, value)) : value;
   }
   return /** @type {Settings} */ (out);
 }

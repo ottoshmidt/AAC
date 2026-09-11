@@ -8,6 +8,9 @@
  * emits events, which makes it easy to test and to reuse with other UIs.
  *
  * Events (all CustomEvent, details in `event.detail`):
+ *   'round'     {}         a new round begins (on every start() and after
+ *                          each selection), just before the first highlight;
+ *                          listeners may change the items and `itemCount` here
  *   'highlight' { index }  the highlight moved to `index`
  *   'select'    { index }  the user selected `index`
  *   'pause'     {}         scanning stopped after `maxCycles` with no selection
@@ -50,8 +53,7 @@ export class Scanner extends EventTarget {
 
   start() {
     this.#clearTimer();
-    this.cycles = 0;
-    this.#highlight(0);
+    this.#newRound();
   }
 
   stop() {
@@ -84,10 +86,13 @@ export class Scanner extends EventTarget {
     this.#clearTimer();
     this.state = 'selected';
     this.#emit('select', { index: this.index });
-    this.timer = setTimeout(() => {
-      this.cycles = 0;
-      this.#highlight(0);
-    }, this.options.cooldownMs);
+    this.timer = setTimeout(() => this.#newRound(), this.options.cooldownMs);
+  }
+
+  #newRound() {
+    this.cycles = 0;
+    this.#emit('round');
+    this.#highlight(0);
   }
 
   #advance() {

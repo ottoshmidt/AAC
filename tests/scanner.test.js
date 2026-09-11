@@ -103,6 +103,40 @@ describe('Scanner', () => {
     assert.ok(!events.some(([type]) => type === 'select'));
   });
 
+  it('starts a new round on start and after each selection, before the first highlight', () => {
+    const { scanner } = setup();
+    const order = [];
+    scanner.addEventListener('round', () => order.push('round'));
+    scanner.addEventListener('highlight', (e) => order.push(`h${e.detail.index}`));
+    scanner.addEventListener('select', (e) => order.push(`s${e.detail.index}`));
+    scanner.start();
+    mock.timers.tick(1000);
+    scanner.press();
+    mock.timers.tick(500); // cooldown ends
+    assert.deepEqual(order, ['round', 'h0', 'h1', 's1', 'round', 'h0']);
+  });
+
+  it('does not start a new round when resuming from a pause', () => {
+    const { scanner } = setup({ maxCycles: 1 });
+    let rounds = 0;
+    scanner.addEventListener('round', () => rounds++);
+    scanner.start();
+    ticks(2, 1000);
+    scanner.press();
+    assert.equal(rounds, 1);
+  });
+
+  it('scans across a changed item count', () => {
+    const { scanner, events } = setup({ itemCount: 2 });
+    scanner.addEventListener('round', () => scanner.updateOptions({ itemCount: 4 }));
+    scanner.start();
+    ticks(4, 1000);
+    assert.deepEqual(
+      events.map(([, i]) => i),
+      [0, 1, 2, 3, 0],
+    );
+  });
+
   it('does nothing after stop', () => {
     const { scanner, events } = setup();
     scanner.start();

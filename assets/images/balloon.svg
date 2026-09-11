@@ -1,0 +1,6 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 200 200" role="img" aria-label="Balloon">
+  <path d="M100 150c-10 14 10 22 0 34s6 14 0 14" fill="none" stroke="#6b7078" stroke-width="3" stroke-linecap="round"/>
+  <ellipse cx="100" cy="82" rx="56" ry="66" fill="#e2332f" stroke="#b01e1b" stroke-width="4"/>
+  <path d="M92 156h16l-8-10z" fill="#e2332f" stroke="#b01e1b" stroke-width="3" stroke-linejoin="round"/>
+  <ellipse cx="78" cy="56" rx="12" ry="20" fill="#ff8a80" transform="rotate(20 78 56)"/>
+</svg>

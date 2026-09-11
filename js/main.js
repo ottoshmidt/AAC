@@ -2,6 +2,7 @@
 import { applyStrings, LANGUAGES, t } from './i18n.js';
 import { clipFor, items, labelFor } from './items.js';
 import { PIPER_VOICES, PiperVoice, piperDownloadBytes } from './piper.js';
+import { PageProgress } from './pages.js';
 import { Scanner } from './scanner.js';
 import { loadSettings, sanitize, saveSettings, VOICE_KEYS } from './settings.js';
 import { Speech } from './speech.js';
@@ -21,8 +22,14 @@ let deviceVoices = /** @type {SpeechSynthesisVoice[]} */ ([]);
 /** False until voices have arrived or we've waited long enough to say there are none. */
 let deviceVoicesSettled = false;
 
+/** Current page and which of its pictures have been chosen. */
+const progress = new PageProgress(items.length, settings.choicesPerRound);
+const pageItems = () => progress.pictures.map((i) => items[i]);
+/** The scanner only visits pictures not chosen yet: scan index -> slot on the page. */
+let scanSlots = progress.remaining;
+
 const scanner = new Scanner({
-  itemCount: items.length,
+  itemCount: scanSlots.length,
   intervalMs: settings.intervalMs,
   cooldownMs: settings.cooldownMs,
   debounceMs: settings.debounceMs,
@@ -63,18 +70,42 @@ function prepareInAppVoice() {
 
 // ---- Scanner -> UI and sound -------------------------------------------------
 
+// Each round (game start, a page turn, and after every choice) moves on to the
+// next page if every picture has been chosen, then draws the page and scans
+// the pictures that are left, starting from the first.
+scanner.addEventListener('round', () => {
+  progress.startRound();
+  renderPage();
+});
+
 scanner.addEventListener('highlight', (event) => {
-  const { index } = /** @type {CustomEvent} */ (event).detail;
-  ui.setHighlight(index);
-  if (settings.speakOnHighlight) speakItem(items[index]);
+  const slot = scanSlots[/** @type {CustomEvent} */ (event).detail.index];
+  ui.setHighlight(slot);
+  if (settings.speakOnHighlight) speakItem(pageItems()[slot]);
   else if (settings.highlightSound) speech.tick();
 });
 
 scanner.addEventListener('select', (event) => {
-  const { index } = /** @type {CustomEvent} */ (event).detail;
-  ui.setSelected(index);
-  if (settings.speakOnSelect) speakItem(items[index]);
+  const slot = scanSlots[/** @type {CustomEvent} */ (event).detail.index];
+  progress.choose(slot);
+  ui.setSelected(slot);
+  if (settings.speakOnSelect) speakItem(pageItems()[slot]);
 });
+
+function renderPage() {
+  scanSlots = progress.remaining;
+  scanner.updateOptions({ itemCount: scanSlots.length });
+  ui.renderChoices(pageItems(), lang(), settings.choicesPerRound, progress.chosen);
+  ui.setPageIndicator(progress.page + 1, progress.pageCount);
+}
+
+/** @param {number} delta +1 for the next page, -1 for the previous one */
+function turnPage(delta) {
+  progress.turn(delta);
+  speech.cancel();
+  ui.showPaused(false);
+  scanner.start(); // emits 'round', which draws the new page
+}
 
 scanner.addEventListener('pause', () => ui.showPaused(true));
 scanner.addEventListener('resume', () => ui.showPaused(false));
@@ -91,9 +122,15 @@ ui.elements.gameScreen.addEventListener('contextmenu', (event) => event.preventD
 
 ui.elements.startButton.addEventListener('click', startGame);
 
-// Keyboard is for the caregiver: Escape returns to the start screen.
+// Keyboard is for the caregiver: arrows turn pages, Escape returns to the
+// start screen. Only during the game, so arrows still work in the settings.
 document.addEventListener('keydown', (event) => {
-  if (event.key === 'Escape' && !ui.elements.gameScreen.hidden) stopGame();
+  if (ui.elements.gameScreen.hidden) return;
+  if (event.key === 'Escape') stopGame();
+  else if (event.key === 'ArrowRight') turnPage(+1);
+  else if (event.key === 'ArrowLeft') turnPage(-1);
+  else return;
+  event.preventDefault();
 });
 
 // Browsers exit fullscreen on Escape without always passing the key to the
@@ -133,6 +170,8 @@ function save() {
 ui.elements.settingsForm.addEventListener('change', () => {
   settings = sanitize(ui.readSettingsForm(settings));
   save();
+  progress.setPerPage(settings.choicesPerRound);
+  renderPage();
   ui.fillSettingsForm(settings); // show clamped values
   scanner.updateOptions({
     intervalMs: settings.intervalMs,
@@ -168,7 +207,7 @@ function setLanguage(language) {
 function applyLanguage() {
   applyStrings(lang());
   ui.setLanguageSwitch(lang());
-  ui.renderChoices(items, lang());
+  renderPage();
   refreshVoiceSelect();
   refreshVoiceStatus();
   prepareInAppVoice();
@@ -240,6 +279,9 @@ ui.renderLanguageSwitch(LANGUAGES, setLanguage);
 ui.fillSettingsForm(settings);
 applyLanguage();
 ui.showScreen('start');
+
+// Warm the image cache so page turns appear without flicker.
+for (const { image } of items) new Image().src = image;
 
 if (speech.speechSupported) {
   // Voices often arrive a moment after page load, so only report that there

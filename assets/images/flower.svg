@@ -1,0 +1,10 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 200 200" role="img" aria-label="Flower">
+  <path d="M100 96v88" stroke="#3fa34d" stroke-width="8" stroke-linecap="round"/>
+  <ellipse cx="74" cy="150" rx="24" ry="10" fill="#3fa34d" transform="rotate(-30 74 150)"/>
+  <ellipse cx="126" cy="136" rx="24" ry="10" fill="#3fa34d" transform="rotate(30 126 136)"/>
+  <g fill="#f25c9c">
+    <circle cx="132" cy="68" r="22"/><circle cx="116" cy="96" r="22"/><circle cx="84" cy="96" r="22"/>
+    <circle cx="68" cy="68" r="22"/><circle cx="84" cy="40" r="22"/><circle cx="116" cy="40" r="22"/>
+  </g>
+  <circle cx="100" cy="68" r="20" fill="#ffd23f" stroke="#e8a800" stroke-width="4"/>
+</svg>
