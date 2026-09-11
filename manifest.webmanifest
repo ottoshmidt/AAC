@@ -1,0 +1,16 @@
+{
+  "name": "AAC Choice",
+  "short_name": "AAC",
+  "description": "Choose between two pictures with a single click.",
+  "start_url": "./",
+  "scope": "./",
+  "display": "fullscreen",
+  "display_override": ["fullscreen", "standalone"],
+  "background_color": "#1f2430",
+  "theme_color": "#1f2430",
+  "icons": [
+    { "src": "assets/icons/icon-192.png", "sizes": "192x192", "type": "image/png" },
+    { "src": "assets/icons/icon-512.png", "sizes": "512x512", "type": "image/png" },
+    { "src": "assets/icons/icon.svg", "sizes": "any", "type": "image/svg+xml" }
+  ]
+}

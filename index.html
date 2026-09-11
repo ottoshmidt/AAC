@@ -1,0 +1,75 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>AAC Choice</title>
+    <meta name="description" content="Choose between two pictures with a single click." />
+    <meta name="theme-color" content="#1f2430" />
+    <link rel="manifest" href="manifest.webmanifest" />
+    <link rel="icon" href="assets/icons/icon.svg" type="image/svg+xml" />
+    <link rel="apple-touch-icon" href="assets/icons/icon-192.png" />
+    <link rel="stylesheet" href="css/style.css" />
+    <script type="module" src="js/main.js"></script>
+  </head>
+  <body>
+    <!-- Start screen: used by the caregiver to adjust settings and hand over. -->
+    <section id="start-screen" class="start-screen">
+      <h1>AAC Choice</h1>
+      <button id="start-button" class="start-button" type="button">Start</button>
+      <p class="hint">During the game, press <kbd>Esc</kbd> to come back here.</p>
+
+      <details class="settings">
+        <summary>Settings</summary>
+        <form id="settings-form" class="settings-form">
+          <fieldset>
+            <legend>Timing</legend>
+            <label>
+              Highlight each side for
+              <span class="field"><input name="intervalMs" type="number" min="0.5" max="10" step="0.1" data-scale="1000" /> seconds</span>
+            </label>
+            <label>
+              Wait after a choice
+              <span class="field"><input name="cooldownMs" type="number" min="0" max="10" step="0.1" data-scale="1000" /> seconds</span>
+            </label>
+            <label>
+              Ignore repeated clicks within
+              <span class="field"><input name="debounceMs" type="number" min="0" max="2" step="0.05" data-scale="1000" /> seconds</span>
+            </label>
+            <label>
+              Pause after
+              <span class="field"><input name="maxCycles" type="number" min="0" max="50" step="1" /> rounds with no choice (0 = never)</span>
+            </label>
+          </fieldset>
+
+          <fieldset>
+            <legend>Sound</legend>
+            <label class="check"><input name="speakOnSelect" type="checkbox" /> Speak the chosen picture</label>
+            <label class="check"><input name="speakOnHighlight" type="checkbox" /> Speak each picture as it is highlighted</label>
+            <label class="check"><input name="highlightSound" type="checkbox" /> Tick when the highlight moves</label>
+            <label>
+              Voice
+              <select id="voice-select" name="voiceName"></select>
+            </label>
+            <p id="speech-note" class="note" hidden></p>
+          </fieldset>
+
+          <fieldset>
+            <legend>Display</legend>
+            <label class="check"><input name="fullscreen" type="checkbox" /> Go fullscreen when the game starts</label>
+          </fieldset>
+        </form>
+      </details>
+    </section>
+
+    <!-- Game screen: a click anywhere selects the highlighted side. -->
+    <section id="game-screen" class="game-screen" hidden>
+      <div id="choices" class="choices"></div>
+      <div id="pause-overlay" class="pause-overlay" hidden>
+        <p>Paused<br /><span>Click to continue</span></p>
+      </div>
+    </section>
+
+    <noscript>This app needs JavaScript enabled.</noscript>
+  </body>
+</html>

@@ -1,0 +1,255 @@
+:root {
+  --bg: #1f2430;
+  --panel: #f7f5ef;
+  --text: #f2f2f2;
+  --text-dark: #1f2430;
+  --muted: #b9bfcc;
+  --accent: #3d7eff;
+  /* Highlight: steady, high-contrast yellow. It moves between the sides but
+     never flashes, which keeps it safe for photosensitive users. */
+  --highlight: #ffd400;
+  --selected: #2fbf71;
+  --radius: 1.5rem;
+  --gap: clamp(1rem, 3vw, 3rem);
+  color-scheme: dark;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+html,
+body {
+  height: 100%;
+}
+
+body {
+  margin: 0;
+  background: var(--bg);
+  color: var(--text);
+  font-family: system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
+  font-size: 1.125rem;
+  line-height: 1.4;
+}
+
+/* ---- Start screen --------------------------------------------------------- */
+
+.start-screen {
+  min-height: 100%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 1.5rem;
+  padding: 3rem 1rem;
+}
+
+.start-screen h1 {
+  margin: 0;
+  font-size: clamp(2rem, 6vw, 3.5rem);
+}
+
+.start-button {
+  font: inherit;
+  font-size: clamp(2rem, 6vw, 3rem);
+  font-weight: 700;
+  padding: 1.25rem 4rem;
+  border: none;
+  border-radius: 999px;
+  background: var(--accent);
+  color: white;
+  cursor: pointer;
+}
+
+.start-button:focus-visible {
+  outline: 0.3rem solid var(--highlight);
+  outline-offset: 0.3rem;
+}
+
+.hint {
+  margin: 0;
+  color: var(--muted);
+}
+
+kbd {
+  padding: 0.1em 0.4em;
+  border: 1px solid var(--muted);
+  border-radius: 0.3em;
+  font-family: inherit;
+  font-size: 0.9em;
+}
+
+.settings {
+  width: min(40rem, 100%);
+  background: #2a3040;
+  border-radius: 1rem;
+  padding: 0.75rem 1.25rem;
+}
+
+.settings summary {
+  cursor: pointer;
+  font-weight: 600;
+  padding: 0.25rem 0;
+}
+
+.settings-form fieldset {
+  border: none;
+  margin: 1rem 0 0;
+  padding: 0;
+  display: grid;
+  gap: 0.75rem;
+}
+
+.settings-form legend {
+  font-weight: 600;
+  color: var(--muted);
+  margin-bottom: 0.5rem;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  font-size: 0.85rem;
+}
+
+.settings-form label {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.settings-form .field {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.settings-form input[type="number"] {
+  width: 5.5rem;
+}
+
+.settings-form input,
+.settings-form select {
+  font: inherit;
+  padding: 0.3rem 0.5rem;
+  max-width: 100%;
+}
+
+.settings-form input[type="checkbox"] {
+  width: 1.4rem;
+  height: 1.4rem;
+}
+
+.note {
+  margin: 0;
+  color: var(--highlight);
+  font-size: 0.95rem;
+}
+
+/* ---- Game screen ---------------------------------------------------------- */
+
+.game-screen {
+  position: fixed;
+  inset: 0;
+  padding: var(--gap);
+  cursor: pointer;
+  user-select: none;
+  -webkit-user-select: none;
+  touch-action: none;
+}
+
+.choices {
+  height: 100%;
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: var(--gap);
+}
+
+/* Stack the pictures on narrow, portrait screens (phones). */
+@media (max-aspect-ratio: 3/4) {
+  .choices {
+    grid-template-columns: 1fr;
+    grid-template-rows: repeat(2, 1fr);
+  }
+}
+
+.choice {
+  margin: 0;
+  min-height: 0;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 1rem;
+  padding: clamp(1rem, 3vw, 2.5rem);
+  background: var(--panel);
+  color: var(--text-dark);
+  border-radius: var(--radius);
+  /* The border is always there, just transparent, so highlighting doesn't
+     shift the layout. */
+  border: 0.9rem solid transparent;
+  transition:
+    border-color 150ms ease,
+    opacity 200ms ease,
+    transform 200ms ease;
+}
+
+.choice img {
+  flex: 1;
+  min-height: 0;
+  width: 100%;
+  object-fit: contain;
+  pointer-events: none;
+}
+
+.choice figcaption {
+  font-size: clamp(1.5rem, 5vw, 3.5rem);
+  font-weight: 700;
+}
+
+.choice.highlighted {
+  border-color: var(--highlight);
+  box-shadow: 0 0 0 0.5rem rgb(255 212 0 / 0.35);
+}
+
+.choice.selected {
+  border-color: var(--selected);
+  box-shadow: 0 0 0 0.75rem rgb(47 191 113 / 0.4);
+  transform: scale(1.03);
+}
+
+.choice.not-selected {
+  opacity: 0.35;
+}
+
+.pause-overlay {
+  position: absolute;
+  inset: 0;
+  display: grid;
+  place-items: center;
+  background: rgb(31 36 48 / 0.8);
+  text-align: center;
+}
+
+.pause-overlay p {
+  margin: 0;
+  font-size: clamp(2rem, 7vw, 4rem);
+  font-weight: 700;
+}
+
+.pause-overlay span {
+  font-size: 0.5em;
+  font-weight: 400;
+  color: var(--muted);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .choice {
+    transition: none;
+  }
+
+  .choice.selected {
+    transform: none;
+  }
+}
+
+[hidden] {
+  display: none !important;
+}
