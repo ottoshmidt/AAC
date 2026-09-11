@@ -1,17 +1,20 @@
 // @ts-check
 /**
- * Audio output: text-to-speech, recorded clips and the highlight tick.
+ * Audio output: recorded clips, in-app Piper voices, device text-to-speech
+ * and the highlight tick.
  *
  * Browsers block sound until the user has interacted with the page, so call
  * `unlock()` from the Start button's click handler before anything else.
  */
 
 /**
- * @typedef {object} SpeakableItem
- * @property {string} label    text to speak
- * @property {string} [audio]  recorded clip to play instead of speech
- * @property {string} [lang]   language of the label, e.g. 'en-US'
+ * @typedef {object} Utterance
+ * @property {string} text   what to say
+ * @property {string} lang   BCP 47 language tag, e.g. 'ka-GE'
+ * @property {string} [clip] recorded clip to play instead of speech
  */
+
+const PIPER_PREFIX = 'piper:';
 
 export class Speech {
   constructor() {
@@ -21,15 +24,31 @@ export class Speech {
     this.audioCtx = null;
     /** @type {HTMLAudioElement | null} */
     this.clip = null;
-    this.voiceName = '';
+    /** @type {Map<string, import('./piper.js').PiperVoice>} */
+    this.piperVoices = new Map();
+    /** Bumped on every speak/cancel, so late async results don't play over newer ones. */
+    this.generation = 0;
   }
 
   get speechSupported() {
     return this.synth !== null;
   }
 
+  /** @param {import('./piper.js').PiperVoice} voice */
+  addPiperVoice(voice) {
+    this.piperVoices.set(voice.id, voice);
+  }
+
   /**
-   * Voices load asynchronously; `callback` runs now and whenever the list changes.
+   * The Piper voice a voice setting refers to, if any.
+   * @param {string} voice
+   */
+  piperVoice(voice) {
+    return voice.startsWith(PIPER_PREFIX) ? this.piperVoices.get(voice.slice(PIPER_PREFIX.length)) : undefined;
+  }
+
+  /**
+   * Device voices load asynchronously; `callback` runs now and whenever the list changes.
    * @param {(voices: SpeechSynthesisVoice[]) => void} callback
    */
   onVoicesChanged(callback) {
@@ -38,11 +57,6 @@ export class Speech {
     const report = () => callback(synth.getVoices());
     synth.addEventListener('voiceschanged', report);
     report();
-  }
-
-  /** @param {string} name voice name, or '' for the browser default */
-  setVoice(name) {
-    this.voiceName = name;
   }
 
   /** Must be called from a user gesture (click) to allow sound later. */
@@ -56,6 +70,7 @@ export class Speech {
 
   /** Stop any speech or clip that is playing. */
   cancel() {
+    this.generation += 1;
     this.synth?.cancel();
     if (this.clip) {
       this.clip.pause();
@@ -63,29 +78,46 @@ export class Speech {
     }
   }
 
-  /** @param {SpeakableItem} item */
-  speakItem(item) {
-    if (item.audio) this.playClip(item.audio);
-    else this.say(item.label, item.lang);
+  /**
+   * Say something: a recorded clip if there is one, otherwise the chosen voice.
+   * If an in-app voice isn't ready yet, falls back to the device voice.
+   * @param {Utterance} utterance
+   * @param {string} voice '' (browser default), a device voice name, or 'piper:<id>'
+   */
+  speak({ text, lang, clip }, voice) {
+    this.cancel();
+    if (clip) return this.#play(clip);
+
+    const piper = this.piperVoice(voice);
+    if (piper?.status === 'ready') {
+      const generation = this.generation;
+      piper
+        .audioUrl(text)
+        .then((url) => {
+          if (generation === this.generation) this.#play(url);
+        })
+        .catch((error) => console.warn('[speech] in-app voice failed:', error));
+      return;
+    }
+    this.#say(text, lang, piper ? '' : voice);
   }
 
   /**
    * @param {string} text
-   * @param {string} [lang]
+   * @param {string} lang
+   * @param {string} voiceName
    */
-  say(text, lang) {
+  #say(text, lang, voiceName) {
     if (!this.synth) return;
-    this.cancel();
     const utterance = new SpeechSynthesisUtterance(text);
-    const voice = this.synth.getVoices().find((v) => v.name === this.voiceName);
+    utterance.lang = lang;
+    const voice = this.synth.getVoices().find((v) => v.name === voiceName);
     if (voice) utterance.voice = voice;
-    if (lang) utterance.lang = lang;
     this.synth.speak(utterance);
   }
 
   /** @param {string} url */
-  playClip(url) {
-    this.cancel();
+  #play(url) {
     this.clip = new Audio(url);
     this.clip.play().catch(() => {});
   }

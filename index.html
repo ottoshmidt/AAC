@@ -13,50 +13,70 @@
     <script type="module" src="js/main.js"></script>
   </head>
   <body>
-    <!-- Start screen: used by the caregiver to adjust settings and hand over. -->
+    <!-- Start screen: used by the caregiver to adjust settings and hand over.
+         Text comes from js/i18n.js via data-i18n. -->
     <section id="start-screen" class="start-screen">
-      <h1>AAC Choice</h1>
-      <button id="start-button" class="start-button" type="button">Start</button>
-      <p class="hint">During the game, press <kbd>Esc</kbd> to come back here.</p>
+      <div id="language-switch" class="language-switch" role="group" aria-label="Language / ენა"></div>
+      <h1 data-i18n="title"></h1>
+      <button id="start-button" class="start-button" type="button" data-i18n="start"></button>
+      <p class="hint" data-i18n="escHint"></p>
+      <p id="voice-status" class="voice-status" hidden>
+        <span id="voice-status-text"></span>
+        <button id="voice-retry" class="link-button" type="button" data-i18n="retry" hidden></button>
+      </p>
 
       <details class="settings">
-        <summary>Settings</summary>
+        <summary data-i18n="settings"></summary>
         <form id="settings-form" class="settings-form">
           <fieldset>
-            <legend>Timing</legend>
+            <legend data-i18n="timing"></legend>
             <label>
-              Highlight each side for
-              <span class="field"><input name="intervalMs" type="number" min="0.5" max="10" step="0.1" data-scale="1000" /> seconds</span>
+              <span data-i18n="intervalBefore"></span>
+              <span class="field">
+                <input name="intervalMs" type="number" min="0.5" max="10" step="0.1" data-scale="1000" />
+                <span data-i18n="intervalAfter"></span>
+              </span>
             </label>
             <label>
-              Wait after a choice
-              <span class="field"><input name="cooldownMs" type="number" min="0" max="10" step="0.1" data-scale="1000" /> seconds</span>
+              <span data-i18n="cooldownBefore"></span>
+              <span class="field">
+                <input name="cooldownMs" type="number" min="0" max="10" step="0.1" data-scale="1000" />
+                <span data-i18n="cooldownAfter"></span>
+              </span>
             </label>
             <label>
-              Ignore repeated clicks within
-              <span class="field"><input name="debounceMs" type="number" min="0" max="2" step="0.05" data-scale="1000" /> seconds</span>
+              <span data-i18n="debounceBefore"></span>
+              <span class="field">
+                <input name="debounceMs" type="number" min="0" max="2" step="0.05" data-scale="1000" />
+                <span data-i18n="debounceAfter"></span>
+              </span>
             </label>
             <label>
-              Pause after
-              <span class="field"><input name="maxCycles" type="number" min="0" max="50" step="1" /> rounds with no choice (0 = never)</span>
+              <span data-i18n="maxCyclesBefore"></span>
+              <span class="field">
+                <input name="maxCycles" type="number" min="0" max="50" step="1" />
+                <span data-i18n="maxCyclesAfter"></span>
+              </span>
             </label>
           </fieldset>
 
           <fieldset>
-            <legend>Sound</legend>
-            <label class="check"><input name="speakOnSelect" type="checkbox" /> Speak the chosen picture</label>
-            <label class="check"><input name="speakOnHighlight" type="checkbox" /> Speak each picture as it is highlighted</label>
-            <label class="check"><input name="highlightSound" type="checkbox" /> Tick when the highlight moves</label>
+            <legend data-i18n="sound"></legend>
+            <label class="check"><input name="speakOnSelect" type="checkbox" /> <span data-i18n="speakOnSelect"></span></label>
+            <label class="check"><input name="speakOnHighlight" type="checkbox" /> <span data-i18n="speakOnHighlight"></span></label>
+            <label class="check"><input name="highlightSound" type="checkbox" /> <span data-i18n="highlightSound"></span></label>
             <label>
-              Voice
-              <select id="voice-select" name="voiceName"></select>
+              <span data-i18n="voice"></span>
+              <!-- Bound to voiceEn / voiceKa depending on the language, see main.js. -->
+              <select id="voice-select"></select>
             </label>
             <p id="speech-note" class="note" hidden></p>
+            <p id="voice-license" class="note-muted" hidden></p>
           </fieldset>
 
           <fieldset>
-            <legend>Display</legend>
-            <label class="check"><input name="fullscreen" type="checkbox" /> Go fullscreen when the game starts</label>
+            <legend data-i18n="display"></legend>
+            <label class="check"><input name="fullscreen" type="checkbox" /> <span data-i18n="fullscreen"></span></label>
           </fieldset>
         </form>
       </details>
@@ -66,10 +86,10 @@
     <section id="game-screen" class="game-screen" hidden>
       <div id="choices" class="choices"></div>
       <div id="pause-overlay" class="pause-overlay" hidden>
-        <p>Paused<br /><span>Click to continue</span></p>
+        <p><span data-i18n="paused"></span><br /><span class="sub" data-i18n="clickToContinue"></span></p>
       </div>
     </section>
 
-    <noscript>This app needs JavaScript enabled.</noscript>
+    <noscript>This app needs JavaScript enabled. / აპლიკაციას JavaScript სჭირდება.</noscript>
   </body>
 </html>

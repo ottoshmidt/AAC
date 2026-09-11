@@ -3,6 +3,8 @@
  * Everything that touches the DOM. main.js wires this to the scanner.
  */
 
+import { labelFor } from './items.js';
+
 /**
  * @param {string} selector
  * @returns {HTMLElement}
@@ -15,10 +17,15 @@ function $(selector) {
 
 export const elements = {
   startScreen: $('#start-screen'),
+  languageSwitch: $('#language-switch'),
   startButton: /** @type {HTMLButtonElement} */ ($('#start-button')),
+  voiceStatus: $('#voice-status'),
+  voiceStatusText: $('#voice-status-text'),
+  voiceRetry: /** @type {HTMLButtonElement} */ ($('#voice-retry')),
   settingsForm: /** @type {HTMLFormElement} */ ($('#settings-form')),
   voiceSelect: /** @type {HTMLSelectElement} */ ($('#voice-select')),
   speechNote: $('#speech-note'),
+  voiceLicense: $('#voice-license'),
   gameScreen: $('#game-screen'),
   choices: $('#choices'),
   pauseOverlay: $('#pause-overlay'),
@@ -30,21 +37,51 @@ export function showScreen(name) {
   elements.gameScreen.hidden = name !== 'game';
 }
 
-/** @param {import('./items.js').Item[]} items */
-export function renderChoices(items) {
+/**
+ * One button per language, each labelled in its own language.
+ * @param {Record<string, import('./i18n.js').Language>} languages
+ * @param {(lang: string) => void} onPick
+ */
+export function renderLanguageSwitch(languages, onPick) {
+  elements.languageSwitch.replaceChildren(
+    ...Object.entries(languages).map(([code, { name }]) => {
+      const button = document.createElement('button');
+      button.type = 'button';
+      button.lang = code;
+      button.dataset.lang = code;
+      button.textContent = name;
+      button.addEventListener('click', () => onPick(code));
+      return button;
+    }),
+  );
+}
+
+/** @param {string} lang */
+export function setLanguageSwitch(lang) {
+  for (const button of elements.languageSwitch.querySelectorAll('button')) {
+    button.setAttribute('aria-pressed', String(button.dataset.lang === lang));
+  }
+}
+
+/**
+ * @param {import('./items.js').Item[]} items
+ * @param {string} lang
+ */
+export function renderChoices(items, lang) {
   elements.choices.replaceChildren(
     ...items.map((item, index) => {
+      const label = labelFor(item, lang);
       const figure = document.createElement('figure');
       figure.className = 'choice';
       figure.dataset.index = String(index);
 
       const img = document.createElement('img');
       img.src = item.image;
-      img.alt = item.label;
+      img.alt = label;
       img.draggable = false;
 
       const caption = document.createElement('figcaption');
-      caption.textContent = item.label;
+      caption.textContent = label;
 
       figure.append(img, caption);
       return figure;
@@ -122,26 +159,39 @@ export function readSettingsForm(current) {
 }
 
 /**
- * @param {SpeechSynthesisVoice[]} voices
- * @param {string} selectedName
+ * @param {{ value: string, label: string }[]} options
+ * @param {string} selected
  */
-export function fillVoiceSelect(voices, selectedName) {
-  const select = elements.voiceSelect;
-  const defaultOption = new Option('Browser default', '');
-  const options = [...voices]
-    .sort((a, b) => a.lang.localeCompare(b.lang) || a.name.localeCompare(b.name))
-    .map((v) => new Option(`${v.name} (${v.lang})`, v.name));
-  // Keep a saved voice that isn't on this device, so changing another
-  // setting doesn't silently discard it. Speech falls back to the default.
-  if (selectedName && !voices.some((v) => v.name === selectedName)) {
-    options.push(new Option(`${selectedName} (not on this device)`, selectedName));
-  }
-  select.replaceChildren(defaultOption, ...options);
-  select.value = selectedName;
+export function fillVoiceSelect(options, selected) {
+  elements.voiceSelect.replaceChildren(...options.map((o) => new Option(o.label, o.value)));
+  elements.voiceSelect.value = selected;
+}
+
+/**
+ * @param {HTMLElement} el
+ * @param {string} text  '' hides the element
+ */
+function setNote(el, text) {
+  el.textContent = text;
+  el.hidden = text === '';
 }
 
 /** @param {string} text */
 export function setSpeechNote(text) {
-  elements.speechNote.textContent = text;
-  elements.speechNote.hidden = text === '';
+  setNote(elements.speechNote, text);
+}
+
+/** @param {string} text */
+export function setVoiceLicense(text) {
+  setNote(elements.voiceLicense, text);
+}
+
+/**
+ * @param {string} text  '' hides the status line
+ * @param {boolean} [canRetry]
+ */
+export function setVoiceStatus(text, canRetry = false) {
+  elements.voiceStatus.hidden = text === '';
+  elements.voiceStatusText.textContent = text;
+  elements.voiceRetry.hidden = !canRetry;
 }

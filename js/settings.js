@@ -19,8 +19,16 @@ const STORAGE_KEY = 'aac.settings.v1';
  * @property {boolean} speakOnHighlight  speak each item as it is highlighted (auditory scanning)
  * @property {boolean} highlightSound    short tick when the highlight moves
  * @property {boolean} fullscreen        enter fullscreen when the game starts
- * @property {string}  voiceName         speech voice name ('' = browser default)
+ * @property {string}  language          interface and speech language, a key of LANGUAGES
+ * @property {string}  voiceEn           voice for English (see below)
+ * @property {string}  voiceKa           voice for Georgian (see below)
+ *
+ * A voice is '' for the browser default, a device voice name, or
+ * 'piper:<id>' for an in-app Piper voice.
  */
+
+/** Settings key holding the voice for each language. */
+export const VOICE_KEYS = Object.freeze({ en: 'voiceEn', ka: 'voiceKa' });
 
 /** @type {Readonly<Settings>} */
 export const DEFAULTS = Object.freeze({
@@ -32,7 +40,15 @@ export const DEFAULTS = Object.freeze({
   speakOnHighlight: false,
   highlightSound: true,
   fullscreen: true,
-  voiceName: '',
+  language: globalThis.navigator?.language?.toLowerCase().startsWith('ka') ? 'ka' : 'en',
+  voiceEn: '',
+  // Devices almost never ship a Georgian voice, so default to the in-app one.
+  voiceKa: 'piper:ka_GE-natia-medium',
+});
+
+/** Allowed values for string settings that are a fixed choice. */
+export const CHOICES = Object.freeze({
+  language: ['ka', 'en'],
 });
 
 /** Allowed ranges for numeric settings. */
@@ -51,7 +67,10 @@ export const LIMITS = Object.freeze({
  */
 export function sanitize(raw) {
   /** @type {Record<string, unknown>} */
-  const input = raw && typeof raw === 'object' ? /** @type {any} */ (raw) : {};
+  const input = raw && typeof raw === 'object' ? { .../** @type {any} */ (raw) } : {};
+  // Before languages existed there was a single `voiceName`, used for English.
+  if (typeof input.voiceName === 'string' && input.voiceEn === undefined) input.voiceEn = input.voiceName;
+
   /** @type {Record<string, unknown>} */
   const out = { ...DEFAULTS };
   for (const [key, fallback] of Object.entries(DEFAULTS)) {
@@ -62,6 +81,8 @@ export function sanitize(raw) {
       const limit = /** @type {Record<string, {min: number, max: number}>} */ (LIMITS)[key];
       out[key] = limit ? Math.min(limit.max, Math.max(limit.min, value)) : value;
     } else {
+      const allowed = /** @type {Record<string, readonly string[]>} */ (CHOICES)[key];
+      if (allowed && !allowed.includes(/** @type {string} */ (value))) continue;
       out[key] = value;
     }
   }

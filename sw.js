@@ -3,8 +3,12 @@
 // Strategy: network first, cache as fallback. When online you always get the
 // latest files (no stale versions while developing); when offline the cached
 // copy is used. Bump CACHE_NAME when the PRECACHE list changes.
+//
+// Downloaded voices live in a separate cache managed by js/piper.js
+// ('aac-voices-…'); it is left alone here so updates never re-download them.
 
-const CACHE_NAME = 'aac-v1';
+const CACHE_NAME = 'aac-app-v2';
+const VOICE_CACHE_PREFIX = 'aac-voices-';
 
 const PRECACHE = [
   './',
@@ -12,11 +16,16 @@ const PRECACHE = [
   'manifest.webmanifest',
   'css/style.css',
   'js/main.js',
+  'js/i18n.js',
   'js/items.js',
+  'js/piper.js',
   'js/scanner.js',
   'js/settings.js',
   'js/speech.js',
   'js/ui.js',
+  'js/wav.js',
+  'vendor/onnxruntime-web/ort.wasm.bundle.min.mjs',
+  'vendor/piper-wasm/piper_phonemize.js',
   'assets/images/apple.svg',
   'assets/images/ball.svg',
   'assets/icons/icon.svg',
@@ -37,7 +46,13 @@ self.addEventListener('activate', (event) => {
   event.waitUntil(
     caches
       .keys()
-      .then((names) => Promise.all(names.filter((n) => n !== CACHE_NAME).map((n) => caches.delete(n))))
+      .then((names) =>
+        Promise.all(
+          names
+            .filter((n) => n !== CACHE_NAME && !n.startsWith(VOICE_CACHE_PREFIX))
+            .map((n) => caches.delete(n)),
+        ),
+      )
       .then(() => self.clients.claim()),
   );
 });

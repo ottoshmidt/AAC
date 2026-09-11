@@ -27,7 +27,11 @@ body {
   margin: 0;
   background: var(--bg);
   color: var(--text);
-  font-family: system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
+  /* Georgian fonts are listed explicitly because some system UI fonts lack
+     Georgian letters: Noto (Linux, Android), Sylfaen (Windows), macOS/iOS fonts. */
+  font-family:
+    system-ui, -apple-system, "Segoe UI", Roboto, "Noto Sans Georgian", "Noto Sans", Sylfaen,
+    "BPG Arial", "Helvetica Neue", sans-serif;
   font-size: 1.125rem;
   line-height: 1.4;
 }
@@ -68,14 +72,53 @@ body {
 .hint {
   margin: 0;
   color: var(--muted);
+  text-align: center;
 }
 
-kbd {
-  padding: 0.1em 0.4em;
-  border: 1px solid var(--muted);
-  border-radius: 0.3em;
-  font-family: inherit;
-  font-size: 0.9em;
+.language-switch {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 0.5rem;
+}
+
+.language-switch button {
+  font: inherit;
+  padding: 0.5rem 1.25rem;
+  border: 2px solid #3a4152;
+  border-radius: 999px;
+  background: transparent;
+  color: var(--text);
+  cursor: pointer;
+}
+
+.language-switch button[aria-pressed="true"] {
+  border-color: var(--accent);
+  background: var(--accent);
+  color: white;
+}
+
+.language-switch button:focus-visible,
+.link-button:focus-visible {
+  outline: 0.2rem solid var(--highlight);
+  outline-offset: 0.2rem;
+}
+
+.voice-status {
+  margin: 0;
+  max-width: 40rem;
+  text-align: center;
+  color: var(--muted);
+}
+
+.link-button {
+  font: inherit;
+  padding: 0;
+  border: none;
+  background: none;
+  color: var(--highlight);
+  text-decoration: underline;
+  cursor: pointer;
 }
 
 .settings {
@@ -141,6 +184,12 @@ kbd {
   margin: 0;
   color: var(--highlight);
   font-size: 0.95rem;
+}
+
+.note-muted {
+  margin: 0;
+  color: var(--muted);
+  font-size: 0.9rem;
 }
 
 /* ---- Game screen ---------------------------------------------------------- */
@@ -234,7 +283,7 @@ kbd {
   font-weight: 700;
 }
 
-.pause-overlay span {
+.pause-overlay .sub {
   font-size: 0.5em;
   font-weight: 400;
   color: var(--muted);

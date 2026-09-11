@@ -1,13 +1,25 @@
 // @ts-check
-import { items } from './items.js';
+import { applyStrings, LANGUAGES, t } from './i18n.js';
+import { clipFor, items, labelFor } from './items.js';
+import { PIPER_VOICES, PiperVoice, piperDownloadBytes } from './piper.js';
 import { Scanner } from './scanner.js';
-import { loadSettings, sanitize, saveSettings } from './settings.js';
+import { loadSettings, sanitize, saveSettings, VOICE_KEYS } from './settings.js';
 import { Speech } from './speech.js';
 import * as ui from './ui.js';
 
 let settings = loadSettings();
+
 const speech = new Speech();
-speech.setVoice(settings.voiceName);
+for (const id of Object.keys(PIPER_VOICES)) {
+  const voice = new PiperVoice(id);
+  voice.addEventListener('change', refreshVoiceStatus);
+  speech.addPiperVoice(voice);
+}
+
+/** Device voices, once the browser has reported them. */
+let deviceVoices = /** @type {SpeechSynthesisVoice[]} */ ([]);
+/** False until voices have arrived or we've waited long enough to say there are none. */
+let deviceVoicesSettled = false;
 
 const scanner = new Scanner({
   itemCount: items.length,
@@ -17,19 +29,51 @@ const scanner = new Scanner({
   maxCycles: settings.maxCycles,
 });
 
+// ---- Language and voice helpers -----------------------------------------------
+
+const lang = () => settings.language;
+
+/** The voice setting for `language`: '', a device voice name, or 'piper:<id>'. */
+function voiceFor(language = lang()) {
+  const key = /** @type {Record<string, string>} */ (VOICE_KEYS)[language];
+  return key ? /** @type {Record<string, any>} */ (settings)[key] : '';
+}
+
+/** @param {import('./items.js').Item} item */
+function utteranceFor(item) {
+  return {
+    text: labelFor(item, lang()),
+    lang: LANGUAGES[lang()].speechLang,
+    clip: clipFor(item, lang()),
+  };
+}
+
+/** @param {import('./items.js').Item} item */
+function speakItem(item) {
+  speech.speak(utteranceFor(item), voiceFor());
+}
+
+/** Start downloading the selected in-app voice and pre-render the labels. */
+function prepareInAppVoice() {
+  const piper = speech.piperVoice(voiceFor());
+  if (!piper) return;
+  const texts = items.filter((item) => !clipFor(item, lang())).map((item) => labelFor(item, lang()));
+  piper.prepare(texts);
+}
+
 // ---- Scanner -> UI and sound -------------------------------------------------
 
 scanner.addEventListener('highlight', (event) => {
   const { index } = /** @type {CustomEvent} */ (event).detail;
   ui.setHighlight(index);
-  if (settings.speakOnHighlight) speech.speakItem(items[index]);
+  if (settings.speakOnHighlight) speakItem(items[index]);
   else if (settings.highlightSound) speech.tick();
 });
 
 scanner.addEventListener('select', (event) => {
   const { index } = /** @type {CustomEvent} */ (event).detail;
   ui.setSelected(index);
-  if (settings.speakOnSelect) speech.speakItem(items[index]);
+  if (settings.speakOnSelect) speakItem(items[index]);
 });
 
 scanner.addEventListener('pause', () => ui.showPaused(true));
@@ -82,13 +126,14 @@ function stopGame() {
 
 // ---- Settings ----------------------------------------------------------------
 
-ui.fillSettingsForm(settings);
+function save() {
+  saveSettings(settings);
+}
 
 ui.elements.settingsForm.addEventListener('change', () => {
   settings = sanitize(ui.readSettingsForm(settings));
-  saveSettings(settings);
+  save();
   ui.fillSettingsForm(settings); // show clamped values
-  speech.setVoice(settings.voiceName);
   scanner.updateOptions({
     intervalMs: settings.intervalMs,
     cooldownMs: settings.cooldownMs,
@@ -98,30 +143,117 @@ ui.elements.settingsForm.addEventListener('change', () => {
 });
 ui.elements.settingsForm.addEventListener('submit', (event) => event.preventDefault());
 
-if (speech.speechSupported) {
-  // Voices often arrive a moment after page load, so only complain if none
-  // have shown up after a few seconds.
-  const noVoicesTimer = setTimeout(() => {
-    ui.setSpeechNote(
-      'No speech voices found on this device. On Linux, install speech-dispatcher and a voice such as espeak-ng.',
-    );
-  }, 3000);
-  speech.onVoicesChanged((voices) => {
-    ui.fillVoiceSelect(voices, settings.voiceName);
-    if (voices.length > 0) {
-      clearTimeout(noVoicesTimer);
-      ui.setSpeechNote('');
-    }
-  });
-} else {
-  ui.elements.voiceSelect.disabled = true;
-  ui.setSpeechNote('This browser does not support text-to-speech. Recorded clips still work.');
+// The voice list only shows voices for the current language, and its value
+// is stored per language (voiceEn / voiceKa), so it's handled separately.
+ui.elements.voiceSelect.addEventListener('change', () => {
+  const key = /** @type {Record<string, string>} */ (VOICE_KEYS)[lang()];
+  if (!key) return;
+  settings = sanitize({ ...settings, [key]: ui.elements.voiceSelect.value });
+  save();
+  refreshVoiceSelect();
+  refreshVoiceStatus();
+  prepareInAppVoice();
+});
+
+ui.elements.voiceRetry.addEventListener('click', prepareInAppVoice);
+
+/** @param {string} language */
+function setLanguage(language) {
+  settings = sanitize({ ...settings, language });
+  save();
+  speech.cancel();
+  applyLanguage();
+}
+
+function applyLanguage() {
+  applyStrings(lang());
+  ui.setLanguageSwitch(lang());
+  ui.renderChoices(items, lang());
+  refreshVoiceSelect();
+  refreshVoiceStatus();
+  prepareInAppVoice();
+}
+
+function refreshVoiceSelect() {
+  const language = lang();
+  const selected = voiceFor(language);
+
+  /** @type {{ value: string, label: string }[]} */
+  const options = [{ value: '', label: t(language, 'browserDefault') }];
+  for (const [id, info] of Object.entries(PIPER_VOICES)) {
+    if (info.lang !== language) continue;
+    const size = Math.round(piperDownloadBytes(id) / 1e6);
+    options.push({ value: `piper:${id}`, label: t(language, 'piperOption', { name: info.name, size }) });
+  }
+  const matching = deviceVoices
+    .filter((v) => v.lang.toLowerCase().replace('_', '-').startsWith(language))
+    .sort((a, b) => a.name.localeCompare(b.name));
+  options.push(...matching.map((v) => ({ value: v.name, label: `${v.name} (${v.lang})` })));
+  // Keep a saved voice that isn't available here, so it isn't silently lost.
+  if (selected && !options.some((o) => o.value === selected)) {
+    options.push({ value: selected, label: t(language, 'notOnDevice', { name: selected }) });
+  }
+  ui.fillVoiceSelect(options, selected);
+
+  let note = '';
+  if (!speech.speechSupported) note = t(language, 'noSpeech');
+  else if (speech.piperVoice(selected)) note = '';
+  else if (deviceVoicesSettled && matching.length === 0) {
+    note = t(language, deviceVoices.length === 0 ? 'noVoices' : 'noVoiceForLanguage');
+  }
+  ui.setSpeechNote(note);
+}
+
+function refreshVoiceStatus() {
+  const language = lang();
+  const piper = speech.piperVoice(voiceFor(language));
+  if (!piper) {
+    ui.setVoiceStatus('');
+    ui.setVoiceLicense('');
+    return;
+  }
+  const vars = {
+    name: piper.info.name,
+    size: Math.round(piperDownloadBytes(piper.id) / 1e6),
+    percent: Math.floor(piper.progress * 100),
+    error: piper.error?.message ?? '',
+    license: piper.info.license,
+  };
+  ui.setVoiceLicense(t(language, 'voiceLicense', vars));
+  switch (piper.status) {
+    case 'downloading':
+      return ui.setVoiceStatus(t(language, 'voiceDownloading', vars));
+    case 'loading':
+      return ui.setVoiceStatus(t(language, 'voiceLoading', vars));
+    case 'ready':
+      return ui.setVoiceStatus(t(language, 'voiceReady', vars));
+    case 'error':
+      return ui.setVoiceStatus(t(language, 'voiceError', vars), true);
+    default:
+      return ui.setVoiceStatus('');
+  }
 }
 
 // ---- Start -------------------------------------------------------------------
 
-ui.renderChoices(items);
+ui.renderLanguageSwitch(LANGUAGES, setLanguage);
+ui.fillSettingsForm(settings);
+applyLanguage();
 ui.showScreen('start');
+
+if (speech.speechSupported) {
+  // Voices often arrive a moment after page load, so only report that there
+  // are none after waiting a few seconds.
+  setTimeout(() => {
+    deviceVoicesSettled = true;
+    refreshVoiceSelect();
+  }, 3000);
+  speech.onVoicesChanged((voices) => {
+    deviceVoices = voices;
+    if (voices.length > 0) deviceVoicesSettled = true;
+    refreshVoiceSelect();
+  });
+}
 
 if ('serviceWorker' in navigator && window.isSecureContext) {
   navigator.serviceWorker.register('sw.js').catch((error) => {
