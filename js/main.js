@@ -155,7 +155,7 @@ ui.elements.startButton.addEventListener('click', startGame);
 ui.elements.backButton.addEventListener('click', closeIntro);
 
 // The in-game Back button: a direct click leaves; a press on it is not a
-// game press. Games also put it in their scan (see GameContext.backButton).
+// game press. It is not part of any scan, so a stray click can't leave the game.
 ui.elements.gameBack.addEventListener('pointerdown', (event) => event.stopPropagation());
 ui.elements.gameBack.addEventListener('click', stopGame);
 

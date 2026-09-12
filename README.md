@@ -49,10 +49,10 @@ Then open <http://localhost:8080>.
 5. The caregiver can also press **←** / **→** to go to the previous / next
    page (it wraps around; the page starts fresh). The page number is shown in
    the bottom-right corner.
-6. After the pictures, the scan lights up the **‹ Back** button in the
-   top-left corner; choosing it returns to the game's page. Esc, the phone's
-   Back button or gesture, and a direct tap on ‹ Back do the same. **Back** on
-   the game's page returns to the menu.
+6. To leave the game, tap **‹ Back** in the top-left corner, press Esc, or
+   use the phone's Back button or gesture. The scan never lights up Back, so
+   a click during the game can't leave it by accident. This returns to the
+   game's page; **Back** there returns to the menu.
 
 ## Settings
 

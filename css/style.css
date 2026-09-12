@@ -122,14 +122,6 @@ body {
   padding: 0.25rem 0;
 }
 
-/* Scan highlight on the in-game Back button: same yellow as the pictures. */
-.scan-highlight {
-  outline: 0.4rem solid var(--highlight);
-  outline-offset: 0.3rem;
-  box-shadow: 0 0 0 0.9rem rgb(255 212 0 / 0.3);
-  border-radius: 1.5rem;
-}
-
 /* ---- Game menu ------------------------------------------------------------ */
 
 .game-menu {
@@ -330,6 +322,7 @@ body {
 }
 
 .game-root {
+  position: relative; /* game overlays (e.g. "Paused") cover the pictures, not Back */
   flex: 1;
   min-height: 0;
 }
@@ -343,6 +336,8 @@ body {
   min-height: 2.75rem;
   padding: 0.4rem 1.25rem;
   font-size: 1.1rem;
+  position: relative;
+  z-index: 2; /* always tappable, above anything a game draws */
 }
 
 .choices {
