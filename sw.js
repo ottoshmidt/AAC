@@ -7,7 +7,7 @@
 // Downloaded voices live in a separate cache managed by js/piper.js
 // ('aac-voices-…'); it is left alone here so updates never re-download them.
 
-const CACHE_NAME = 'aac-app-v7';
+const CACHE_NAME = 'aac-app-v8';
 const VOICE_CACHE_PREFIX = 'aac-voices-';
 
 const PRECACHE = [
@@ -27,6 +27,7 @@ const PRECACHE = [
   'js/speech.js',
   'js/ui.js',
   'js/wav.js',
+  'js/wakelock.js',
   'vendor/onnxruntime-web/ort.wasm.bundle.min.mjs',
   'vendor/piper-wasm/piper_phonemize.js',
   // Keep in sync with js/items.js (tests/items.test.js checks this).

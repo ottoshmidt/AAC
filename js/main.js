@@ -9,11 +9,13 @@ import { clipFor, items, labelFor } from './items.js';
 import { PIPER_VOICES, PiperVoice, piperDownloadBytes } from './piper.js';
 import { loadSettings, sanitize, saveSettings, VOICE_KEYS } from './settings.js';
 import { Speech } from './speech.js';
+import { WakeLock } from './wakelock.js';
 import * as ui from './ui.js';
 
 let settings = loadSettings();
 
 const speech = new Speech();
+const wakeLock = new WakeLock();
 for (const id of Object.keys(PIPER_VOICES)) {
   const voice = new PiperVoice(id);
   voice.addEventListener('change', refreshVoiceStatus);
@@ -106,6 +108,7 @@ function startGame() {
   // game (popstate below) instead of leaving the app.
   history.pushState({ game: selected?.id }, '');
   ui.showScreen('game');
+  wakeLock.acquire(); // keep the screen on and unlocked during the game
   if (settings.fullscreen && document.fullscreenEnabled) {
     document.documentElement.requestFullscreen().catch(() => {});
   }
@@ -122,6 +125,7 @@ function endGame() {
   if (!running) return;
   running.stop();
   running = null;
+  wakeLock.release();
   speech.cancel();
   ui.showScreen('intro');
   if (document.fullscreenElement) document.exitFullscreen().catch(() => {});

@@ -66,6 +66,9 @@ Then open <http://localhost:8080>.
 | Go fullscreen on start | on | Leaving fullscreen ends the game |
 | Language | browser language (ka, ru), else English | Buttons at the top of the menu |
 
+While a game runs, the screen is kept on and unlocked (Screen Wake Lock;
+Chrome/Android, iOS 16.4+, needs HTTPS). It is released when the game ends.
+
 Settings are on each game's page (below Start) and are saved in the
 browser (localStorage) per device.
 
@@ -179,6 +182,7 @@ js/i18n.js            languages and interface strings
 js/speech.js          chooses clip, in-app voice or device voice; tick sound
 js/piper.js           in-app Piper voices (download, cache, synthesis)
 js/wav.js             WAV encoder for synthesized speech
+js/wakelock.js        keeps the screen on during a game
 js/ui.js              the shell's DOM (menu, settings form, notes)
 js/items.js           the pictures
 vendor/               small third-party JS glue for Piper (see vendor/README.md)
