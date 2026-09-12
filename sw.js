@@ -2,12 +2,14 @@
 //
 // Strategy: network first, cache as fallback. When online you always get the
 // latest files (no stale versions while developing); when offline the cached
-// copy is used. Bump CACHE_NAME when the PRECACHE list changes.
+// copy is used. Requests revalidate with the server ('no-cache'), otherwise
+// the browser's HTTP cache could hand back old files for hours on servers
+// that send no cache headers, and even mix old and new files. Bump CACHE_NAME when the PRECACHE list changes.
 //
 // Downloaded voices live in a separate cache managed by js/piper.js
 // ('aac-voices-…'); it is left alone here so updates never re-download them.
 
-const CACHE_NAME = 'aac-app-v8';
+const CACHE_NAME = 'aac-app-v10';
 const VOICE_CACHE_PREFIX = 'aac-voices-';
 
 const PRECACHE = [
@@ -65,7 +67,7 @@ self.addEventListener('install', (event) => {
   event.waitUntil(
     caches
       .open(CACHE_NAME)
-      .then((cache) => cache.addAll(PRECACHE))
+      .then((cache) => cache.addAll(PRECACHE.map((url) => new Request(url, { cache: 'no-cache' }))))
       .then(() => self.skipWaiting()),
   );
 });
@@ -85,12 +87,23 @@ self.addEventListener('activate', (event) => {
   );
 });
 
+/**
+ * The same request, but checked with the server instead of the HTTP cache.
+ * A navigation request can't be copied with options, so it's rebuilt from its URL.
+ * @param {Request} request
+ */
+function revalidating(request) {
+  return request.mode === 'navigate'
+    ? new Request(request.url, { cache: 'no-cache', credentials: 'same-origin' })
+    : new Request(request, { cache: 'no-cache' });
+}
+
 self.addEventListener('fetch', (event) => {
   const { request } = event;
   if (request.method !== 'GET' || new URL(request.url).origin !== self.location.origin) return;
 
   event.respondWith(
-    fetch(request)
+    fetch(revalidating(request))
       .then((response) => {
         if (response.ok) {
           const copy = response.clone();

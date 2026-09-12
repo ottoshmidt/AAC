@@ -24,7 +24,8 @@ const STRINGS = {
   en: {
     title: 'AAC Games',
     chooseGame: 'Choose a game',
-    escHint: 'During the game, press Esc or the Back button, or hold ✕ in the corner for 2 seconds, to come back here.',
+    escHint: 'During the game, press Esc or the Back button, or tap ✕ in the corner and then “Exit”, to come back here.',
+    exit: 'Exit',
     back: 'Back',
     start: 'Start',
     'games.guess.name': 'Guess items',
@@ -68,7 +69,8 @@ const STRINGS = {
   ka: {
     title: 'AAC თამაშები',
     chooseGame: 'აირჩიეთ თამაში',
-    escHint: 'თამაშის დროს აქ დასაბრუნებლად დააჭირეთ Esc-ს ან „უკან“ ღილაკს, ან 2 წამით დააჭირეთ ✕-ს კუთხეში.',
+    escHint: 'თამაშის დროს აქ დასაბრუნებლად დააჭირეთ Esc-ს ან „უკან“ ღილაკს, ან კუთხეში ✕-ს და შემდეგ „გასვლას“.',
+    exit: 'გასვლა',
     back: 'უკან',
     start: 'დაწყება',
     'games.guess.name': 'საგნების გამოცნობა',
@@ -112,7 +114,8 @@ const STRINGS = {
   ru: {
     title: 'AAC Игры',
     chooseGame: 'Выберите игру',
-    escHint: 'Во время игры вернуться сюда можно клавишей Esc, кнопкой «Назад» или удерживая ✕ в углу 2 секунды.',
+    escHint: 'Во время игры вернуться сюда можно клавишей Esc, кнопкой «Назад» или нажав ✕ в углу, а затем «Выйти».',
+    exit: 'Выйти',
     back: 'Назад',
     start: 'Начать',
     'games.guess.name': 'Угадывать предметы',

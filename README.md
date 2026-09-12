@@ -46,9 +46,10 @@ Then open <http://localhost:8080>.
    page (it wraps around; the page starts fresh). The page number is shown in
    the bottom-right corner.
 6. To leave the game: press **Esc**, use the phone's **Back** button or
-   gesture, or **hold ✕** in the top-right corner for 2 seconds (a plain
-   tap does nothing, so it can't happen by accident). This returns to the
-   game's page; **Back** there returns to the menu.
+   gesture, or tap **✕** in the top-right corner and then the **Exit**
+   button that appears next to it (holding ✕ for 2 seconds also works). A
+   single stray tap never leaves the game. This returns to the game's page;
+   **Back** there returns to the menu.
 
 ## Settings
 

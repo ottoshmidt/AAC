@@ -98,6 +98,8 @@ function closeIntro() {
 
 /** How long the corner ✕ must be held to leave the game. */
 const HOLD_TO_EXIT_MS = 2000;
+/** How long the "Exit" button stays up after tapping ✕. */
+const EXIT_CONFIRM_MS = 4000;
 
 function startGame() {
   const game = selected && instances.get(selected.id);
@@ -125,6 +127,7 @@ function endGame() {
   if (!running) return;
   running.stop();
   running = null;
+  exitControls.reset();
   wakeLock.release();
   speech.cancel();
   ui.showScreen('intro');
@@ -139,29 +142,73 @@ ui.elements.backButton.addEventListener('click', closeIntro);
 // Back button / gesture (Android, browser) during a game.
 window.addEventListener('popstate', () => endGame());
 
-// Hold the corner ✕ to leave: a plain tap does nothing, so the user can't
-// leave by accident, but a caregiver always can on a touch screen.
-{
+// Corner ✕ for touch screens. Tapping it shows an "Exit" button for a few
+// seconds; tapping that leaves. Holding ✕ for 2 s also leaves. Either way it
+// takes a deliberate action, so a stray tap in the corner never ends the game.
+// A tap on a plain button would be enough on a desktop, but on phones a long
+// press can be cancelled by the system (context menu, gestures), so the hold
+// alone isn't reliable; a cancelled hold also shows the Exit button.
+const exitControls = (() => {
   const button = ui.elements.exitButton;
-  /** @type {ReturnType<typeof setTimeout> | null} */
-  let holdTimer = null;
-  const release = () => {
-    if (holdTimer !== null) clearTimeout(holdTimer);
-    holdTimer = null;
-    button.classList.remove('holding');
+  const confirm = ui.elements.exitConfirm;
+  /** @type {ReturnType<typeof setTimeout> | undefined} */
+  let holdTimer;
+  /** @type {ReturnType<typeof setTimeout> | undefined} */
+  let confirmTimer;
+  let holding = false;
+
+  const hideConfirm = () => {
+    clearTimeout(confirmTimer);
+    confirm.hidden = true;
   };
+  const showConfirm = () => {
+    clearTimeout(confirmTimer);
+    confirm.hidden = false;
+    confirmTimer = setTimeout(hideConfirm, EXIT_CONFIRM_MS);
+  };
+  /** @param {boolean} offerConfirm */
+  const endHold = (offerConfirm) => {
+    if (!holding) return;
+    holding = false;
+    clearTimeout(holdTimer);
+    button.classList.remove('holding');
+    if (offerConfirm) showConfirm();
+  };
+  const leave = () => {
+    endHold(false);
+    hideConfirm();
+    stopGame();
+  };
+
+  // These controls are not game presses: keep them away from the game screen.
+  for (const el of [button, confirm]) {
+    el.addEventListener('pointerdown', (event) => {
+      event.stopPropagation();
+      event.preventDefault();
+    });
+    el.addEventListener('contextmenu', (event) => event.preventDefault());
+  }
+
   button.addEventListener('pointerdown', (event) => {
-    event.stopPropagation(); // not a game press
-    event.preventDefault();
+    // Capture, so a wobbling finger or mouse sliding off the small button
+    // doesn't end the hold.
+    button.setPointerCapture?.(event.pointerId);
+    holding = true;
     button.classList.add('holding');
-    holdTimer = setTimeout(() => {
-      release();
-      stopGame();
-    }, HOLD_TO_EXIT_MS);
+    holdTimer = setTimeout(leave, HOLD_TO_EXIT_MS);
   });
-  for (const type of ['pointerup', 'pointercancel', 'pointerleave']) button.addEventListener(type, release);
-  button.addEventListener('contextmenu', (event) => event.preventDefault());
-}
+  button.addEventListener('pointerup', () => endHold(true));
+  button.addEventListener('pointercancel', () => endHold(true));
+  confirm.addEventListener('click', leave);
+
+  return {
+    /** Forget any hold or pending confirmation (when a game ends). */
+    reset() {
+      endHold(false);
+      hideConfirm();
+    },
+  };
+})();
 
 // Any button, anywhere on the game screen, counts as a press.
 // `pointerdown` also covers touch screens and pens.
@@ -321,5 +368,14 @@ if (speech.speechSupported) {
 if ('serviceWorker' in navigator && window.isSecureContext) {
   navigator.serviceWorker.register('sw.js').catch((error) => {
     console.warn('Service worker registration failed:', error);
+  });
+
+  // After an update the new service worker takes over while this page still
+  // runs the old files. Reload once to pick up the new version, but never in
+  // the middle of a game (it will be picked up on the next load instead).
+  // On a first visit there was no controller before, so nothing to update.
+  const hadController = Boolean(navigator.serviceWorker.controller);
+  navigator.serviceWorker.addEventListener('controllerchange', () => {
+    if (hadController && !running) location.reload();
   });
 }

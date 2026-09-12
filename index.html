@@ -107,8 +107,10 @@
          it counts as a press. -->
     <section id="game-screen" class="game-screen" hidden>
       <div id="game-root" class="game-root"></div>
-      <!-- Caregiver exit for touch devices: hold for 2 s. A tap does nothing. -->
+      <!-- Caregiver exit for touch devices: tap ✕, then "Exit" (or hold ✕ for 2 s).
+           A single stray tap never leaves the game. -->
       <button id="exit-button" class="exit-button" type="button" aria-label="Exit">✕</button>
+      <button id="exit-confirm" class="exit-confirm" type="button" data-i18n="exit" hidden></button>
     </section>
 
     <noscript>This app needs JavaScript enabled. / აპლიკაციას JavaScript სჭირდება.</noscript>

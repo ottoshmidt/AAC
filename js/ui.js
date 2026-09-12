@@ -37,6 +37,7 @@ export const elements = {
   gameScreen: $('#game-screen'),
   gameRoot: $('#game-root'),
   exitButton: /** @type {HTMLButtonElement} */ ($('#exit-button')),
+  exitConfirm: /** @type {HTMLButtonElement} */ ($('#exit-confirm')),
 };
 
 /** @param {'start' | 'intro' | 'game'} name */
