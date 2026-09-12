@@ -45,7 +45,10 @@ Then open <http://localhost:8080>.
 5. The caregiver can also press **←** / **→** to go to the previous / next
    page (it wraps around; the page starts fresh). The page number is shown in
    the bottom-right corner.
-6. Press **Esc** to return to the game's page, and **Back** for the menu.
+6. To leave the game: press **Esc**, use the phone's **Back** button or
+   gesture, or **hold ✕** in the top-right corner for 2 seconds (a plain
+   tap does nothing, so it can't happen by accident). This returns to the
+   game's page; **Back** there returns to the menu.
 
 ## Settings
 

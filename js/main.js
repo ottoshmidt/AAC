@@ -94,11 +94,17 @@ function closeIntro() {
   if (id) ui.focusMenu(id);
 }
 
+/** How long the corner ✕ must be held to leave the game. */
+const HOLD_TO_EXIT_MS = 2000;
+
 function startGame() {
   const game = selected && instances.get(selected.id);
   if (!game) return;
   speech.unlock();
   running = game;
+  // A history entry for the game, so the Android/browser Back button ends the
+  // game (popstate below) instead of leaving the app.
+  history.pushState({ game: selected?.id }, '');
   ui.showScreen('game');
   if (settings.fullscreen && document.fullscreenEnabled) {
     document.documentElement.requestFullscreen().catch(() => {});
@@ -106,8 +112,15 @@ function startGame() {
   game.start();
 }
 
+/** Leave the game. Goes through history when the game pushed an entry. */
 function stopGame() {
-  running?.stop();
+  if (history.state?.game) history.back(); // popstate -> endGame()
+  else endGame();
+}
+
+function endGame() {
+  if (!running) return;
+  running.stop();
   running = null;
   speech.cancel();
   ui.showScreen('intro');
@@ -118,6 +131,33 @@ function stopGame() {
 
 ui.elements.startButton.addEventListener('click', startGame);
 ui.elements.backButton.addEventListener('click', closeIntro);
+
+// Back button / gesture (Android, browser) during a game.
+window.addEventListener('popstate', () => endGame());
+
+// Hold the corner ✕ to leave: a plain tap does nothing, so the user can't
+// leave by accident, but a caregiver always can on a touch screen.
+{
+  const button = ui.elements.exitButton;
+  /** @type {ReturnType<typeof setTimeout> | null} */
+  let holdTimer = null;
+  const release = () => {
+    if (holdTimer !== null) clearTimeout(holdTimer);
+    holdTimer = null;
+    button.classList.remove('holding');
+  };
+  button.addEventListener('pointerdown', (event) => {
+    event.stopPropagation(); // not a game press
+    event.preventDefault();
+    button.classList.add('holding');
+    holdTimer = setTimeout(() => {
+      release();
+      stopGame();
+    }, HOLD_TO_EXIT_MS);
+  });
+  for (const type of ['pointerup', 'pointercancel', 'pointerleave']) button.addEventListener(type, release);
+  button.addEventListener('contextmenu', (event) => event.preventDefault());
+}
 
 // Any button, anywhere on the game screen, counts as a press.
 // `pointerdown` also covers touch screens and pens.
@@ -141,6 +181,9 @@ document.addEventListener('keydown', (event) => {
 document.addEventListener('fullscreenchange', () => {
   if (!document.fullscreenElement && settings.fullscreen && running) stopGame();
 });
+
+// After a reload during a game the entry is stale: drop it so Back leaves normally.
+if (history.state?.game) history.replaceState(null, '');
 
 // ---- Settings ----------------------------------------------------------------
 

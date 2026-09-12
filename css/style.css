@@ -312,6 +312,31 @@ body {
   height: 100%;
 }
 
+/* Corner exit: hold to leave. The ring fills while held. */
+.exit-button {
+  position: absolute;
+  top: 0.5rem;
+  right: 0.5rem;
+  width: 2.75rem;
+  height: 2.75rem;
+  border: 2px solid rgb(255 255 255 / 0.25);
+  border-radius: 50%;
+  background: rgb(255 255 255 / 0.08);
+  color: rgb(255 255 255 / 0.6);
+  font: inherit;
+  font-size: 1.1rem;
+  cursor: pointer;
+  touch-action: none;
+  user-select: none;
+  -webkit-user-select: none;
+  transition: background 2000ms linear, color 150ms ease;
+}
+
+.exit-button.holding {
+  background: var(--highlight);
+  color: var(--text-dark);
+}
+
 .choices {
   height: 100%;
   display: grid;

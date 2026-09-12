@@ -36,6 +36,7 @@ export const elements = {
   voiceLicense: $('#voice-license'),
   gameScreen: $('#game-screen'),
   gameRoot: $('#game-root'),
+  exitButton: /** @type {HTMLButtonElement} */ ($('#exit-button')),
 };
 
 /** @param {'start' | 'intro' | 'game'} name */
