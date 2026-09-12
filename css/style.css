@@ -122,24 +122,12 @@ body {
   padding: 0.25rem 0;
 }
 
-/* Scan highlight on menu and game-page buttons: same yellow as in the games. */
+/* Scan highlight on the in-game Back button: same yellow as the pictures. */
 .scan-highlight {
   outline: 0.4rem solid var(--highlight);
   outline-offset: 0.3rem;
   box-shadow: 0 0 0 0.9rem rgb(255 212 0 / 0.3);
   border-radius: 1.5rem;
-}
-
-summary.scan-highlight {
-  outline-offset: 0.5rem;
-  border-radius: 0.5rem;
-}
-
-.language-switch button.scan-highlight {
-  outline-width: 0.3rem;
-  outline-offset: 0.2rem;
-  box-shadow: 0 0 0 0.6rem rgb(255 212 0 / 0.3);
-  border-radius: 999px;
 }
 
 /* ---- Game menu ------------------------------------------------------------ */

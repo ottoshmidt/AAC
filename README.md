@@ -35,14 +35,11 @@ npm start            # or: python3 -m http.server 8080
 
 Then open <http://localhost:8080>.
 
-1. The menu and the game pages are scanned too: the game cards and the
-   language buttons (and, on a game's page, **Start** and **Back**) light
-   up in turn, and a
-   click on the background chooses the lit one. So a single-switch user can
-   get around the whole app; a caregiver can also click things directly.
-2. The caregiver picks the language and adjusts **Settings** on the game's
-   page if needed, then clicks **Start** (or lets the scan reach it). This
-   goes fullscreen and enables sound.
+1. The caregiver picks the language and a game on the menu.
+2. On the game's page the caregiver adjusts **Settings** if needed and
+   clicks **Start**. This goes fullscreen and enables sound. (Scanning
+   happens only inside the games; the menu and game pages are operated
+   directly.)
 3. In **Guess items**, the highlight moves through the pictures (left to right,
    top to bottom).
    A click anywhere selects the highlighted picture, which is spoken aloud.

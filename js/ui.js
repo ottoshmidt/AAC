@@ -143,24 +143,6 @@ export function focusMenu(id) {
   /** @type {HTMLElement | null} */ (elements.gameMenu.querySelector(`[data-game="${id}"]`))?.focus();
 }
 
-/** The menu's scan stops: the game cards, then the language buttons. */
-export function menuScanStops() {
-  return /** @type {HTMLElement[]} */ ([
-    ...elements.gameMenu.querySelectorAll('.game-card'),
-    ...elements.languageSwitch.querySelectorAll('button'),
-  ]);
-}
-
-/**
- * Mark `el` as the scan highlight on a shell screen (or none).
- * @param {HTMLElement | null} el
- */
-export function setScanHighlight(el) {
-  for (const old of document.querySelectorAll('.scan-highlight')) old.classList.remove('scan-highlight');
-  el?.classList.add('scan-highlight');
-  el?.scrollIntoView({ block: 'nearest' });
-}
-
 // ---- Settings form ----------------------------------------------------------
 // Inputs are matched to settings by their `name`. Numeric inputs may carry
 // `data-scale` to show a different unit (e.g. seconds for a value in ms).

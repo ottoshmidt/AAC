@@ -7,7 +7,6 @@ import { CATEGORIES, games } from './games/index.js';
 import { applyStrings, LANGUAGES, t } from './i18n.js';
 import { clipFor, itemSets, labelFor } from './items.js';
 import { PIPER_VOICES, PiperVoice, piperDownloadBytes } from './piper.js';
-import { Scanner } from './scanner.js';
 import { loadSettings, sanitize, saveSettings, VOICE_KEYS } from './settings.js';
 import { Speech } from './speech.js';
 import { WakeLock } from './wakelock.js';
@@ -85,69 +84,6 @@ const gameContext = {
   exit: () => stopGame(),
 };
 
-// ---- Scanning on the menu and game pages ------------------------------------
-// The shell screens are scanned like a game: buttons light up in turn and a
-// press on the background chooses the lit one, so a single-switch user can
-// get around the whole app. Direct clicks on buttons still work for caregivers.
-
-const shellScanner = new Scanner({ itemCount: 0, intervalMs: 2000, cooldownMs: 0, debounceMs: 300, maxCycles: 0 });
-/** @type {HTMLElement[]} buttons being scanned on the current shell screen */
-let shellItems = [];
-
-/** @param {HTMLElement[]} items */
-function scanShell(items) {
-  shellItems = items;
-  shellScanner.updateOptions({
-    itemCount: items.length,
-    intervalMs: settings.intervalMs,
-    cooldownMs: settings.cooldownMs,
-    debounceMs: settings.debounceMs,
-    maxCycles: 0, // never pause here: a stuck frame on the menu just looks broken
-  });
-  if (items.length > 0) shellScanner.start();
-  else shellScanner.stop();
-}
-
-function stopShellScan() {
-  shellScanner.stop();
-  ui.setScanHighlight(null);
-}
-
-shellScanner.addEventListener('highlight', (event) => {
-  const el = shellItems[/** @type {CustomEvent} */ (event).detail.index];
-  ui.setScanHighlight(el);
-  if (settings.speakOnHighlight) {
-    say(el.textContent?.replace(/^‹\s*/, '').trim() ?? '');
-  } else if (settings.highlightSound) speech.tick();
-});
-shellScanner.addEventListener('select', (event) => {
-  const el = shellItems[/** @type {CustomEvent} */ (event).detail.index];
-  ui.setScanHighlight(null);
-  el.click();
-});
-shellScanner.addEventListener('stop', () => ui.setScanHighlight(null));
-shellScanner.addEventListener('pause', () => ui.setScanHighlight(null));
-
-// A press on a shell screen's background selects the lit button; presses on
-// buttons and form fields are left to them.
-for (const screen of [ui.elements.startScreen, ui.elements.introScreen]) {
-  screen.addEventListener('pointerdown', (event) => {
-    const target = /** @type {Element} */ (event.target);
-    if (target.closest('button, a, input, select, textarea, summary, label')) return;
-    event.preventDefault();
-    shellScanner.press();
-  });
-}
-
-function scanMenu() {
-  scanShell(ui.menuScanStops());
-}
-
-function scanIntro() {
-  // Settings are for the caregiver, so they are left out of the scan.
-  scanShell([ui.elements.startButton, ui.elements.backButton]);
-}
-
 /** Game instances, created once and reused between runs. */
 const instances = new Map(games.map((info) => [info.id, info.create(gameContext)]));
 /** @type {import('./games/index.js').Game | null} the game on screen */
@@ -164,7 +100,6 @@ function openIntro(id) {
   ui.showScreen('intro');
   window.scrollTo(0, 0);
   ui.elements.startButton.focus({ preventScroll: true });
-  scanIntro();
 }
 
 function closeIntro() {
@@ -172,14 +107,12 @@ function closeIntro() {
   selected = null;
   ui.showScreen('start');
   if (id) ui.focusMenu(id);
-  scanMenu();
 }
 
 function startGame() {
   const game = selected && instances.get(selected.id);
   if (!game) return;
   speech.unlock();
-  stopShellScan();
   running = game;
   // A history entry for the game, so the Android/browser Back button ends the
   // game (popstate below) instead of leaving the app.
@@ -216,7 +149,6 @@ function endGame() {
   if (document.fullscreenElement) document.exitFullscreen().catch(() => {});
   window.scrollTo(0, 0);
   ui.elements.startButton.focus({ preventScroll: true });
-  scanIntro();
 }
 
 ui.elements.startButton.addEventListener('click', startGame);
@@ -300,7 +232,6 @@ function applyLanguage() {
   ui.setLanguageSwitch(lang());
   ui.renderGameMenu(CATEGORIES, games, lang(), openIntro);
   if (selected) ui.fillIntro(selected, lang());
-  else if (!running) scanMenu(); // the cards were rebuilt
   refreshVoiceSelect();
   refreshVoiceStatus();
   prepareInAppVoice();
@@ -372,7 +303,6 @@ ui.renderLanguageSwitch(LANGUAGES, setLanguage);
 ui.fillSettingsForm(settings);
 applyLanguage();
 ui.showScreen('start');
-scanMenu();
 
 // Warm the image cache so pictures appear without flicker.
 for (const { image } of Object.values(itemSets).flat()) new Image().src = image;

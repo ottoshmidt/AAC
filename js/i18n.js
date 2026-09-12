@@ -24,7 +24,7 @@ const STRINGS = {
   en: {
     title: 'AAC Games',
     chooseGame: 'Choose a game',
-    escHint: 'Start and Back light up in turn; a click chooses the lit one. In the game, Back is lit after the pictures. Esc and the phone’s Back button also come back here.',
+    escHint: 'In the game, Back lights up after the pictures; choosing it comes back here. Esc and the phone’s Back button do too.',
     back: 'Back',
     start: 'Start',
     'categories.guess.name': 'Guess items',
@@ -75,7 +75,7 @@ const STRINGS = {
   ka: {
     title: 'AAC თამაშები',
     chooseGame: 'აირჩიეთ თამაში',
-    escHint: '„დაწყება“ და „უკან“ რიგრიგობით ინიშნება; დაწკაპუნება ირჩევს მონიშნულს. თამაშში სურათების შემდეგ „უკან“ ინიშნება. Esc და ტელეფონის „უკან“ ღილაკიც აქ აბრუნებს.',
+    escHint: 'თამაშში სურათების შემდეგ „უკან“ ინიშნება; მისი არჩევა აქ აბრუნებს. Esc და ტელეფონის „უკან“ ღილაკიც აქ აბრუნებს.',
     back: 'უკან',
     start: 'დაწყება',
     'categories.guess.name': 'საგნების გამოცნობა',
@@ -126,7 +126,7 @@ const STRINGS = {
   ru: {
     title: 'AAC Игры',
     chooseGame: 'Выберите игру',
-    escHint: '«Начать» и «Назад» подсвечиваются по очереди; нажатие выбирает подсвеченную. В игре после картинок подсвечивается «Назад». Esc и кнопка «Назад» телефона тоже возвращают сюда.',
+    escHint: 'В игре после картинок подсвечивается «Назад»; её выбор возвращает сюда. Esc и кнопка «Назад» телефона тоже возвращают сюда.',
     back: 'Назад',
     start: 'Начать',
     'categories.guess.name': 'Угадывать предметы',
