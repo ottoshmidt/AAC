@@ -30,11 +30,12 @@
 
 /**
  * @param {string} dir  folder under assets/images ('' for the top level)
- * @returns {(id: string, ka: string, en: string, ru: string) => Item}
+ * @returns {(id: string, ka: string, en: string, ru: string, ext?: string) => Item}
+ *   `ext` is the picture's file extension (default 'svg')
  */
-const inFolder = (dir) => (id, ka, en, ru) => ({
+const inFolder = (dir) => (id, ka, en, ru, ext = 'svg') => ({
   id,
-  image: `assets/images/${dir ? dir + '/' : ''}${id}.svg`,
+  image: `assets/images/${dir ? dir + '/' : ''}${id}.${ext}`,
   label: { ka, en, ru },
 });
 
@@ -261,7 +262,7 @@ export const itemSets = {};
   const item = inFolder('birds');
   itemSets.birds = [
     // Page 1
-    item('sparrow', 'ბეღურა', 'Sparrow', 'Воробей'),
+    item('sparrow', 'ბეღურა', 'Sparrow', 'Воробей', 'webp'),
     item('dove', 'მტრედი', 'Dove', 'Голубь'),
     item('eagle', 'არწივი', 'Eagle', 'Орёл'),
     item('duck', 'იხვი', 'Duck', 'Утка'),
@@ -281,10 +282,10 @@ export const itemSets = {};
     item('goose', 'ბატი', 'Goose', 'Гусь'),
     item('crow', 'ყვავი', 'Crow', 'Ворона'),
     // Page 5
-    item('stork', 'ყარყატი', 'Stork', 'Аист'),
+    item('stork', 'ყარყატი', 'Stork', 'Аист', 'webp'),
     item('seagull', 'თოლია', 'Seagull', 'Чайка'),
-    item('woodpecker', 'კოდალა', 'Woodpecker', 'Дятел'),
-    item('hummingbird', 'კოლიბრი', 'Hummingbird', 'Колибри'),
+    item('woodpecker', 'კოდალა', 'Woodpecker', 'Дятел', 'webp'),
+    item('hummingbird', 'კოლიბრი', 'Hummingbird', 'Колибри', 'webp'),
     // Page 6
     item('ostrich', 'სირაქლემა', 'Ostrich', 'Страус'),
     item('magpie', 'კაჭკაჭი', 'Magpie', 'Сорока'),

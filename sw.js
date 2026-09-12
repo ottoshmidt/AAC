@@ -9,7 +9,7 @@
 // Downloaded voices live in a separate cache managed by js/piper.js
 // ('aac-voices-…'); it is left alone here so updates never re-download them.
 
-const CACHE_NAME = 'aac-app-v19';
+const CACHE_NAME = 'aac-app-v22';
 const VOICE_CACHE_PREFIX = 'aac-voices-';
 
 const PRECACHE = [
@@ -72,7 +72,7 @@ const PRECACHE = [
   'assets/images/birds/flamingo.svg',
   'assets/images/birds/goose.svg',
   'assets/images/birds/heron.svg',
-  'assets/images/birds/hummingbird.svg',
+  'assets/images/birds/hummingbird.webp',
   'assets/images/birds/magpie.svg',
   'assets/images/birds/ostrich.svg',
   'assets/images/birds/owl.svg',
@@ -81,12 +81,12 @@ const PRECACHE = [
   'assets/images/birds/penguin.svg',
   'assets/images/birds/rooster.svg',
   'assets/images/birds/seagull.svg',
-  'assets/images/birds/sparrow.svg',
-  'assets/images/birds/stork.svg',
+  'assets/images/birds/sparrow.webp',
+  'assets/images/birds/stork.webp',
   'assets/images/birds/swallow.svg',
   'assets/images/birds/swan.svg',
   'assets/images/birds/turkey.svg',
-  'assets/images/birds/woodpecker.svg',
+  'assets/images/birds/woodpecker.webp',
   'assets/images/book.svg',
   'assets/images/bread.svg',
   'assets/images/cake.svg',
