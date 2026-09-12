@@ -25,6 +25,7 @@
     <section id="intro-screen" class="intro-screen" hidden>
       <button id="back-button" class="back-button" type="button">‹ <span data-i18n="back"></span></button>
       <img id="intro-icon" class="intro-icon" alt="" draggable="false" />
+      <p id="intro-category" class="intro-category"></p>
       <h2 id="intro-name" class="intro-name"></h2>
       <p id="intro-description" class="intro-description"></p>
       <button id="start-button" class="start-button" type="button" data-i18n="start"></button>
@@ -35,11 +36,11 @@
         <button id="voice-retry" class="link-button" type="button" data-i18n="retry" hidden></button>
       </p>
 
-      <section class="settings">
-        <h3 data-i18n="settings"></h3>
+      <details id="settings" class="settings">
+        <summary id="settings-summary" data-i18n="settings"></summary>
         <form id="settings-form" class="settings-form">
-          <fieldset data-game="guess">
-            <legend data-i18n="games.guess.name"></legend>
+          <fieldset data-category="guess">
+            <legend data-i18n="categories.guess.name"></legend>
             <label>
               <span data-i18n="choicesPerRound"></span>
               <select name="choicesPerRound">
@@ -100,17 +101,16 @@
             <label class="check"><input name="fullscreen" type="checkbox" /> <span data-i18n="fullscreen"></span></label>
           </fieldset>
         </form>
-      </section>
+      </details>
     </section>
 
     <!-- Game screen: the running game fills #game-root. A click anywhere on
          it counts as a press. -->
     <section id="game-screen" class="game-screen" hidden>
       <div id="game-root" class="game-root"></div>
-      <!-- Caregiver exit for touch devices: tap ✕, then "Exit" (or hold ✕ for 2 s).
-           A single stray tap never leaves the game. -->
-      <button id="exit-button" class="exit-button" type="button" aria-label="Exit">✕</button>
-      <button id="exit-confirm" class="exit-confirm" type="button" data-i18n="exit" hidden></button>
+      <!-- Back to the game's page. Games include it in their scan; a direct
+           click works too. -->
+      <button id="game-back" class="back-button" type="button">‹ <span data-i18n="back"></span></button>
     </section>
 
     <noscript>This app needs JavaScript enabled. / აპლიკაციას JavaScript სჭირდება.</noscript>

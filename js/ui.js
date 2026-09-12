@@ -23,10 +23,13 @@ export const elements = {
   introScreen: $('#intro-screen'),
   backButton: /** @type {HTMLButtonElement} */ ($('#back-button')),
   introIcon: /** @type {HTMLImageElement} */ ($('#intro-icon')),
+  introCategory: $('#intro-category'),
   introName: $('#intro-name'),
   introDescription: $('#intro-description'),
   introHelp: $('#intro-help'),
   startButton: /** @type {HTMLButtonElement} */ ($('#start-button')),
+  settings: /** @type {HTMLDetailsElement} */ ($('#settings')),
+  settingsSummary: $('#settings-summary'),
   voiceStatus: $('#voice-status'),
   voiceStatusText: $('#voice-status-text'),
   voiceRetry: /** @type {HTMLButtonElement} */ ($('#voice-retry')),
@@ -36,8 +39,7 @@ export const elements = {
   voiceLicense: $('#voice-license'),
   gameScreen: $('#game-screen'),
   gameRoot: $('#game-root'),
-  exitButton: /** @type {HTMLButtonElement} */ ($('#exit-button')),
-  exitConfirm: /** @type {HTMLButtonElement} */ ($('#exit-confirm')),
+  gameBack: /** @type {HTMLButtonElement} */ ($('#game-back')),
 };
 
 /** @param {'start' | 'intro' | 'game'} name */
@@ -54,12 +56,14 @@ export function showScreen(name) {
  * @param {string} lang
  */
 export function fillIntro(game, lang) {
+  const textId = game.textId ?? game.id;
   elements.introIcon.src = game.icon;
+  elements.introCategory.textContent = t(lang, `categories.${game.category}.name`);
   elements.introName.textContent = t(lang, `games.${game.id}.name`);
-  elements.introDescription.textContent = t(lang, `games.${game.id}.description`);
-  elements.introHelp.textContent = t(lang, `games.${game.id}.help`);
-  for (const fieldset of elements.settingsForm.querySelectorAll('fieldset[data-game]')) {
-    /** @type {HTMLElement} */ (fieldset).hidden = fieldset.getAttribute('data-game') !== game.id;
+  elements.introDescription.textContent = t(lang, `games.${textId}.description`);
+  elements.introHelp.textContent = t(lang, `games.${textId}.help`);
+  for (const fieldset of elements.settingsForm.querySelectorAll('fieldset[data-category]')) {
+    /** @type {HTMLElement} */ (fieldset).hidden = fieldset.getAttribute('data-category') !== game.category;
   }
 }
 
@@ -90,40 +94,46 @@ export function setLanguageSwitch(lang) {
 }
 
 /**
- * One big card per game: icon, name and a short description. Clicking a card
- * starts that game.
+ * The menu: a heading per category, then a card (icon + name) per game.
+ * Clicking a card opens that game's page.
+ * @param {string[]} categories  category ids in order
  * @param {import('./games/index.js').GameInfo[]} games
  * @param {string} lang
  * @param {(id: string) => void} onPick
  */
-export function renderGameMenu(games, lang, onPick) {
+export function renderGameMenu(categories, games, lang, onPick) {
   elements.gameMenu.replaceChildren(
-    ...games.map((game) => {
-      const card = document.createElement('button');
-      card.type = 'button';
-      card.className = 'game-card';
-      card.dataset.game = game.id;
+    ...categories.flatMap((category) => {
+      const heading = document.createElement('h2');
+      heading.className = 'category-name';
+      heading.textContent = t(lang, `categories.${category}.name`);
 
-      const img = document.createElement('img');
-      img.src = game.icon;
-      img.alt = '';
-      img.draggable = false;
+      const grid = document.createElement('div');
+      grid.className = 'category-games';
+      grid.append(
+        ...games
+          .filter((game) => game.category === category)
+          .map((game) => {
+            const card = document.createElement('button');
+            card.type = 'button';
+            card.className = 'game-card';
+            card.dataset.game = game.id;
 
-      const name = document.createElement('span');
-      name.className = 'game-name';
-      name.textContent = t(lang, `games.${game.id}.name`);
+            const img = document.createElement('img');
+            img.src = game.icon;
+            img.alt = '';
+            img.draggable = false;
 
-      const description = document.createElement('span');
-      description.className = 'game-description';
-      description.textContent = t(lang, `games.${game.id}.description`);
+            const name = document.createElement('span');
+            name.className = 'game-name';
+            name.textContent = t(lang, `games.${game.id}.name`);
 
-      const help = document.createElement('span');
-      help.className = 'game-help';
-      help.textContent = t(lang, `games.${game.id}.help`);
-
-      card.append(img, name, description, help);
-      card.addEventListener('click', () => onPick(game.id));
-      return card;
+            card.append(img, name);
+            card.addEventListener('click', () => onPick(game.id));
+            return card;
+          }),
+      );
+      return [heading, grid];
     }),
   );
 }
@@ -131,6 +141,21 @@ export function renderGameMenu(games, lang, onPick) {
 /** Focus the card of `id` on the menu (after going back from an intro). */
 export function focusMenu(id) {
   /** @type {HTMLElement | null} */ (elements.gameMenu.querySelector(`[data-game="${id}"]`))?.focus();
+}
+
+/** The game cards, in scanning order. */
+export function menuCards() {
+  return /** @type {HTMLElement[]} */ ([...elements.gameMenu.querySelectorAll('.game-card')]);
+}
+
+/**
+ * Mark `el` as the scan highlight on a shell screen (or none).
+ * @param {HTMLElement | null} el
+ */
+export function setScanHighlight(el) {
+  for (const old of document.querySelectorAll('.scan-highlight')) old.classList.remove('scan-highlight');
+  el?.classList.add('scan-highlight');
+  el?.scrollIntoView({ block: 'nearest' });
 }
 
 // ---- Settings form ----------------------------------------------------------

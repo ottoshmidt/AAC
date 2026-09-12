@@ -3,10 +3,11 @@
  * App shell: language, settings, voices and the game menu. Games live in
  * js/games/; the shell starts the chosen one and forwards presses and keys.
  */
-import { games } from './games/index.js';
+import { CATEGORIES, games } from './games/index.js';
 import { applyStrings, LANGUAGES, t } from './i18n.js';
-import { clipFor, items, labelFor } from './items.js';
+import { clipFor, itemSets, labelFor } from './items.js';
 import { PIPER_VOICES, PiperVoice, piperDownloadBytes } from './piper.js';
+import { Scanner } from './scanner.js';
 import { loadSettings, sanitize, saveSettings, VOICE_KEYS } from './settings.js';
 import { Speech } from './speech.js';
 import { WakeLock } from './wakelock.js';
@@ -51,10 +52,19 @@ function speakItem(item) {
   speech.speak(utteranceFor(item), voiceFor());
 }
 
-/** Start downloading the selected in-app voice and pre-render the labels. */
+/** Speak any text in the current language and voice. @param {string} text */
+function say(text) {
+  speech.speak({ text, lang: LANGUAGES[lang()].speechLang }, voiceFor());
+}
+
+/**
+ * Start downloading the selected in-app voice and pre-render the labels of
+ * the chosen game (or, before one is chosen, of the first game).
+ */
 function prepareInAppVoice() {
   const piper = speech.piperVoice(voiceFor());
   if (!piper) return;
+  const items = (selected ?? games[0]).items ?? [];
   const texts = items.filter((item) => !clipFor(item, lang())).map((item) => labelFor(item, lang()));
   piper.prepare(texts);
 }
@@ -64,13 +74,78 @@ function prepareInAppVoice() {
 /** @type {import('./games/index.js').GameContext} */
 const gameContext = {
   root: ui.elements.gameRoot,
+  backButton: ui.elements.gameBack,
   settings: () => settings,
   lang,
   speech,
   speakItem,
+  say,
   labelFor,
   t: (key, vars) => t(lang(), key, vars),
+  exit: () => stopGame(),
 };
+
+// ---- Scanning on the menu and game pages ------------------------------------
+// The shell screens are scanned like a game: buttons light up in turn and a
+// press on the background chooses the lit one, so a single-switch user can
+// get around the whole app. Direct clicks on buttons still work for caregivers.
+
+const shellScanner = new Scanner({ itemCount: 0, intervalMs: 2000, cooldownMs: 0, debounceMs: 300, maxCycles: 0 });
+/** @type {HTMLElement[]} buttons being scanned on the current shell screen */
+let shellItems = [];
+
+/** @param {HTMLElement[]} items */
+function scanShell(items) {
+  shellItems = items;
+  shellScanner.updateOptions({
+    itemCount: items.length,
+    intervalMs: settings.intervalMs,
+    cooldownMs: settings.cooldownMs,
+    debounceMs: settings.debounceMs,
+    maxCycles: 0, // never pause here: a stuck frame on the menu just looks broken
+  });
+  if (items.length > 0) shellScanner.start();
+  else shellScanner.stop();
+}
+
+function stopShellScan() {
+  shellScanner.stop();
+  ui.setScanHighlight(null);
+}
+
+shellScanner.addEventListener('highlight', (event) => {
+  const el = shellItems[/** @type {CustomEvent} */ (event).detail.index];
+  ui.setScanHighlight(el);
+  if (settings.speakOnHighlight) {
+    say(el.textContent?.replace(/^‹\s*/, '').trim() ?? '');
+  } else if (settings.highlightSound) speech.tick();
+});
+shellScanner.addEventListener('select', (event) => {
+  const el = shellItems[/** @type {CustomEvent} */ (event).detail.index];
+  ui.setScanHighlight(null);
+  el.click();
+});
+shellScanner.addEventListener('stop', () => ui.setScanHighlight(null));
+shellScanner.addEventListener('pause', () => ui.setScanHighlight(null));
+
+// A press on a shell screen's background selects the lit button; presses on
+// buttons and form fields are left to them.
+for (const screen of [ui.elements.startScreen, ui.elements.introScreen]) {
+  screen.addEventListener('pointerdown', (event) => {
+    const target = /** @type {Element} */ (event.target);
+    if (target.closest('button, a, input, select, textarea, summary, label')) return;
+    event.preventDefault();
+    shellScanner.press();
+  });
+}
+
+function scanMenu() {
+  scanShell(ui.menuCards());
+}
+
+function scanIntro() {
+  scanShell([ui.elements.startButton, ui.elements.settingsSummary, ui.elements.backButton]);
+}
 
 /** Game instances, created once and reused between runs. */
 const instances = new Map(games.map((info) => [info.id, info.create(gameContext)]));
@@ -84,9 +159,11 @@ function openIntro(id) {
   selected = games.find((g) => g.id === id) ?? null;
   if (!selected) return;
   ui.fillIntro(selected, lang());
+  prepareInAppVoice();
   ui.showScreen('intro');
   window.scrollTo(0, 0);
   ui.elements.startButton.focus({ preventScroll: true });
+  scanIntro();
 }
 
 function closeIntro() {
@@ -94,17 +171,14 @@ function closeIntro() {
   selected = null;
   ui.showScreen('start');
   if (id) ui.focusMenu(id);
+  scanMenu();
 }
-
-/** How long the corner ✕ must be held to leave the game. */
-const HOLD_TO_EXIT_MS = 2000;
-/** How long the "Exit" button stays up after tapping ✕. */
-const EXIT_CONFIRM_MS = 4000;
 
 function startGame() {
   const game = selected && instances.get(selected.id);
   if (!game) return;
   speech.unlock();
+  stopShellScan();
   running = game;
   // A history entry for the game, so the Android/browser Back button ends the
   // game (popstate below) instead of leaving the app.
@@ -117,98 +191,47 @@ function startGame() {
   game.start();
 }
 
-/** Leave the game. Goes through history when the game pushed an entry. */
+/** popstate events caused by our own history.back(), to be ignored. */
+let ownBacks = 0;
+
+/** Leave the game, and drop the history entry it pushed. */
 function stopGame() {
-  if (history.state?.game) history.back(); // popstate -> endGame()
-  else endGame();
+  endGame();
+  if (history.state?.game) {
+    // Ending first, then going back, keeps this safe even if the popstate
+    // arrives after the next game has already started.
+    ownBacks += 1;
+    history.back();
+  }
 }
 
 function endGame() {
   if (!running) return;
   running.stop();
   running = null;
-  exitControls.reset();
   wakeLock.release();
   speech.cancel();
   ui.showScreen('intro');
   if (document.fullscreenElement) document.exitFullscreen().catch(() => {});
   window.scrollTo(0, 0);
   ui.elements.startButton.focus({ preventScroll: true });
+  scanIntro();
 }
 
 ui.elements.startButton.addEventListener('click', startGame);
 ui.elements.backButton.addEventListener('click', closeIntro);
 
+// The in-game Back button: a direct click leaves; a press on it is not a
+// game press. Games also put it in their scan (see GameContext.backButton).
+ui.elements.gameBack.addEventListener('pointerdown', (event) => event.stopPropagation());
+ui.elements.gameBack.addEventListener('click', stopGame);
+
 // Back button / gesture (Android, browser) during a game.
-window.addEventListener('popstate', () => endGame());
+window.addEventListener('popstate', () => {
+  if (ownBacks > 0) ownBacks -= 1;
+  else endGame();
+});
 
-// Corner ✕ for touch screens. Tapping it shows an "Exit" button for a few
-// seconds; tapping that leaves. Holding ✕ for 2 s also leaves. Either way it
-// takes a deliberate action, so a stray tap in the corner never ends the game.
-// A tap on a plain button would be enough on a desktop, but on phones a long
-// press can be cancelled by the system (context menu, gestures), so the hold
-// alone isn't reliable; a cancelled hold also shows the Exit button.
-const exitControls = (() => {
-  const button = ui.elements.exitButton;
-  const confirm = ui.elements.exitConfirm;
-  /** @type {ReturnType<typeof setTimeout> | undefined} */
-  let holdTimer;
-  /** @type {ReturnType<typeof setTimeout> | undefined} */
-  let confirmTimer;
-  let holding = false;
-
-  const hideConfirm = () => {
-    clearTimeout(confirmTimer);
-    confirm.hidden = true;
-  };
-  const showConfirm = () => {
-    clearTimeout(confirmTimer);
-    confirm.hidden = false;
-    confirmTimer = setTimeout(hideConfirm, EXIT_CONFIRM_MS);
-  };
-  /** @param {boolean} offerConfirm */
-  const endHold = (offerConfirm) => {
-    if (!holding) return;
-    holding = false;
-    clearTimeout(holdTimer);
-    button.classList.remove('holding');
-    if (offerConfirm) showConfirm();
-  };
-  const leave = () => {
-    endHold(false);
-    hideConfirm();
-    stopGame();
-  };
-
-  // These controls are not game presses: keep them away from the game screen.
-  for (const el of [button, confirm]) {
-    el.addEventListener('pointerdown', (event) => {
-      event.stopPropagation();
-      event.preventDefault();
-    });
-    el.addEventListener('contextmenu', (event) => event.preventDefault());
-  }
-
-  button.addEventListener('pointerdown', (event) => {
-    // Capture, so a wobbling finger or mouse sliding off the small button
-    // doesn't end the hold.
-    button.setPointerCapture?.(event.pointerId);
-    holding = true;
-    button.classList.add('holding');
-    holdTimer = setTimeout(leave, HOLD_TO_EXIT_MS);
-  });
-  button.addEventListener('pointerup', () => endHold(true));
-  button.addEventListener('pointercancel', () => endHold(true));
-  confirm.addEventListener('click', leave);
-
-  return {
-    /** Forget any hold or pending confirmation (when a game ends). */
-    reset() {
-      endHold(false);
-      hideConfirm();
-    },
-  };
-})();
 
 // Any button, anywhere on the game screen, counts as a press.
 // `pointerdown` also covers touch screens and pens.
@@ -274,8 +297,9 @@ function setLanguage(language) {
 function applyLanguage() {
   applyStrings(lang());
   ui.setLanguageSwitch(lang());
-  ui.renderGameMenu(games, lang(), openIntro);
+  ui.renderGameMenu(CATEGORIES, games, lang(), openIntro);
   if (selected) ui.fillIntro(selected, lang());
+  else if (!running) scanMenu(); // the cards were rebuilt
   refreshVoiceSelect();
   refreshVoiceStatus();
   prepareInAppVoice();
@@ -347,9 +371,10 @@ ui.renderLanguageSwitch(LANGUAGES, setLanguage);
 ui.fillSettingsForm(settings);
 applyLanguage();
 ui.showScreen('start');
+scanMenu();
 
 // Warm the image cache so pictures appear without flicker.
-for (const { image } of items) new Image().src = image;
+for (const { image } of Object.values(itemSets).flat()) new Image().src = image;
 
 if (speech.speechSupported) {
   // Voices often arrive a moment after page load, so only report that there

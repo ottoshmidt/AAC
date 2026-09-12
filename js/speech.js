@@ -110,7 +110,7 @@ export class Speech {
   #say(text, lang, voiceName) {
     if (!this.synth) return;
     const utterance = new SpeechSynthesisUtterance(text);
-    utterance.lang = lang;
+    if (lang) utterance.lang = lang;
     const voice = this.synth.getVoices().find((v) => v.name === voiceName);
     if (voice) utterance.voice = voice;
     this.synth.speak(utterance);

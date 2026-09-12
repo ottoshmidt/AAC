@@ -7,14 +7,17 @@ selects the lit one, so the user never has to aim the mouse. The same works
 with a touch screen, a big-button mouse or any switch that acts as a mouse
 click.
 
-The start screen is a menu of games. There is one game so far:
+The start screen is a menu of games, grouped by category. So far there is
+one category, **Guess items**, with seven games that differ only in their
+pictures: **Mixed**, **Fruit**, **Vegetables**, **Transport**, **Clothes**,
+**Animals** and **Birds**, 24 pictures each.
 
-- **Guess items.** Four pictures in a 2×2 grid (or two side by side); the
-  highlight moves through them and a click chooses the highlighted one, which
-  is spoken aloud. The 24 pictures are split into pages of 4 (6 pages, grouped
-  by topic). When every picture on a page has been chosen, the game moves to
-  the next page, and after the last one it starts over. The caregiver can also
-  turn pages with the arrow keys.
+In a Guess items game, four pictures are shown in a 2×2 grid (or two side by
+side); the highlight moves through them and a click chooses the highlighted
+one, which is spoken aloud. The pictures are split into pages of 4 (6 pages).
+When every picture on a page has been chosen, the game moves to the next
+page, and after the last one it starts over. The caregiver can also turn
+pages with the arrow keys.
 
 The interface and speech are available in **Georgian (ქართული)**,
 **Russian (Русский)** and English.
@@ -32,10 +35,13 @@ npm start            # or: python3 -m http.server 8080
 
 Then open <http://localhost:8080>.
 
-1. The caregiver picks the language and adjusts **Settings** on the start
-   screen if needed.
-2. Click a game card. The game's page shows its description and settings;
-   click **Start**. This goes fullscreen and enables sound.
+1. The menu and the game pages are scanned too: the game cards (and, on a
+   game's page, **Start**, **Settings** and **Back**) light up in turn, and a
+   click on the background chooses the lit one. So a single-switch user can
+   get around the whole app; a caregiver can also click things directly.
+2. The caregiver picks the language and adjusts **Settings** on the game's
+   page if needed, then clicks **Start** (or lets the scan reach it). This
+   goes fullscreen and enables sound.
 3. In **Guess items**, the highlight moves through the pictures (left to right,
    top to bottom).
    A click anywhere selects the highlighted picture, which is spoken aloud.
@@ -45,11 +51,10 @@ Then open <http://localhost:8080>.
 5. The caregiver can also press **←** / **→** to go to the previous / next
    page (it wraps around; the page starts fresh). The page number is shown in
    the bottom-right corner.
-6. To leave the game: press **Esc**, use the phone's **Back** button or
-   gesture, or tap **✕** in the top-right corner and then the **Exit**
-   button that appears next to it (holding ✕ for 2 seconds also works). A
-   single stray tap never leaves the game. This returns to the game's page;
-   **Back** there returns to the menu.
+6. After the pictures, the scan lights up the **‹ Back** button in the
+   top-left corner; choosing it returns to the game's page. Esc, the phone's
+   Back button or gesture, and a direct tap on ‹ Back do the same. **Back** on
+   the game's page returns to the menu.
 
 ## Settings
 
@@ -59,7 +64,7 @@ Then open <http://localhost:8080>.
 | Highlight each picture for | 2 s | 0.5–10 s |
 | Wait after a choice | 2 s | Clicks are ignored during this time |
 | Ignore repeated clicks within | 0.3 s | Helps with tremor and double clicks |
-| Pause after N rounds with no choice | 5 | 0 = never pause; a click resumes |
+| Pause after N rounds with no choice | 0 (never) | With N > 0 the game pauses after N rounds; a click resumes |
 | Speak the chosen picture | on | Recorded clip if there is one, otherwise the voice |
 | Speak each picture as highlighted | off | Auditory scanning; replaces the tick |
 | Tick when the highlight moves | on | Generated sound, no file needed |
@@ -107,11 +112,10 @@ use.
 
 ## Changing the pictures
 
-There are 24 pictures on 6 pages: fruit, food, drinks and home, toys, sky
-and tree, flower and animals. Edit `js/items.js` to change them. Pages are
-cut from the list in order, so keep related pictures together in runs of 4.
-Each item has a label per language and, optionally, a recorded clip per
-language:
+The picture sets live in `js/items.js` (`itemSets`), one list per Guess
+items game, 24 pictures each. Pages are cut from a list in order, so keep
+related pictures together in runs of 4. Each item has a label per language
+and, optionally, a recorded clip per language:
 
 ```js
 export const items = [
@@ -129,20 +133,33 @@ export const items = [
 - `audio` (optional) plays a recorded clip instead of text-to-speech, e.g. a
   familiar person's voice. Use MP3 or WAV, which play in every browser.
 
+**Picture credits.** The Mixed set and a few pictures in the other sets
+(pomegranate, plum, fig, apricot, quince, persimmon, cabbage, pumpkin, beet,
+radish, zucchini, cauliflower, sparrow, stork, seagull, woodpecker,
+hummingbird, ostrich, magpie, swallow, heron) were drawn for this app. All
+other pictures are [Twemoji](https://github.com/jdecked/twemoji) graphics,
+© Twitter and contributors, licensed
+[CC-BY 4.0](https://creativecommons.org/licenses/by/4.0/); files are named
+by item rather than by emoji code.
+
 Add new files to the `PRECACHE` list in `sw.js` and bump `CACHE_NAME` so
 they are available offline. `npm test` fails if an image is missing or not
 precached.
 
 ## Adding a game
 
-Games live in `js/games/`, one module each, and are listed in
-`js/games/index.js` (menu order). A game module exports an `info` object:
+Games live in `js/games/`, and are listed in `js/games/index.js` together
+with the category order (`CATEGORIES`). A game module exports one or more
+`GameInfo` objects:
 
 ```js
 export const info = {
-  id: 'guess',
-  icon: 'assets/icons/game-guess.svg',
-  create: (ctx) => new GuessGame(ctx),
+  id: 'guess-fruit',
+  category: 'guess',       // menu group; name in categories.<category>.name
+  textId: 'guess',         // optional: share description/help with other games
+  icon: 'assets/images/fruit/apple.svg',
+  items: itemSets.fruit,   // optional: the pictures it speaks (voice preparation)
+  create: (ctx) => new GuessGame(ctx, itemSets.fruit),
 };
 ```
 
@@ -154,11 +171,12 @@ engine and `speakItem(item)`; it forwards every click on the game screen as
 `key(event)`. The game draws its own screen inside `ctx.root` and clears it
 in `stop()`.
 
-Then add `games.<id>.name`, `.description` and `.help` to every language in
-`js/i18n.js`, put the icon in `assets/icons/` and in `sw.js`'s `PRECACHE`,
-and bump `CACHE_NAME`. Settings that belong only to the game go in a
-`<fieldset data-game="<id>">` in `index.html`; it is shown only on that
-game's page. `npm test` checks all of that.
+Then add `games.<id>.name` (and `games.<textId>.description` / `.help`, plus
+`categories.<category>.name` for a new category) to every language in
+`js/i18n.js`, put the icon in `sw.js`'s `PRECACHE`, and bump `CACHE_NAME`.
+Settings shared by a category go in a `<fieldset data-category="<category>">`
+in `index.html`; it is shown only on those games' pages. `npm test` checks
+all of that.
 
 ## Translations
 
@@ -175,7 +193,7 @@ index.html            start screen and game screen
 css/style.css         layout and highlight styles
 js/main.js            app shell: menu, language, settings, voices
 js/games/index.js     list of games shown on the menu
-js/games/guess.js     the Guess items game (its screen, scanning, pages)
+js/games/guess.js     the Guess items games (one per picture set)
 js/scanner.js         scanning logic (no DOM; unit-tested)
 js/pages.js           pages and progress through them (unit-tested)
 js/settings.js        defaults, limits, load/save
@@ -185,7 +203,7 @@ js/piper.js           in-app Piper voices (download, cache, synthesis)
 js/wav.js             WAV encoder for synthesized speech
 js/wakelock.js        keeps the screen on during a game
 js/ui.js              the shell's DOM (menu, settings form, notes)
-js/items.js           the pictures
+js/items.js           the picture sets
 vendor/               small third-party JS glue for Piper (see vendor/README.md)
 sw.js                 service worker for offline use
 manifest.webmanifest  makes the app installable

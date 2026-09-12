@@ -49,7 +49,7 @@ export const DEFAULTS = Object.freeze({
   intervalMs: 2000,
   cooldownMs: 2000,
   debounceMs: 300,
-  maxCycles: 5,
+  maxCycles: 0, // never pause; caregivers can turn it on
   speakOnSelect: true,
   speakOnHighlight: false,
   highlightSound: true,

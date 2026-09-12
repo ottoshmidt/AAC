@@ -78,7 +78,7 @@ body {
 }
 
 .back-button:focus-visible {
-  outline: 0.2rem solid var(--highlight);
+  outline: 0.2rem solid var(--accent);
   outline-offset: 0.2rem;
 }
 
@@ -112,33 +112,56 @@ body {
 }
 
 .start-button:focus-visible {
-  outline: 0.3rem solid var(--highlight);
+  outline: 0.2rem solid white;
   outline-offset: 0.3rem;
 }
 
-.settings h3 {
-  margin: 0.25rem 0 0;
-  font-size: 1.1rem;
+.settings summary {
+  cursor: pointer;
+  font-weight: 600;
+  padding: 0.25rem 0;
+}
+
+/* Scan highlight on menu and game-page buttons: same yellow as in the games. */
+.scan-highlight {
+  outline: 0.4rem solid var(--highlight);
+  outline-offset: 0.3rem;
+  box-shadow: 0 0 0 0.9rem rgb(255 212 0 / 0.3);
+  border-radius: 1.5rem;
+}
+
+summary.scan-highlight {
+  outline-offset: 0.5rem;
+  border-radius: 0.5rem;
 }
 
 /* ---- Game menu ------------------------------------------------------------ */
 
 .game-menu {
   width: min(56rem, 100%);
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+}
+
+.category-name {
+  margin: 0.5rem 0 0;
+  font-size: clamp(1.25rem, 3vw, 1.6rem);
+  color: var(--muted);
+}
+
+.category-games {
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(16rem, 1fr));
-  gap: 1.25rem;
-  justify-items: center;
+  grid-template-columns: repeat(auto-fill, minmax(9.5rem, 1fr));
+  gap: 1rem;
 }
 
 .game-card {
-  width: 100%;
-  max-width: 22rem;
   display: flex;
   flex-direction: column;
   align-items: center;
   gap: 0.6rem;
-  padding: 1.5rem 1.25rem;
+  padding: 1.25rem 0.75rem;
   border: 0.35rem solid transparent;
   border-radius: 1.5rem;
   background: var(--panel);
@@ -153,30 +176,30 @@ body {
   transform: translateY(-2px);
 }
 
+/* Keyboard focus is a thin blue ring; yellow is reserved for the scan. */
 .game-card:focus-visible {
-  outline: none;
-  border-color: var(--highlight);
+  outline: 0.2rem solid var(--accent);
+  outline-offset: 0.2rem;
 }
 
 .game-card img {
-  width: clamp(6rem, 30%, 9rem);
+  width: 4.5rem;
   aspect-ratio: 1;
 }
 
 .game-name {
-  font-size: clamp(1.5rem, 4vw, 2.25rem);
+  font-size: 1.15rem;
   font-weight: 700;
   color: var(--accent);
+  line-height: 1.2;
 }
 
-.game-description {
-  font-size: 1rem;
-  line-height: 1.35;
-}
-
-.game-help {
+.intro-category {
+  margin: 0;
+  color: var(--muted);
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
   font-size: 0.9rem;
-  color: #5f6674;
 }
 
 .hint {
@@ -210,7 +233,7 @@ body {
 
 .language-switch button:focus-visible,
 .link-button:focus-visible {
-  outline: 0.2rem solid var(--highlight);
+  outline: 0.2rem solid var(--accent);
   outline-offset: 0.2rem;
 }
 
@@ -301,7 +324,10 @@ body {
 .game-screen {
   position: fixed;
   inset: 0;
-  padding: var(--gap);
+  padding: calc(var(--gap) * 0.5) var(--gap) var(--gap);
+  display: flex;
+  flex-direction: column;
+  gap: calc(var(--gap) * 0.5);
   cursor: pointer;
   user-select: none;
   -webkit-user-select: none;
@@ -309,56 +335,19 @@ body {
 }
 
 .game-root {
-  height: 100%;
+  flex: 1;
+  min-height: 0;
 }
 
-/* Corner exit: hold to leave. The ring fills while held. */
-.exit-button {
-  position: absolute;
-  top: 0.5rem;
-  right: 0.5rem;
-  width: 2.75rem;
-  height: 2.75rem;
-  border: 2px solid rgb(255 255 255 / 0.25);
-  border-radius: 50%;
-  background: rgb(255 255 255 / 0.08);
-  color: rgb(255 255 255 / 0.6);
-  font: inherit;
+/* Back button: its own row above the game, so it never covers a picture.
+   It is a scan stop, so it is as tall as a comfortable touch target. */
+.game-screen .back-button {
+  position: static;
+  order: -1;
+  align-self: flex-start;
+  min-height: 2.75rem;
+  padding: 0.4rem 1.25rem;
   font-size: 1.1rem;
-  cursor: pointer;
-  touch-action: none;
-  user-select: none;
-  -webkit-user-select: none;
-  transition: background 2000ms linear, color 150ms ease;
-}
-
-.exit-button.holding {
-  background: var(--highlight);
-  color: var(--text-dark);
-}
-
-.exit-button,
-.exit-confirm {
-  -webkit-touch-callout: none; /* no iOS long-press menu */
-}
-
-/* Appears left of ✕ after a tap on it; tapping it leaves the game. */
-.exit-confirm {
-  position: absolute;
-  top: 0.5rem;
-  right: 4.25rem;
-  height: 2.75rem;
-  padding: 0 1.25rem;
-  border: none;
-  border-radius: 999px;
-  background: var(--highlight);
-  color: var(--text-dark);
-  font: inherit;
-  font-weight: 700;
-  cursor: pointer;
-  touch-action: none;
-  user-select: none;
-  -webkit-user-select: none;
 }
 
 .choices {
@@ -389,7 +378,7 @@ body {
 }
 
 .choices[data-count="4"] .choice figcaption {
-  font-size: clamp(1rem, 10cqi, 2.75rem);
+  font-size: clamp(0.8rem, 10cqi, 2.75rem);
 }
 
 .choice {
@@ -427,7 +416,7 @@ body {
   max-width: 100%;
   /* Sized by the card's width (cqi), so long Georgian words like
      ფორთოხალი fit on one line even in a small 2×2 cell on a phone. */
-  font-size: clamp(1rem, 10cqi, 3.5rem);
+  font-size: clamp(0.8rem, 10cqi, 3.5rem);
   font-weight: 700;
   line-height: 1.15;
   text-align: center;

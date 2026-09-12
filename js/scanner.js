@@ -44,6 +44,9 @@ export class Scanner extends EventTarget {
     this.lastPressAt = -Infinity;
     /** @type {ReturnType<typeof setTimeout> | null} */
     this.timer = null;
+    /** Bumped by start()/stop(), so an event listener that restarts or stops
+     * the scanner doesn't get a stale timer scheduled on top. */
+    this.run = 0;
   }
 
   /** @param {Partial<ScannerOptions>} changes */
@@ -53,11 +56,13 @@ export class Scanner extends EventTarget {
 
   start() {
     this.#clearTimer();
+    this.run += 1;
     this.#newRound();
   }
 
   stop() {
     this.#clearTimer();
+    this.run += 1;
     this.state = 'idle';
     this.index = -1;
     this.#emit('stop');
@@ -85,13 +90,17 @@ export class Scanner extends EventTarget {
   #select() {
     this.#clearTimer();
     this.state = 'selected';
+    const run = this.run;
     this.#emit('select', { index: this.index });
+    if (this.run !== run) return; // a listener stopped or restarted us
     this.timer = setTimeout(() => this.#newRound(), this.options.cooldownMs);
   }
 
   #newRound() {
     this.cycles = 0;
+    const run = this.run;
     this.#emit('round');
+    if (this.run !== run) return;
     this.#highlight(0);
   }
 
@@ -119,7 +128,9 @@ export class Scanner extends EventTarget {
   #highlight(index) {
     this.state = 'scanning';
     this.index = index;
+    const run = this.run;
     this.#emit('highlight', { index });
+    if (this.run !== run) return;
     this.timer = setTimeout(() => this.#advance(), this.options.intervalMs);
   }
 

@@ -137,6 +137,27 @@ describe('Scanner', () => {
     );
   });
 
+  it('stays stopped when a listener calls stop() inside select', () => {
+    const { scanner, events } = setup();
+    scanner.addEventListener('select', () => scanner.stop());
+    scanner.start();
+    scanner.press();
+    ticks(10, 1000);
+    assert.deepEqual(events.slice(1), [['select', 0], ['stop']]);
+    assert.equal(scanner.state, 'idle');
+  });
+
+  it('does not double up when a listener calls start() inside select', () => {
+    const { scanner, events } = setup();
+    scanner.addEventListener('select', () => scanner.start());
+    scanner.start();
+    scanner.press();
+    ticks(3, 1000);
+    // After the restart: highlight 0, then one highlight per interval; no
+    // extra round from the old cooldown timer.
+    assert.deepEqual(events.slice(1), [['select', 0], ['highlight', 0], ['highlight', 1], ['highlight', 0], ['highlight', 1]]);
+  });
+
   it('does nothing after stop', () => {
     const { scanner, events } = setup();
     scanner.start();

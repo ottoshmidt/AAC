@@ -5,26 +5,51 @@
  * Pictures come in pages; once every picture on a page has been chosen the
  * next page appears.
  *
+ * After the pictures, the scan visits the shell's Back button, so a
+ * single-switch user can leave the game.
+ *
  * The game owns everything inside its screen. The shell (main.js) gives it a
  * root element and a context, and forwards presses and key strokes.
  */
 
-import { items } from '../items.js';
+import { itemSets } from '../items.js';
 import { PageProgress } from '../pages.js';
 import { Scanner } from '../scanner.js';
 
-/** @type {import('./index.js').GameInfo} */
-export const info = {
-  id: 'guess',
-  icon: 'assets/icons/game-guess.svg',
-  create: (ctx) => new GuessGame(ctx),
+/** Menu icon per set (an item's own picture, or the game icon for Mixed). */
+const ICONS = {
+  mixed: 'assets/icons/game-guess.svg',
+  fruit: 'assets/images/fruit/apple.svg',
+  vegetables: 'assets/images/vegetables/carrot.svg',
+  transport: 'assets/images/transport/car.svg',
+  clothes: 'assets/images/clothes/t-shirt.svg',
+  animals: 'assets/images/animals/cat.svg',
+  birds: 'assets/images/birds/owl.svg',
 };
+
+/**
+ * One "Guess items" game per picture set, all in the 'guess' category and
+ * sharing the same description, help and settings (textId 'guess').
+ * @type {import('./index.js').GameInfo[]}
+ */
+export const guessGames = Object.entries(ICONS).map(([set, icon]) => ({
+  id: `guess-${set}`,
+  category: 'guess',
+  textId: 'guess',
+  icon,
+  items: itemSets[set],
+  create: (ctx) => new GuessGame(ctx, itemSets[set]),
+}));
 
 /** @implements {import('./index.js').Game} */
 class GuessGame {
-  /** @param {import('./index.js').GameContext} ctx */
-  constructor(ctx) {
+  /**
+   * @param {import('./index.js').GameContext} ctx
+   * @param {import('../items.js').Item[]} items  the pictures, in page order
+   */
+  constructor(ctx, items) {
     this.ctx = ctx;
+    this.items = items;
     this.progress = new PageProgress(items.length, ctx.settings().choicesPerRound);
     /** Scan index -> slot on the page; chosen slots are left out. */
     this.scanSlots = this.progress.remaining;
@@ -45,14 +70,28 @@ class GuessGame {
       this.renderPage();
     });
     this.scanner.addEventListener('highlight', (event) => {
-      const slot = this.scanSlots[/** @type {CustomEvent} */ (event).detail.index];
-      this.setHighlight(slot);
+      const { index } = /** @type {CustomEvent} */ (event).detail;
       const s = ctx.settings();
+      if (index === this.scanSlots.length) {
+        // Last stop of the round: the Back button.
+        this.setHighlight(-1);
+        ctx.backButton.classList.add('scan-highlight');
+        if (s.speakOnHighlight) ctx.say(ctx.t('back'));
+        else if (s.highlightSound) ctx.speech.tick();
+        return;
+      }
+      const slot = this.scanSlots[index];
+      this.setHighlight(slot);
       if (s.speakOnHighlight) ctx.speakItem(this.pageItems()[slot]);
       else if (s.highlightSound) ctx.speech.tick();
     });
     this.scanner.addEventListener('select', (event) => {
-      const slot = this.scanSlots[/** @type {CustomEvent} */ (event).detail.index];
+      const { index } = /** @type {CustomEvent} */ (event).detail;
+      if (index === this.scanSlots.length) {
+        ctx.exit();
+        return;
+      }
+      const slot = this.scanSlots[index];
       this.progress.choose(slot);
       this.setSelected(slot);
       if (ctx.settings().speakOnSelect) ctx.speakItem(this.pageItems()[slot]);
@@ -62,7 +101,7 @@ class GuessGame {
   }
 
   pageItems() {
-    return this.progress.pictures.map((i) => items[i]);
+    return this.progress.pictures.map((i) => this.items[i]);
   }
 
   // ---- Game interface --------------------------------------------------------
@@ -82,6 +121,7 @@ class GuessGame {
 
   stop() {
     this.scanner.stop();
+    this.ctx.backButton.classList.remove('scan-highlight');
     this.ctx.root.replaceChildren();
   }
 
@@ -127,7 +167,7 @@ class GuessGame {
   renderPage() {
     const { lang, labelFor, settings } = this.ctx;
     this.scanSlots = this.progress.remaining;
-    this.scanner.updateOptions({ itemCount: this.scanSlots.length });
+    this.scanner.updateOptions({ itemCount: this.scanSlots.length + 1 }); // + Back
 
     const choices = /** @type {HTMLElement} */ (this.choices);
     choices.dataset.count = String(settings().choicesPerRound); // grid layout; a short last page keeps positions
@@ -157,6 +197,7 @@ class GuessGame {
 
   /** @param {number} slot highlighted slot, or -1 for none */
   setHighlight(slot) {
+    this.ctx.backButton.classList.remove('scan-highlight');
     for (const c of this.choiceElements()) {
       c.classList.toggle('highlighted', Number(c.dataset.index) === slot);
       c.classList.remove('selected', 'not-selected');
