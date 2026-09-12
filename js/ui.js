@@ -143,9 +143,12 @@ export function focusMenu(id) {
   /** @type {HTMLElement | null} */ (elements.gameMenu.querySelector(`[data-game="${id}"]`))?.focus();
 }
 
-/** The game cards, in scanning order. */
-export function menuCards() {
-  return /** @type {HTMLElement[]} */ ([...elements.gameMenu.querySelectorAll('.game-card')]);
+/** The menu's scan stops: the game cards, then the language buttons. */
+export function menuScanStops() {
+  return /** @type {HTMLElement[]} */ ([
+    ...elements.gameMenu.querySelectorAll('.game-card'),
+    ...elements.languageSwitch.querySelectorAll('button'),
+  ]);
 }
 
 /**

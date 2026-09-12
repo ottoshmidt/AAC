@@ -140,11 +140,12 @@ for (const screen of [ui.elements.startScreen, ui.elements.introScreen]) {
 }
 
 function scanMenu() {
-  scanShell(ui.menuCards());
+  scanShell(ui.menuScanStops());
 }
 
 function scanIntro() {
-  scanShell([ui.elements.startButton, ui.elements.settingsSummary, ui.elements.backButton]);
+  // Settings are for the caregiver, so they are left out of the scan.
+  scanShell([ui.elements.startButton, ui.elements.backButton]);
 }
 
 /** Game instances, created once and reused between runs. */

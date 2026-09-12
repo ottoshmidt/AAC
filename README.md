@@ -35,8 +35,9 @@ npm start            # or: python3 -m http.server 8080
 
 Then open <http://localhost:8080>.
 
-1. The menu and the game pages are scanned too: the game cards (and, on a
-   game's page, **Start**, **Settings** and **Back**) light up in turn, and a
+1. The menu and the game pages are scanned too: the game cards and the
+   language buttons (and, on a game's page, **Start** and **Back**) light
+   up in turn, and a
    click on the background chooses the lit one. So a single-switch user can
    get around the whole app; a caregiver can also click things directly.
 2. The caregiver picks the language and adjusts **Settings** on the game's

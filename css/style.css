@@ -135,6 +135,13 @@ summary.scan-highlight {
   border-radius: 0.5rem;
 }
 
+.language-switch button.scan-highlight {
+  outline-width: 0.3rem;
+  outline-offset: 0.2rem;
+  box-shadow: 0 0 0 0.6rem rgb(255 212 0 / 0.3);
+  border-radius: 999px;
+}
+
 /* ---- Game menu ------------------------------------------------------------ */
 
 .game-menu {
