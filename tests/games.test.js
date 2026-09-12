@@ -29,7 +29,7 @@ describe('game registry', () => {
         assert.notEqual(t(lang, key), key, `${lang}: ${key} missing`);
       }
       for (const game of games) {
-        const keys = [`games.${game.id}.name`, `games.${game.textId ?? game.id}.description`, `games.${game.textId ?? game.id}.help`];
+        const keys = [`games.${game.id}.name`, `games.${game.textId ?? game.id}.help`];
         for (const key of keys) assert.notEqual(t(lang, key), key, `${lang}: ${key} missing`);
       }
     }

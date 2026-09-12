@@ -25,7 +25,6 @@ export const elements = {
   introIcon: /** @type {HTMLImageElement} */ ($('#intro-icon')),
   introCategory: $('#intro-category'),
   introName: $('#intro-name'),
-  introDescription: $('#intro-description'),
   introHelp: $('#intro-help'),
   startButton: /** @type {HTMLButtonElement} */ ($('#start-button')),
   settings: /** @type {HTMLDetailsElement} */ ($('#settings')),
@@ -60,7 +59,6 @@ export function fillIntro(game, lang) {
   elements.introIcon.src = game.icon;
   elements.introCategory.textContent = t(lang, `categories.${game.category}.name`);
   elements.introName.textContent = t(lang, `games.${game.id}.name`);
-  elements.introDescription.textContent = t(lang, `games.${textId}.description`);
   elements.introHelp.textContent = t(lang, `games.${textId}.help`);
   for (const fieldset of elements.settingsForm.querySelectorAll('fieldset[data-category]')) {
     /** @type {HTMLElement} */ (fieldset).hidden = fieldset.getAttribute('data-category') !== game.category;

@@ -93,12 +93,6 @@ body {
   text-align: center;
 }
 
-.intro-description {
-  margin: 0;
-  max-width: 40rem;
-  text-align: center;
-}
-
 .start-button {
   font: inherit;
   font-size: clamp(2rem, 6vw, 3rem);
@@ -311,10 +305,12 @@ body {
 .game-screen {
   position: fixed;
   inset: 0;
-  padding: calc(var(--gap) * 0.5) var(--gap) var(--gap);
+  padding: 0.5rem var(--gap) var(--gap);
   display: flex;
   flex-direction: column;
-  gap: calc(var(--gap) * 0.5);
+  /* Room under Back for the highlight/selected frames, which spill up to
+     0.75rem outside a picture. */
+  gap: max(1rem, calc(var(--gap) * 0.5));
   cursor: pointer;
   user-select: none;
   -webkit-user-select: none;
@@ -327,17 +323,18 @@ body {
   min-height: 0;
 }
 
-/* Back button: its own row above the game, so it never covers a picture.
-   It is a scan stop, so it is as tall as a comfortable touch target. */
+/* Back button: its own row above the game, so it never covers a picture,
+   as tall as a comfortable touch target. */
 .game-screen .back-button {
-  position: static;
+  position: relative;
+  top: 0; /* not the intro screen's absolute offsets */
+  left: 0;
+  z-index: 2; /* always tappable, above anything a game draws */
   order: -1;
   align-self: flex-start;
   min-height: 2.75rem;
   padding: 0.4rem 1.25rem;
   font-size: 1.1rem;
-  position: relative;
-  z-index: 2; /* always tappable, above anything a game draws */
 }
 
 .choices {

@@ -161,7 +161,7 @@ with the category order (`CATEGORIES`). A game module exports one or more
 export const info = {
   id: 'guess-fruit',
   category: 'guess',       // menu group; name in categories.<category>.name
-  textId: 'guess',         // optional: share description/help with other games
+  textId: 'guess',         // optional: share help text/settings with other games
   icon: 'assets/images/fruit/apple.svg',
   items: itemSets.fruit,   // optional: the pictures it speaks (voice preparation)
   create: (ctx) => new GuessGame(ctx, itemSets.fruit),
@@ -176,7 +176,7 @@ engine and `speakItem(item)`; it forwards every click on the game screen as
 `key(event)`. The game draws its own screen inside `ctx.root` and clears it
 in `stop()`.
 
-Then add `games.<id>.name` (and `games.<textId>.description` / `.help`, plus
+Then add `games.<id>.name` (and `games.<textId>.help`, plus
 `categories.<category>.name` for a new category) to every language in
 `js/i18n.js`, put the icon in `sw.js`'s `PRECACHE`, and bump `CACHE_NAME`.
 Settings shared by a category go in a `<fieldset data-category="<category>">`

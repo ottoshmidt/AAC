@@ -4,8 +4,8 @@
  *
  * A game module exports one or more GameInfo objects. Strings live in
  * js/i18n.js: `categories.<category>.name`, `games.<id>.name`, and
- * `games.<textId>.description` / `.help` (textId defaults to id, so games
- * that share a description can share it). Icons and pictures must be in the
+ * `games.<textId>.help` (textId defaults to id, so games that share help
+ * text can share it). Icons and pictures must be in the
  * PRECACHE list of sw.js (tests check this).
  */
 
@@ -37,7 +37,7 @@ import { guessGames } from './guess.js';
  * @typedef {object} GameInfo
  * @property {string} id
  * @property {string} category  key of CATEGORIES
- * @property {string} [textId]  whose description/help strings to show (default: id)
+ * @property {string} [textId]  whose help text to show (default: id)
  * @property {string} icon  path to the menu icon
  * @property {import('../items.js').Item[]} [items]  pictures the game speaks (for voice preparation)
  * @property {(ctx: GameContext) => Game} create
