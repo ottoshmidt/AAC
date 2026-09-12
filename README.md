@@ -96,10 +96,17 @@ voice that runs entirely in the browser.
 - The Voice setting also lists any Georgian voices the device does have
   (for example `espeak-ng` or RHVoice through speech-dispatcher on Linux).
 
-**License:** Natia is trained on the RHVoice Natia recordings, licensed
-**CC BY-NC-SA 4.0**. It is free for personal, non-commercial use only;
-organizations need permission from the copyright holders. Recorded clips
-(below) avoid the restriction entirely and usually sound best.
+**License:** the Natia model is a [Piper](https://github.com/rhasspy/piper)
+voice trained on the RHVoice Natia recordings, which have a custom license,
+not a Creative Commons one. According to the
+[RHVoice license page](https://github.com/RHVoice/RHVoice/wiki/License/325174d13f5dd3517d0d15d7bd4fc174355c0e89),
+"The Georgian voice can be used free of charge only by individuals for
+personal use." Organizations and manufacturers need explicit permission from
+the copyright holders before copying, modifying, distributing, selling or
+using it. The contacts listed there are Beqa Gozalishvili
+(beqaprogger@gmail.com) and Vladimer Urdulashvili
+(vladimerurdulashvili@gmail.com). Recorded clips (below) avoid the
+restriction entirely and usually sound best.
 
 ## Russian speech
 
