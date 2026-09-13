@@ -112,7 +112,7 @@ voice. The recording page lives at `record.html` and saves straight into the
 project through a small development server:
 
 ```sh
-npm run record            # then open http://localhost:8080/record.html
+npm run record            # then open http://localhost:8888/record.html
 ```
 
 Pick the language, and for each picture click **Record**, say the word,
@@ -126,8 +126,9 @@ The server also rewrites `js/clips.js` (the word → file registry the app
 reads) and the `clips:begin` … `clips:end` block of `sw.js` so the clips
 work offline. Commit those two files together with the WAVs and bump
 `CACHE_NAME`. Recording needs a secure origin, so use `localhost` on the
-computer; on a phone, `adb reverse tcp:8080 tcp:8080` makes
-`http://localhost:8080` reach it.
+computer; on a phone, `adb reverse tcp:8888 tcp:8888` makes
+`http://localhost:8888` reach it. It uses port 8888, so it can run next to
+`npm start`.
 
 ## Russian speech
 

@@ -3,7 +3,7 @@
  * Development server for recording words: serves the project like
  * `python3 -m http.server`, and saves clips posted by record.html.
  *
- *   npm run record            then open http://localhost:8080/record.html
+ *   npm run record            then open http://localhost:8888/record.html
  *
  * API (used by js/record.js):
  *   GET    /api/clips                    the registry (language -> label -> file)
@@ -22,7 +22,7 @@ import { buildRegistry, clipPath, renderClipsModule, updateServiceWorker } from 
 import { LANGUAGES } from '../js/i18n.js';
 
 const ROOT = fileURLToPath(new URL('../', import.meta.url));
-const PORT = Number(process.env.PORT ?? 8080);
+const PORT = Number(process.env.PORT ?? 8888);
 
 const MIME = {
   '.html': 'text/html; charset=utf-8',

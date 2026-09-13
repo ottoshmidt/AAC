@@ -88,6 +88,10 @@ async function api(path, init) {
   } catch {
     throw new Error('The record server is not running. Start it with: npm run record');
   }
+  if (response.status === 501 || response.status === 405 || response.status === 404) {
+    // A plain static server (npm start) can't save. Only the record server can.
+    throw new Error('This server cannot save recordings. Run: npm run record, then open http://localhost:8888/record.html');
+  }
   const body = await response.json().catch(() => ({}));
   if (!response.ok) throw new Error(body.error ?? `Server error ${response.status}`);
   return body;
@@ -147,7 +151,7 @@ async function toWav(blob) {
 async function ensureStream() {
   if (stream) return stream;
   if (!navigator.mediaDevices?.getUserMedia) {
-    throw new Error('No microphone access: open this page at http://localhost:8080/record.html (a secure origin).');
+    throw new Error('No microphone access: open this page at http://localhost:8888/record.html (a secure origin).');
   }
   stream = await navigator.mediaDevices.getUserMedia({
     audio: { echoCancellation: false, noiseSuppression: false, autoGainControl: false },
