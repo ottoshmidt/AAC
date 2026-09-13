@@ -170,8 +170,9 @@ export const info = {
 
 `create` returns an object with `start()`, `stop()`, `press()` and
 `key(event)`. The shell (`js/main.js`) gives the game a context with its
-screen element (`ctx.root`), the current settings and language, the speech
-engine and `speakItem(item)`; it forwards every click on the game screen as
+screen element (`ctx.root`), a slot in the top bar next to Back for its own
+tap-only buttons (`ctx.controls`, e.g. page arrows), the current settings and
+language, the speech engine and `speakItem(item)`; it forwards every click on the game screen as
 `press()` and every key (except Esc, which returns to the menu) as
 `key(event)`. The game draws its own screen inside `ctx.root` and clears it
 in `stop()`.

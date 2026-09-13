@@ -16,6 +16,9 @@ import { Scanner } from '../scanner.js';
 /** Captions shrink to fit on one line, but never below this (px). */
 const MIN_CAPTION_PX = 12;
 
+const TRIANGLE_LEFT = '<svg viewBox="0 0 20 20" aria-hidden="true"><path d="M14 3v14L4 10z"/></svg>';
+const TRIANGLE_RIGHT = '<svg viewBox="0 0 20 20" aria-hidden="true"><path d="M6 3v14l10-7z"/></svg>';
+
 /** Menu icon per set (an item's own picture, or the game icon for Mixed). */
 const ICONS = {
   mixed: 'assets/icons/game-guess.svg',
@@ -111,6 +114,7 @@ class GuessGame {
     this.scanner.stop();
     window.removeEventListener('resize', this.onResize);
     this.ctx.root.replaceChildren();
+    this.ctx.controls.replaceChildren();
   }
 
   press() {
@@ -150,6 +154,17 @@ class GuessGame {
     p.append(el('span', '', t('paused')), el('br'), el('span', 'sub', t('clickToContinue')));
     this.pauseOverlay.append(p);
     root.replaceChildren(this.choices, this.pageIndicator, this.pauseOverlay);
+
+    // Page arrows in the top bar: for the caregiver's finger, like Back.
+    this.pageButtons = [-1, +1].map((delta) => {
+      const button = el('button', 'page-button');
+      button.type = 'button';
+      button.setAttribute('aria-label', t(delta < 0 ? 'previousPage' : 'nextPage'));
+      button.innerHTML = delta < 0 ? TRIANGLE_LEFT : TRIANGLE_RIGHT;
+      button.addEventListener('click', () => this.turnPage(delta));
+      return button;
+    });
+    this.ctx.controls.replaceChildren(...this.pageButtons);
   }
 
   renderPage() {
@@ -177,6 +192,7 @@ class GuessGame {
     const indicator = /** @type {HTMLElement} */ (this.pageIndicator);
     indicator.textContent = `${this.progress.page + 1} / ${this.progress.pageCount}`;
     indicator.hidden = this.progress.pageCount <= 1;
+    for (const b of this.pageButtons ?? []) b.hidden = this.progress.pageCount <= 1;
     this.fitCaptions();
   }
 

@@ -109,7 +109,11 @@
       <div id="game-root" class="game-root"></div>
       <!-- Back to the game's page. Games include it in their scan; a direct
            click works too. -->
-      <button id="game-back" class="back-button" type="button">‹ <span data-i18n="back"></span></button>
+      <div class="game-bar">
+        <button id="game-back" class="back-button" type="button">‹ <span data-i18n="back"></span></button>
+        <!-- Games put their own tap-only buttons here (e.g. page arrows). -->
+        <div id="game-controls" class="game-controls"></div>
+      </div>
     </section>
 
     <noscript>This app needs JavaScript enabled. / აპლიკაციას JavaScript სჭირდება.</noscript>

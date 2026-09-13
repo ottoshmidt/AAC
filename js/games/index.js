@@ -15,6 +15,7 @@ import { guessGames } from './guess.js';
  * @typedef {object} GameContext
  * @property {HTMLElement} root  the game's screen; the game fills and clears it
  * @property {HTMLElement} backButton  the shell's Back button on the game screen (tap only; not scanned)
+ * @property {HTMLElement} controls  slot in the top bar, right of Back, for the game's own tap-only buttons; cleared by the game in stop()
  * @property {() => import('../settings.js').Settings} settings  current settings
  * @property {() => string} lang  current language code
  * @property {import('../speech.js').Speech} speech

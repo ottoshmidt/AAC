@@ -74,6 +74,7 @@ function prepareInAppVoice() {
 const gameContext = {
   root: ui.elements.gameRoot,
   backButton: ui.elements.gameBack,
+  controls: ui.elements.gameControls,
   settings: () => settings,
   lang,
   speech,
@@ -158,6 +159,8 @@ ui.elements.backButton.addEventListener('click', closeIntro);
 // game press. It is not part of any scan, so a stray click can't leave the game.
 ui.elements.gameBack.addEventListener('pointerdown', (event) => event.stopPropagation());
 ui.elements.gameBack.addEventListener('click', stopGame);
+// Same for the game's own buttons in the top bar (page arrows).
+ui.elements.gameControls.addEventListener('pointerdown', (event) => event.stopPropagation());
 
 // Back button / gesture (Android, browser) during a game.
 window.addEventListener('popstate', () => {
