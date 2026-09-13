@@ -280,7 +280,7 @@ export const itemSets = {};
     item('chick', 'წიწილა', 'Chick', 'Цыплёнок'),
     item('turkey', 'ინდაური', 'Turkey', 'Индюк'),
     item('goose', 'ბატი', 'Goose', 'Гусь'),
-    item('crow', 'ყვავი', 'Crow', 'Ворона'),
+    item('crow', 'ყვავი', 'Crow', 'Ворона', 'webp'),
     // Page 5
     item('stork', 'ყარყატი', 'Stork', 'Аист', 'webp'),
     item('seagull', 'თოლია', 'Seagull', 'Чайка'),
