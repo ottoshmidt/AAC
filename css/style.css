@@ -5,9 +5,12 @@
   --text-dark: #1f2430;
   --muted: #b9bfcc;
   --accent: #3d7eff;
-  /* Highlight: steady, high-contrast yellow. It moves between the sides but
-     never flashes, which keeps it safe for photosensitive users. */
+  /* Highlight (links, notes): high-contrast yellow. The scan frame around a
+     picture is black instead, see .choice.highlighted. Either way it moves
+     between pictures but never flashes, which keeps it safe for
+     photosensitive users. */
   --highlight: #ffd400;
+  --frame: #111;
   --selected: #2fbf71;
   --radius: 1.5rem;
   --gap: clamp(1rem, 3vw, 3rem);
@@ -451,8 +454,8 @@ body {
 }
 
 .choice.highlighted {
-  border-color: var(--highlight);
-  box-shadow: 0 0 0 0.5rem rgb(255 212 0 / 0.35);
+  border-color: var(--frame);
+  box-shadow: 0 0 0 0.5rem rgb(255 255 255 / 0.3); /* halo so the black frame stands out from the dark page */
 }
 
 .choice.selected {
