@@ -167,17 +167,17 @@ export const itemSets = {};
     item('truck', 'სატვირთო მანქანა', 'Truck', 'Грузовик'),
     item('tractor', 'ტრაქტორი', 'Tractor', 'Трактор'),
     item('motorcycle', 'მოტოციკლი', 'Motorcycle', 'Мотоцикл'),
-    item('scooter', 'სკუტერი', 'Scooter', 'Скутер'),
+    item('scooter', 'მოპედი', 'Scooter', 'Скутер'),
     // Page 4
     item('bicycle', 'ველოსიპედი', 'Bicycle', 'Велосипед'),
-    item('kick-scooter', 'სამოკატი', 'Kick scooter', 'Самокат'),
+    item('kick-scooter', 'ფეხის სკუტერი', 'Kick scooter', 'Самокат'),
     item('airplane', 'თვითმფრინავი', 'Airplane', 'Самолёт'),
     item('helicopter', 'ვერტმფრენი', 'Helicopter', 'Вертолёт'),
     // Page 5
     item('rocket', 'რაკეტა', 'Rocket', 'Ракета'),
     item('ship', 'გემი', 'Ship', 'Корабль'),
     item('sailboat', 'იალქნიანი ნავი', 'Sailboat', 'Парусник'),
-    item('speedboat', 'კატერი', 'Speedboat', 'Катер'),
+    item('speedboat', 'კატარღა', 'Speedboat', 'Катер'),
     // Page 6
     item('ambulance', 'სასწრაფო დახმარება', 'Ambulance', 'Скорая помощь'),
     item('fire-engine', 'სახანძრო მანქანა', 'Fire engine', 'Пожарная машина'),
