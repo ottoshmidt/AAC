@@ -283,7 +283,7 @@ export const itemSets = {};
     item('crow', 'ყვავი', 'Crow', 'Ворона', 'webp'),
     // Page 5
     item('stork', 'ყარყატი', 'Stork', 'Аист', 'webp'),
-    item('seagull', 'თოლია', 'Seagull', 'Чайка'),
+    item('seagull', 'თოლია', 'Seagull', 'Чайка', 'webp'),
     item('woodpecker', 'კოდალა', 'Woodpecker', 'Дятел', 'webp'),
     item('hummingbird', 'კოლიბრი', 'Hummingbird', 'Колибри', 'webp'),
     // Page 6
