@@ -410,6 +410,11 @@ body {
   overflow-wrap: anywhere; /* last resort: never widen the grid cell */
 }
 
+/* Set by the game while the caption fits (after shrinking) on one line. */
+.choice figcaption.one-line {
+  white-space: nowrap;
+}
+
 .choice.highlighted {
   border-color: var(--highlight);
   box-shadow: 0 0 0 0.5rem rgb(255 212 0 / 0.35);

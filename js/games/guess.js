@@ -13,6 +13,9 @@ import { itemSets } from '../items.js';
 import { PageProgress } from '../pages.js';
 import { Scanner } from '../scanner.js';
 
+/** Captions shrink to fit on one line, but never below this (px). */
+const MIN_CAPTION_PX = 12;
+
 /** Menu icon per set (an item's own picture, or the game icon for Mixed). */
 const ICONS = {
   mixed: 'assets/icons/game-guess.svg',
@@ -81,6 +84,7 @@ class GuessGame {
     });
     this.scanner.addEventListener('pause', () => this.showPaused(true));
     this.scanner.addEventListener('resume', () => this.showPaused(false));
+    this.onResize = () => this.fitCaptions();
   }
 
   pageItems() {
@@ -99,11 +103,13 @@ class GuessGame {
     });
     this.progress.setPerPage(s.choicesPerRound);
     this.buildScreen();
+    window.addEventListener('resize', this.onResize);
     this.scanner.start(); // emits 'round', which draws the page
   }
 
   stop() {
     this.scanner.stop();
+    window.removeEventListener('resize', this.onResize);
     this.ctx.root.replaceChildren();
   }
 
@@ -171,6 +177,25 @@ class GuessGame {
     const indicator = /** @type {HTMLElement} */ (this.pageIndicator);
     indicator.textContent = `${this.progress.page + 1} / ${this.progress.pageCount}`;
     indicator.hidden = this.progress.pageCount <= 1;
+    this.fitCaptions();
+  }
+
+  /**
+   * Keep every caption on one line so the picture gets the height: a label
+   * wider than its card (e.g. სატვირთო მანქანა) gets a smaller font instead
+   * of a second line. Only if it still doesn't fit at the minimum size is it
+   * allowed to wrap.
+   */
+  fitCaptions() {
+    for (const cap of /** @type {NodeListOf<HTMLElement>} */ (this.ctx.root.querySelectorAll('figcaption'))) {
+      cap.style.fontSize = '';
+      cap.classList.add('one-line');
+      const ratio = cap.clientWidth / cap.scrollWidth;
+      if (ratio >= 1) continue;
+      const base = parseFloat(getComputedStyle(cap).fontSize);
+      cap.style.fontSize = `${Math.max(base * ratio * 0.97, MIN_CAPTION_PX)}px`;
+      if (cap.scrollWidth > cap.clientWidth) cap.classList.remove('one-line');
+    }
   }
 
   choiceElements() {
