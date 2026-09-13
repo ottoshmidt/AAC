@@ -1,0 +1,38 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Record words – AAC Games</title>
+    <link rel="stylesheet" href="css/style.css" />
+  </head>
+  <body class="record-page">
+    <!-- Recording page for caregivers: record the name of every item in one
+         language. Needs the record server (npm run record); see README. -->
+    <header class="record-header">
+      <a class="record-home" href="./">‹ AAC Games</a>
+      <div id="record-langs" class="language-switch" aria-label="Language"></div>
+      <span id="record-progress" class="record-progress"></span>
+    </header>
+
+    <main class="record-main">
+      <section class="record-card">
+        <img id="record-image" class="record-image" alt="" draggable="false" />
+        <h1 id="record-word" class="record-word"></h1>
+        <p id="record-status" class="record-status" aria-live="polite"></p>
+        <div class="record-buttons">
+          <button id="record-prev" type="button" class="record-nav" aria-label="Previous word">‹</button>
+          <button id="record-button" type="button" class="record-button">● Record</button>
+          <button id="record-play" type="button" class="record-action">▶ Play</button>
+          <button id="record-delete" type="button" class="record-action">Delete</button>
+          <button id="record-next" type="button" class="record-nav" aria-label="Next word">›</button>
+        </div>
+        <p class="hint">Space: record / stop &nbsp;·&nbsp; ← →: previous / next word</p>
+      </section>
+
+      <ol id="record-list" class="record-list" aria-label="Words"></ol>
+    </main>
+
+    <script type="module" src="js/record.js"></script>
+  </body>
+</html>

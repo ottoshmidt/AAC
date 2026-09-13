@@ -105,6 +105,30 @@ using it. The contacts listed there are Beqa Gozalishvili
 (vladimerurdulashvili@gmail.com). Recorded clips (below) avoid the
 restriction entirely and usually sound best.
 
+## Recording words
+
+Instead of a synthetic voice, every word can be a recording, e.g. a parent's
+voice. The recording page lives at `record.html` and saves straight into the
+project through a small development server:
+
+```sh
+npm run record            # then open http://localhost:8080/record.html
+```
+
+Pick the language, and for each picture click **Record**, say the word,
+click **Stop** (or press Space). The clip is trimmed, normalized, resampled
+to 16 kHz mono and saved as `assets/audio/<lang>/<id>.wav`; it plays back
+once and the page moves on to the next unrecorded word. **Play** replays it,
+**Record again** overwrites it, **Delete** removes it. Words that appear in
+several sets (ვაშლი in Mixed and Fruit) are recorded once and shared.
+
+The server also rewrites `js/clips.js` (the word → file registry the app
+reads) and the `clips:begin` … `clips:end` block of `sw.js` so the clips
+work offline. Commit those two files together with the WAVs and bump
+`CACHE_NAME`. Recording needs a secure origin, so use `localhost` on the
+computer; on a phone, `adb reverse tcp:8080 tcp:8080` makes
+`http://localhost:8080` reach it.
+
 ## Russian speech
 
 Most devices already have a Russian voice (Windows, macOS, iOS, Android,
@@ -137,6 +161,8 @@ export const items = [
 - `label` is shown under the picture and spoken on selection.
 - `audio` (optional) plays a recorded clip instead of text-to-speech, e.g. a
   familiar person's voice. Use MP3 or WAV, which play in every browser.
+  Clips made with the recording page (see below) need no `audio` field:
+  they are found by label through `js/clips.js`.
 
 **Picture credits.** The Mixed set and a few pictures in the other sets
 (pomegranate, plum, fig, apricot, quince, persimmon, cabbage, pumpkin, beet,

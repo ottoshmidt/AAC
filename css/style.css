@@ -540,3 +540,178 @@ body {
 [hidden] {
   display: none !important;
 }
+
+/* ---- Recording page (record.html) ------------------------------------------ */
+
+.record-page {
+  display: flex;
+  flex-direction: column;
+  min-height: 100%;
+}
+
+.record-header {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 1rem;
+  padding: 1rem;
+}
+
+.record-home {
+  color: var(--muted);
+  text-decoration: none;
+}
+
+.record-progress {
+  margin-left: auto;
+  font-weight: 700;
+  color: var(--muted);
+}
+
+.record-main {
+  flex: 1;
+  min-height: 0;
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) minmax(12rem, 18rem);
+  gap: 1rem;
+  padding: 0 1rem 1rem;
+}
+
+@media (max-width: 40rem) {
+  .record-main {
+    grid-template-columns: minmax(0, 1fr);
+  }
+}
+
+.record-card {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 1rem;
+  padding: 1.5rem;
+  border-radius: var(--radius);
+  background: var(--panel);
+  color: var(--text-dark);
+}
+
+.record-image {
+  width: clamp(8rem, 40vmin, 18rem);
+  height: clamp(8rem, 40vmin, 18rem);
+  object-fit: contain;
+}
+
+.record-word {
+  margin: 0;
+  font-size: clamp(1.5rem, 5vw, 3rem);
+  text-align: center;
+}
+
+.record-status {
+  margin: 0;
+  min-height: 1.5em;
+  text-align: center;
+  color: #555;
+}
+
+.record-status.error {
+  color: #c0392b;
+  font-weight: 700;
+}
+
+.record-buttons {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  align-items: center;
+  gap: 0.75rem;
+}
+
+.record-button,
+.record-action,
+.record-nav {
+  font: inherit;
+  min-height: 3rem;
+  padding: 0.5rem 1.25rem;
+  border: 2px solid #3a4152;
+  border-radius: 999px;
+  background: transparent;
+  color: var(--text-dark);
+  cursor: pointer;
+}
+
+.record-button {
+  font-size: 1.25rem;
+  font-weight: 700;
+  padding: 0.75rem 2rem;
+  border-color: #c0392b;
+  background: #c0392b;
+  color: white;
+}
+
+.record-button.recording {
+  background: #1f2430;
+  border-color: #1f2430;
+  animation: record-pulse 1s ease-in-out infinite;
+}
+
+@keyframes record-pulse {
+  50% {
+    opacity: 0.6;
+  }
+}
+
+.record-nav {
+  min-width: 3rem;
+  font-size: 1.5rem;
+  padding: 0.25rem 0.75rem;
+}
+
+.record-button:disabled,
+.record-action:disabled,
+.record-nav:disabled {
+  opacity: 0.4;
+  cursor: default;
+}
+
+.record-button:focus-visible,
+.record-action:focus-visible,
+.record-nav:focus-visible {
+  outline: 0.2rem solid var(--accent);
+  outline-offset: 0.2rem;
+}
+
+.record-page .hint {
+  color: #777;
+}
+
+.record-list {
+  margin: 0;
+  padding: 0;
+  list-style: none;
+  overflow-y: auto;
+  max-height: calc(100vh - 6rem);
+  display: flex;
+  flex-direction: column;
+  gap: 0.25rem;
+}
+
+.record-list button {
+  font: inherit;
+  width: 100%;
+  text-align: left;
+  padding: 0.4rem 0.75rem;
+  border: 2px solid transparent;
+  border-radius: 0.75rem;
+  background: transparent;
+  color: var(--text);
+  cursor: pointer;
+}
+
+.record-list .done button::before {
+  content: '✓ ';
+  color: var(--selected);
+}
+
+.record-list .current button {
+  border-color: var(--accent);
+}

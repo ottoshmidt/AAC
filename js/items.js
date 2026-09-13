@@ -9,6 +9,7 @@
  *   image  path to the picture (SVG, PNG, JPG, WebP)
  *   label  text per language: shown under the picture and spoken on selection
  *   audio  optional recorded clip per language, played instead of text-to-speech
+ *          (clips recorded with `npm run record` are found by label, see clipFor)
  *
  * Example with a Georgian recording:
  *   { id: 'ball', image: 'assets/images/ball.svg',
@@ -20,6 +21,8 @@
  * PRECACHE list in sw.js so they work offline (tests check this).
  */
 
+
+import { clips } from './clips.js';
 /**
  * @typedef {object} Item
  * @property {string} id
@@ -304,10 +307,11 @@ export function labelFor(item, lang) {
 }
 
 /**
- * An item's recorded clip in `lang`, if it has one.
+ * An item's recorded clip in `lang`, if it has one: its own `audio`, or the
+ * clip recorded for its label (js/clips.js, made with `npm run record`).
  * @param {Item} item
  * @param {string} lang
  */
 export function clipFor(item, lang) {
-  return item.audio?.[lang];
+  return item.audio?.[lang] ?? clips[lang]?.[labelFor(item, lang)];
 }
