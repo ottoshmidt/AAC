@@ -565,6 +565,19 @@ body {
   text-decoration: none;
 }
 
+.record-mic {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  color: var(--muted);
+}
+
+.record-mic select {
+  font: inherit;
+  max-width: 16rem;
+  padding: 0.3rem 0.5rem;
+}
+
 .record-progress {
   margin-left: auto;
   font-weight: 700;

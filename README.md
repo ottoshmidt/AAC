@@ -115,8 +115,10 @@ project through a small development server:
 npm run record            # then open http://localhost:8888/record.html
 ```
 
-Pick the language and the voice (**Female voice** or **Male voice**: each
-word can be recorded in both), and for each picture click **Record**, say
+Pick the language, the voice (**Female voice** or **Male voice**: each
+word can be recorded in both) and the **Microphone** (e.g. a USB mic; the
+choice is remembered, and the list shows device names once the page has
+been allowed to use the microphone), and for each picture click **Record**, say
 the word, click **Stop** (or press Space). The clip is trimmed, normalized,
 resampled to 16 kHz mono and saved as
 `assets/audio/<lang>/<voice>/<id>.wav`; it plays back once and the page

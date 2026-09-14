@@ -15,6 +15,7 @@ import { itemSets, labelFor, RECORDED_VOICES } from './items.js';
 import { encodeWav } from './wav.js';
 
 const SAMPLE_RATE = 16000;
+const MIC_KEY = 'aac.record.mic';
 const SILENCE = 0.01; // about -40 dBFS
 const PAD_MS = 80;
 const PEAK = 0.9;
@@ -23,6 +24,7 @@ const $ = (/** @type {string} */ selector) => /** @type {HTMLElement} */ (docume
 const ui = {
   langs: $('#record-langs'),
   voices: $('#record-voices'),
+  mic: /** @type {HTMLSelectElement} */ ($('#record-mic')),
   progress: $('#record-progress'),
   image: /** @type {HTMLImageElement} */ ($('#record-image')),
   word: $('#record-word'),
@@ -152,15 +154,52 @@ async function toWav(blob) {
 
 // ---- Recording ---------------------------------------------------------------
 
+/** The chosen microphone's device id ('' = system default). */
+function chosenMic() {
+  try {
+    return localStorage.getItem(MIC_KEY) ?? '';
+  } catch {
+    return '';
+  }
+}
+
 async function ensureStream() {
   if (stream) return stream;
   if (!navigator.mediaDevices?.getUserMedia) {
     throw new Error('No microphone access: open this page at http://localhost:8888/record.html (a secure origin).');
   }
-  stream = await navigator.mediaDevices.getUserMedia({
-    audio: { echoCancellation: false, noiseSuppression: false, autoGainControl: false },
-  });
+  const deviceId = chosenMic();
+  /** @type {MediaTrackConstraints} */
+  const audio = { echoCancellation: false, noiseSuppression: false, autoGainControl: false };
+  try {
+    stream = await navigator.mediaDevices.getUserMedia({ audio: deviceId ? { ...audio, deviceId: { exact: deviceId } } : audio });
+  } catch (error) {
+    // The saved microphone is unplugged: fall back to the default one.
+    if (!deviceId || !(error instanceof DOMException) || error.name !== 'OverconstrainedError') throw error;
+    stream = await navigator.mediaDevices.getUserMedia({ audio });
+  }
+  // Device names are only visible once the page may use the microphone.
+  await listMics();
   return stream;
+}
+
+/** Stop using the current microphone, so the next recording opens the chosen one. */
+function releaseStream() {
+  for (const track of stream?.getTracks() ?? []) track.stop();
+  stream = null;
+}
+
+/** Fill the microphone list from the devices the browser reports. */
+async function listMics() {
+  if (!navigator.mediaDevices?.enumerateDevices) return;
+  const mics = (await navigator.mediaDevices.enumerateDevices()).filter((d) => d.kind === 'audioinput' && d.deviceId !== 'default');
+  const saved = chosenMic();
+  const active = stream?.getAudioTracks()[0]?.getSettings().deviceId ?? '';
+  const options = [new Option('System default', '')];
+  mics.forEach((mic, i) => options.push(new Option(mic.label || `Microphone ${i + 1}`, mic.deviceId)));
+  ui.mic.replaceChildren(...options);
+  ui.mic.value = mics.some((m) => m.deviceId === saved) ? saved : '';
+  ui.mic.title = active ? `In use: ${mics.find((m) => m.deviceId === active)?.label ?? active}` : '';
 }
 
 async function startRecording() {
@@ -340,6 +379,20 @@ ui.voices.replaceChildren(
   }),
 );
 
+ui.mic.addEventListener('change', () => {
+  try {
+    localStorage.setItem(MIC_KEY, ui.mic.value);
+  } catch {
+    // Not remembered, but still used for this session.
+  }
+  releaseStream();
+  guarded(async () => {
+    await ensureStream();
+    setStatus(`Microphone: ${ui.mic.selectedOptions[0]?.textContent ?? ''}`);
+  })();
+});
+navigator.mediaDevices?.addEventListener?.('devicechange', () => listMics().catch(showError));
+
 ui.record.addEventListener('click', () => {
   if (state.recording) stopRecording();
   else guarded(recordCurrent)();
@@ -359,6 +412,7 @@ document.addEventListener('keydown', (event) => {
 });
 
 setLang(state.lang);
+listMics().catch(showError);
 loadClips()
   .then(() => {
     render();
