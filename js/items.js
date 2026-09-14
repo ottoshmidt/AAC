@@ -75,7 +75,7 @@ export const itemSets = {};
   itemSets.mixed = [
     // Page 1: fruit
     item('apple', 'ვაშლი', 'Apple', 'Яблоко'),
-    item('banana', 'ბანანი', 'Banana', 'Банан'),
+    item('banana', 'ბანანი', 'Banana', 'Банан', 'webp'),
     item('orange', 'ფორთოხალი', 'Orange', 'Апельсин'),
     item('grapes', 'ყურძენი', 'Grapes', 'Виноград'),
     // Page 2: food
@@ -116,7 +116,7 @@ export const itemSets = {};
     item('orange', 'ფორთოხალი', 'Orange', 'Апельсин'),
     // Page 2
     item('lemon', 'ლიმონი', 'Lemon', 'Лимон'),
-    item('banana', 'ბანანი', 'Banana', 'Банан'),
+    item('banana', 'ბანანი', 'Banana', 'Банан', 'webp'),
     item('watermelon', 'საზამთრო', 'Watermelon', 'Арбуз'),
     item('grapes', 'ყურძენი', 'Grapes', 'Виноград'),
     // Page 3
@@ -254,23 +254,23 @@ export const itemSets = {};
   const item = inFolder('animals');
   itemSets.animals = [
     // Page 1
-    item('dog', 'ძაღლი', 'Dog', 'Собака'),
-    item('cat', 'კატა', 'Cat', 'Кошка'),
-    item('horse', 'ცხენი', 'Horse', 'Лошадь'),
-    item('cow', 'ძროხა', 'Cow', 'Корова'),
+    item('dog', 'ძაღლი', 'Dog', 'Собака', 'webp'),
+    item('cat', 'კატა', 'Cat', 'Кошка', 'webp'),
+    item('horse', 'ცხენი', 'Horse', 'Лошадь', 'webp'),
+    item('cow', 'ძროხა', 'Cow', 'Корова', 'webp'),
     // Page 2
-    item('pig', 'ღორი', 'Pig', 'Свинья'),
+    item('pig', 'ღორი', 'Pig', 'Свинья', 'webp'),
     item('sheep', 'ცხვარი', 'Sheep', 'Овца', 'webp'),
-    item('goat', 'თხა', 'Goat', 'Коза'),
-    item('rabbit', 'კურდღელი', 'Rabbit', 'Кролик'),
+    item('goat', 'თხა', 'Goat', 'Коза', 'webp'),
+    item('rabbit', 'კურდღელი', 'Rabbit', 'Кролик', 'webp'),
     // Page 3
-    item('mouse', 'თაგვი', 'Mouse', 'Мышь'),
+    item('mouse', 'თაგვი', 'Mouse', 'Мышь', 'webp'),
     item('hedgehog', 'ზღარბი', 'Hedgehog', 'Ёж', 'webp'),
-    item('squirrel', 'ციყვი', 'Squirrel', 'Белка'),
-    item('fox', 'მელა', 'Fox', 'Лиса'),
+    item('squirrel', 'ციყვი', 'Squirrel', 'Белка', 'webp'),
+    item('fox', 'მელა', 'Fox', 'Лиса', 'webp'),
     // Page 4
-    item('wolf', 'მგელი', 'Wolf', 'Волк'),
-    item('bear', 'დათვი', 'Bear', 'Медведь'),
+    item('wolf', 'მგელი', 'Wolf', 'Волк', 'webp'),
+    item('bear', 'დათვი', 'Bear', 'Медведь', 'webp'),
     item('lion', 'ლომი', 'Lion', 'Лев'),
     item('tiger', 'ვეფხვი', 'Tiger', 'Тигр', 'webp'),
     // Page 5

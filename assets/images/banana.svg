@@ -1,6 +1,0 @@
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 200 200" role="img" aria-label="Banana">
-  <path d="M42 48c6 70 50 108 124 104 12-1 14-12 4-16-58 4-94-30-104-90-3-14-25-14-24 2z" fill="#ffd23f" stroke="#c99a00" stroke-width="5" stroke-linejoin="round"/>
-  <path d="M60 60c10 44 40 70 86 78" fill="none" stroke="#e8b800" stroke-width="5" stroke-linecap="round"/>
-  <path d="M44 48l-4-22" stroke="#6b4226" stroke-width="10" stroke-linecap="round"/>
-  <circle cx="172" cy="144" r="5" fill="#6b4226"/>
-</svg>
