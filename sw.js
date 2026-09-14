@@ -9,7 +9,7 @@
 // Downloaded voices live in a separate cache managed by js/piper.js
 // ('aac-voices-…'); it is left alone here so updates never re-download them.
 
-const CACHE_NAME = 'aac-app-v32';
+const CACHE_NAME = 'aac-app-v34';
 const VOICE_CACHE_PREFIX = 'aac-voices-';
 
 const PRECACHE = [
@@ -38,23 +38,23 @@ const PRECACHE = [
   'assets/images/animals/camel.svg',
   'assets/images/animals/cat.svg',
   'assets/images/animals/cow.svg',
-  'assets/images/animals/deer.svg',
+  'assets/images/animals/deer.webp',
   'assets/images/animals/dog.svg',
   'assets/images/animals/elephant.svg',
   'assets/images/animals/fox.svg',
   'assets/images/animals/frog.svg',
   'assets/images/animals/giraffe.svg',
   'assets/images/animals/goat.svg',
-  'assets/images/animals/hedgehog.svg',
+  'assets/images/animals/hedgehog.webp',
   'assets/images/animals/horse.svg',
   'assets/images/animals/lion.svg',
   'assets/images/animals/monkey.svg',
   'assets/images/animals/mouse.svg',
   'assets/images/animals/pig.svg',
   'assets/images/animals/rabbit.svg',
-  'assets/images/animals/sheep.svg',
+  'assets/images/animals/sheep.webp',
   'assets/images/animals/squirrel.svg',
-  'assets/images/animals/tiger.svg',
+  'assets/images/animals/tiger.webp',
   'assets/images/animals/turtle.svg',
   'assets/images/animals/wolf.svg',
   'assets/images/animals/zebra.svg',

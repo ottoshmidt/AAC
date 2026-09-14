@@ -260,19 +260,19 @@ export const itemSets = {};
     item('cow', 'ძროხა', 'Cow', 'Корова'),
     // Page 2
     item('pig', 'ღორი', 'Pig', 'Свинья'),
-    item('sheep', 'ცხვარი', 'Sheep', 'Овца'),
+    item('sheep', 'ცხვარი', 'Sheep', 'Овца', 'webp'),
     item('goat', 'თხა', 'Goat', 'Коза'),
     item('rabbit', 'კურდღელი', 'Rabbit', 'Кролик'),
     // Page 3
     item('mouse', 'თაგვი', 'Mouse', 'Мышь'),
-    item('hedgehog', 'ზღარბი', 'Hedgehog', 'Ёж'),
+    item('hedgehog', 'ზღარბი', 'Hedgehog', 'Ёж', 'webp'),
     item('squirrel', 'ციყვი', 'Squirrel', 'Белка'),
     item('fox', 'მელა', 'Fox', 'Лиса'),
     // Page 4
     item('wolf', 'მგელი', 'Wolf', 'Волк'),
     item('bear', 'დათვი', 'Bear', 'Медведь'),
     item('lion', 'ლომი', 'Lion', 'Лев'),
-    item('tiger', 'ვეფხვი', 'Tiger', 'Тигр'),
+    item('tiger', 'ვეფხვი', 'Tiger', 'Тигр', 'webp'),
     // Page 5
     item('elephant', 'სპილო', 'Elephant', 'Слон'),
     item('giraffe', 'ჟირაფი', 'Giraffe', 'Жираф'),
@@ -280,7 +280,7 @@ export const itemSets = {};
     item('monkey', 'მაიმუნი', 'Monkey', 'Обезьяна'),
     // Page 6
     item('camel', 'აქლემი', 'Camel', 'Верблюд'),
-    item('deer', 'ირემი', 'Deer', 'Олень'),
+    item('deer', 'ირემი', 'Deer', 'Олень', 'webp'),
     item('frog', 'ბაყაყი', 'Frog', 'Лягушка'),
     item('turtle', 'კუ', 'Turtle', 'Черепаха'),
   ];
