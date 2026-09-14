@@ -25,8 +25,10 @@ const STORAGE_KEY = 'aac.settings.v1';
  * @property {string}  voiceKa           voice for Georgian (see below)
  * @property {string}  voiceRu           voice for Russian (see below)
  *
- * A voice is '' for the browser default, a device voice name, or
- * 'piper:<id>' for an in-app Piper voice.
+ * A voice is '' for the browser default, a device voice name,
+ * 'piper:<id>' for an in-app Piper voice, or 'recorded:<voice>' for words
+ * recorded with `npm run record` (female/male); words without a recording
+ * fall back to the language's default voice.
  */
 
 /** Settings key holding the voice for each language. */

@@ -18,12 +18,12 @@ describe('clip registry', () => {
   });
 
   it('maps existing files to labels and ignores unknown ids', () => {
-    const registry = buildRegistry({ ka: ['apple', 'no-such-item'], en: [] });
-    assert.deepEqual(registry, { ka: { ვაშლი: 'assets/audio/ka/apple.wav' } });
+    const registry = buildRegistry({ ka: { female: ['apple', 'no-such-item'], male: [] }, en: { female: [] } });
+    assert.deepEqual(registry, { ka: { female: { ვაშლი: 'assets/audio/ka/female/apple.wav' } } });
   });
 
   it('renders a clips module that round-trips', async () => {
-    const registry = buildRegistry({ ka: ['apple', 'cat'] });
+    const registry = buildRegistry({ ka: { female: ['apple'], male: ['apple', 'cat'] } });
     const source = renderClipsModule(registry);
     const module = await import(`data:text/javascript,${encodeURIComponent(source)}`);
     assert.deepEqual(module.clips, registry);
@@ -32,10 +32,13 @@ describe('clip registry', () => {
   });
 
   it('rewrites only the clips block of sw.js', () => {
-    const registry = buildRegistry({ ka: ['apple'] });
-    const updated = updateServiceWorker(serviceWorker, registry);
-    assert.ok(updated.includes("  'assets/audio/ka/apple.wav',\n  // clips:end"));
-    assert.equal(updateServiceWorker(updated, {}), serviceWorker, 'emptying the block restores the original');
+    // Start from sw.js with an empty block, whatever has been recorded so far.
+    const empty = updateServiceWorker(serviceWorker, {});
+    const registry = buildRegistry({ ka: { male: ['apple'] } });
+    const updated = updateServiceWorker(empty, registry);
+    assert.ok(updated.includes("  'assets/audio/ka/male/apple.wav',\n  // clips:end"));
+    assert.equal(updated.replace("  'assets/audio/ka/male/apple.wav',\n", ''), empty, 'nothing outside the block changes');
+    assert.equal(updateServiceWorker(updated, {}), empty, 'emptying the block restores the original');
     assert.throws(() => updateServiceWorker('nothing here', registry));
   });
 });

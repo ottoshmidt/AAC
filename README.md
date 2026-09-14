@@ -66,7 +66,7 @@ Then open <http://localhost:8080>.
 | Speak the chosen picture | on | Recorded clip if there is one, otherwise the voice |
 | Speak each picture as highlighted | off | Auditory scanning; replaces the tick |
 | Tick when the highlight moves | on | Generated sound, no file needed |
-| Voice | Georgian: Natia (in-app); Russian, English: browser default | Chosen separately per language |
+| Voice | Georgian: Natia (in-app); Russian, English: browser default | Chosen separately per language; recorded voices appear here once words are recorded |
 | Go fullscreen on start | on | Leaving fullscreen ends the game |
 | Language | browser language (ka, ru), else English | Buttons at the top of the menu |
 
@@ -115,12 +115,19 @@ project through a small development server:
 npm run record            # then open http://localhost:8888/record.html
 ```
 
-Pick the language, and for each picture click **Record**, say the word,
-click **Stop** (or press Space). The clip is trimmed, normalized, resampled
-to 16 kHz mono and saved as `assets/audio/<lang>/<id>.wav`; it plays back
-once and the page moves on to the next unrecorded word. **Play** replays it,
-**Record again** overwrites it, **Delete** removes it. Words that appear in
-several sets (ვაშლი in Mixed and Fruit) are recorded once and shared.
+Pick the language and the voice (**Female voice** or **Male voice**: each
+word can be recorded in both), and for each picture click **Record**, say
+the word, click **Stop** (or press Space). The clip is trimmed, normalized,
+resampled to 16 kHz mono and saved as
+`assets/audio/<lang>/<voice>/<id>.wav`; it plays back once and the page
+moves on to the next unrecorded word. **Play** replays it, **Record again**
+overwrites it, **Delete** removes it. Words that appear in several sets
+(ვაშლი in Mixed and Fruit) are recorded once and shared.
+
+In the app, Settings → Voice then offers "Recorded female voice" / "Recorded
+male voice" for that language (with how many of the game's words are
+recorded); words without a recording fall back to the language's default
+voice (Natia for Georgian).
 
 The server also rewrites `js/clips.js` (the word → file registry the app
 reads) and the `clips:begin` … `clips:end` block of `sw.js` so the clips
@@ -162,8 +169,8 @@ export const items = [
 - `label` is shown under the picture and spoken on selection.
 - `audio` (optional) plays a recorded clip instead of text-to-speech, e.g. a
   familiar person's voice. Use MP3 or WAV, which play in every browser.
-  Clips made with the recording page (see below) need no `audio` field:
-  they are found by label through `js/clips.js`.
+  Clips made with the recording page (see above) need no `audio` field:
+  they are found by label and voice through `js/clips.js`.
 
 **Picture credits.** The Mixed set and a few pictures in the other sets
 (pomegranate, plum, fig, apricot, quince, persimmon, cabbage, pumpkin, beet,

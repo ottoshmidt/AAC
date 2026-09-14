@@ -3,14 +3,15 @@
  * Recording page (record.html): record the name of every item in a language,
  * one word at a time, and save the clips into the project through the
  * record server (npm run record). Words are the distinct labels of all
- * picture sets; items sharing a word share the clip.
+ * picture sets; items sharing a word share the clip. Each word can be
+ * recorded in two voices (female, male); the app's Voice setting picks one.
  *
  * Each recording is trimmed of silence, peak-normalized, resampled to
  * 16 kHz and stored as a mono WAV next to the pictures.
  */
 
 import { LANGUAGES } from './i18n.js';
-import { itemSets, labelFor } from './items.js';
+import { itemSets, labelFor, RECORDED_VOICES } from './items.js';
 import { encodeWav } from './wav.js';
 
 const SAMPLE_RATE = 16000;
@@ -21,6 +22,7 @@ const PEAK = 0.9;
 const $ = (/** @type {string} */ selector) => /** @type {HTMLElement} */ (document.querySelector(selector));
 const ui = {
   langs: $('#record-langs'),
+  voices: $('#record-voices'),
   progress: $('#record-progress'),
   image: /** @type {HTMLImageElement} */ ($('#record-image')),
   word: $('#record-word'),
@@ -37,10 +39,12 @@ const ui = {
 
 const state = {
   lang: 'ka',
+  /** @type {string} */
+  voice: RECORDED_VOICES[0],
   index: 0,
   /** @type {Word[]} */
   words: [],
-  /** @type {Record<string, Record<string, string>>} language -> label -> file */
+  /** @type {Record<string, Record<string, Record<string, string>>>} language -> voice -> label -> file */
   clips: {},
   recording: false,
   busy: false,
@@ -72,7 +76,7 @@ function current() {
 
 /** @param {Word} word */
 function clipOf(word) {
-  return state.clips[state.lang]?.[word.label];
+  return state.clips[state.lang]?.[state.voice]?.[word.label];
 }
 
 // ---- Server ------------------------------------------------------------------
@@ -188,7 +192,7 @@ async function recordCurrent() {
   try {
     setStatus('Saving…');
     const wav = await toWav(blob);
-    const { clips } = await api(`/api/clips/${state.lang}/${word.id}.wav`, { method: 'POST', body: wav });
+    const { clips } = await api(`/api/clips/${state.lang}/${state.voice}/${word.id}.wav`, { method: 'POST', body: wav });
     state.clips = clips;
     setStatus(`Saved ${clipOf(word)} (${Math.round(wav.byteLength / 1024)} KB).`);
     render();
@@ -217,7 +221,7 @@ function play(word) {
 
 async function removeCurrent() {
   const word = current();
-  const { clips } = await api(`/api/clips/${state.lang}/${word.id}.wav`, { method: 'DELETE' });
+  const { clips } = await api(`/api/clips/${state.lang}/${state.voice}/${word.id}.wav`, { method: 'DELETE' });
   state.clips = clips;
   setStatus('Removed. The voice will be used for this word again.');
   render();
@@ -251,6 +255,15 @@ function setLang(lang) {
   state.index = 0;
   renderList();
   render();
+}
+
+/** @param {string} voice */
+function setVoice(voice) {
+  state.voice = voice;
+  const first = state.words.findIndex((w) => !clipOf(w));
+  state.index = first >= 0 ? first : 0;
+  render();
+  ui.list.children[state.index]?.scrollIntoView({ block: 'nearest' });
 }
 
 function renderList() {
@@ -291,6 +304,9 @@ function render() {
   for (const button of ui.langs.querySelectorAll('button')) {
     button.setAttribute('aria-pressed', String(button.dataset.lang === state.lang));
   }
+  for (const button of ui.voices.querySelectorAll('button')) {
+    button.setAttribute('aria-pressed', String(button.dataset.voice === state.voice));
+  }
 }
 
 /** @param {() => Promise<unknown>} action */
@@ -306,6 +322,19 @@ ui.langs.replaceChildren(
     button.textContent = name;
     button.addEventListener('click', () => {
       if (!state.recording && !state.busy) setLang(code);
+    });
+    return button;
+  }),
+);
+
+ui.voices.replaceChildren(
+  ...RECORDED_VOICES.map((voice) => {
+    const button = document.createElement('button');
+    button.type = 'button';
+    button.dataset.voice = voice;
+    button.textContent = voice === 'female' ? 'Female voice' : 'Male voice';
+    button.addEventListener('click', () => {
+      if (!state.recording && !state.busy) setVoice(voice);
     });
     return button;
   }),

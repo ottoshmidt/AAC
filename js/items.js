@@ -9,7 +9,7 @@
  *   image  path to the picture (SVG, PNG, JPG, WebP)
  *   label  text per language: shown under the picture and spoken on selection
  *   audio  optional recorded clip per language, played instead of text-to-speech
- *          (clips recorded with `npm run record` are found by label, see clipFor)
+ *          (clips recorded with `npm run record` are found by label and voice, see clipFor)
  *
  * Example with a Georgian recording:
  *   { id: 'ball', image: 'assets/images/ball.svg',
@@ -23,6 +23,31 @@
 
 
 import { clips } from './clips.js';
+
+/** Recorded voices a word can be recorded in (npm run record). */
+export const RECORDED_VOICES = /** @type {const} */ (['female', 'male']);
+/** Voice setting prefix for a recorded voice: 'recorded:female'. */
+export const RECORDED_PREFIX = 'recorded:';
+
+/**
+ * The recorded voice a voice setting refers to, if any.
+ * @param {string} voice  a voice setting ('', device name, 'piper:…', 'recorded:…')
+ * @returns {string | undefined}
+ */
+export function recordedVoiceOf(voice) {
+  if (!voice.startsWith(RECORDED_PREFIX)) return undefined;
+  const name = voice.slice(RECORDED_PREFIX.length);
+  return RECORDED_VOICES.includes(/** @type {any} */ (name)) ? name : undefined;
+}
+
+/**
+ * How many words of `lang` are recorded in `voice`.
+ * @param {string} lang
+ * @param {string} voice
+ */
+export function recordedCount(lang, voice) {
+  return Object.keys(clips[lang]?.[voice] ?? {}).length;
+}
 /**
  * @typedef {object} Item
  * @property {string} id
@@ -307,11 +332,13 @@ export function labelFor(item, lang) {
 }
 
 /**
- * An item's recorded clip in `lang`, if it has one: its own `audio`, or the
- * clip recorded for its label (js/clips.js, made with `npm run record`).
+ * An item's recorded clip in `lang`, if it has one: its own `audio`, or, when
+ * a recorded voice is chosen, the clip of its label in that voice
+ * (js/clips.js, made with `npm run record`).
  * @param {Item} item
  * @param {string} lang
+ * @param {string} [voice]  a recorded voice name, e.g. 'female'
  */
-export function clipFor(item, lang) {
-  return item.audio?.[lang] ?? clips[lang]?.[labelFor(item, lang)];
+export function clipFor(item, lang, voice) {
+  return item.audio?.[lang] ?? (voice ? clips[lang]?.[voice]?.[labelFor(item, lang)] : undefined);
 }

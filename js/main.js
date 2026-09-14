@@ -5,9 +5,9 @@
  */
 import { CATEGORIES, games } from './games/index.js';
 import { applyStrings, LANGUAGES, t } from './i18n.js';
-import { clipFor, itemSets, labelFor } from './items.js';
+import { clipFor, itemSets, labelFor, RECORDED_PREFIX, RECORDED_VOICES, recordedCount, recordedVoiceOf } from './items.js';
 import { PIPER_VOICES, PiperVoice, piperDownloadBytes } from './piper.js';
-import { loadSettings, sanitize, saveSettings, VOICE_KEYS } from './settings.js';
+import { DEFAULTS, loadSettings, sanitize, saveSettings, VOICE_KEYS } from './settings.js';
 import { Speech } from './speech.js';
 import { WakeLock } from './wakelock.js';
 import * as ui from './ui.js';
@@ -31,10 +31,29 @@ let deviceVoicesSettled = false;
 
 const lang = () => settings.language;
 
-/** The voice setting for `language`: '', a device voice name, or 'piper:<id>'. */
+/** The voice setting for `language`: '', a device voice name, 'piper:<id>' or 'recorded:<voice>'. */
 function voiceFor(language = lang()) {
   const key = /** @type {Record<string, string>} */ (VOICE_KEYS)[language];
   return key ? /** @type {Record<string, any>} */ (settings)[key] : '';
+}
+
+/**
+ * The synthetic voice to speak with: the setting itself, or, when a recorded
+ * voice is chosen, the language's default voice for words that have no clip.
+ */
+function spokenVoiceFor(language = lang()) {
+  const voice = voiceFor(language);
+  if (!recordedVoiceOf(voice)) return voice;
+  const key = /** @type {Record<string, string>} */ (VOICE_KEYS)[language];
+  return key ? /** @type {Record<string, any>} */ (DEFAULTS)[key] : '';
+}
+
+/** Words of `language` (of the chosen game, or all) and how many have a clip in `voice`. */
+function recordedWords(language, voice) {
+  const items = (selected ?? games[0]).items ?? [];
+  const labels = new Set(items.map((item) => labelFor(item, language)));
+  const done = [...labels].filter((label) => items.some((item) => labelFor(item, language) === label && clipFor(item, language, voice)));
+  return { done: done.length, total: labels.size };
 }
 
 /** @param {import('./items.js').Item} item */
@@ -42,18 +61,18 @@ function utteranceFor(item) {
   return {
     text: labelFor(item, lang()),
     lang: LANGUAGES[lang()].speechLang,
-    clip: clipFor(item, lang()),
+    clip: clipFor(item, lang(), recordedVoiceOf(voiceFor())),
   };
 }
 
 /** @param {import('./items.js').Item} item */
 function speakItem(item) {
-  speech.speak(utteranceFor(item), voiceFor());
+  speech.speak(utteranceFor(item), spokenVoiceFor());
 }
 
 /** Speak any text in the current language and voice. @param {string} text */
 function say(text) {
-  speech.speak({ text, lang: LANGUAGES[lang()].speechLang }, voiceFor());
+  speech.speak({ text, lang: LANGUAGES[lang()].speechLang }, spokenVoiceFor());
 }
 
 /**
@@ -61,10 +80,11 @@ function say(text) {
  * the chosen game (or, before one is chosen, of the first game).
  */
 function prepareInAppVoice() {
-  const piper = speech.piperVoice(voiceFor());
+  const piper = speech.piperVoice(spokenVoiceFor());
   if (!piper) return;
   const items = (selected ?? games[0]).items ?? [];
-  const texts = items.filter((item) => !clipFor(item, lang())).map((item) => labelFor(item, lang()));
+  const recorded = recordedVoiceOf(voiceFor());
+  const texts = items.filter((item) => !clipFor(item, lang(), recorded)).map((item) => labelFor(item, lang()));
   piper.prepare(texts);
 }
 
@@ -246,6 +266,13 @@ function refreshVoiceSelect() {
 
   /** @type {{ value: string, label: string }[]} */
   const options = [{ value: '', label: t(language, 'browserDefault') }];
+  // Recorded voices, when some words of this language were recorded in them.
+  for (const voice of RECORDED_VOICES) {
+    if (recordedCount(language, voice) === 0) continue;
+    const { done, total } = recordedWords(language, voice);
+    const name = t(language, voice === 'female' ? 'voiceFemale' : 'voiceMale');
+    options.push({ value: `${RECORDED_PREFIX}${voice}`, label: t(language, 'recordedOption', { name, done, total }) });
+  }
   for (const [id, info] of Object.entries(PIPER_VOICES)) {
     if (info.lang !== language) continue;
     const size = Math.round(piperDownloadBytes(id) / 1e6);
@@ -263,7 +290,7 @@ function refreshVoiceSelect() {
 
   let note = '';
   if (!speech.speechSupported) note = t(language, 'noSpeech');
-  else if (speech.piperVoice(selected)) note = '';
+  else if (speech.piperVoice(spokenVoiceFor(language))) note = '';
   else if (deviceVoicesSettled && matching.length === 0) {
     note = t(language, deviceVoices.length === 0 ? 'noVoices' : 'noVoiceForLanguage');
   }
@@ -272,12 +299,23 @@ function refreshVoiceSelect() {
 
 function refreshVoiceStatus() {
   const language = lang();
-  const piper = speech.piperVoice(voiceFor(language));
-  if (!piper) {
+  const recorded = recordedVoiceOf(voiceFor(language));
+  const piper = speech.piperVoice(spokenVoiceFor(language));
+  if (recorded) {
+    // Recorded voice: say how much of the chosen game it covers; the rest
+    // falls back to the language's default voice, whose status follows.
+    const { done, total } = recordedWords(language, recorded);
+    const name = t(language, recorded === 'female' ? 'voiceFemale' : 'voiceMale');
+    const fallback = piper ? piper.info.name : t(language, 'browserDefault');
+    ui.setVoiceStatus(t(language, done < total ? 'recordedPartial' : 'recordedComplete', { name, done, total, fallback }));
+    ui.setVoiceLicense('');
+    if (done === total || !piper) return;
+  } else if (!piper) {
     ui.setVoiceStatus('');
     ui.setVoiceLicense('');
     return;
   }
+  if (!piper) return;
   const vars = {
     name: piper.info.name,
     size: Math.round(piperDownloadBytes(piper.id) / 1e6),
@@ -286,17 +324,18 @@ function refreshVoiceStatus() {
     license: piper.info.license,
   };
   ui.setVoiceLicense(t(language, piper.info.nonCommercial ? 'voiceLicense' : 'voiceLicenseFree', vars));
+  const prefix = recorded ? `${ui.elements.voiceStatusText.textContent} ` : '';
   switch (piper.status) {
     case 'downloading':
-      return ui.setVoiceStatus(t(language, 'voiceDownloading', vars));
+      return ui.setVoiceStatus(prefix + t(language, 'voiceDownloading', vars));
     case 'loading':
-      return ui.setVoiceStatus(t(language, 'voiceLoading', vars));
+      return ui.setVoiceStatus(prefix + t(language, 'voiceLoading', vars));
     case 'ready':
-      return ui.setVoiceStatus(t(language, 'voiceReady', vars));
+      return ui.setVoiceStatus(prefix + t(language, 'voiceReady', vars));
     case 'error':
-      return ui.setVoiceStatus(t(language, 'voiceError', vars), true);
+      return ui.setVoiceStatus(prefix + t(language, 'voiceError', vars), true);
     default:
-      return ui.setVoiceStatus('');
+      return ui.setVoiceStatus(prefix.trim());
   }
 }
 

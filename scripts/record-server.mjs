@@ -7,8 +7,8 @@
  *
  * API (used by js/record.js):
  *   GET    /api/clips                    the registry (language -> label -> file)
- *   POST   /api/clips/<lang>/<id>.wav    save a clip (body: the WAV bytes)
- *   DELETE /api/clips/<lang>/<id>.wav    remove it
+ *   POST   /api/clips/<lang>/<voice>/<id>.wav    save a clip (body: the WAV bytes)
+ *   DELETE /api/clips/<lang>/<voice>/<id>.wav    remove it
  * After every change js/clips.js and the clips block in sw.js are rewritten.
  *
  * No dependencies. Recording needs a secure context, so use it on localhost.
@@ -20,6 +20,7 @@ import { extname, join, normalize } from 'node:path';
 import { fileURLToPath } from 'node:url';
 import { buildRegistry, clipPath, renderClipsModule, updateServiceWorker } from './clips-registry.mjs';
 import { LANGUAGES } from '../js/i18n.js';
+import { RECORDED_VOICES } from '../js/items.js';
 
 const ROOT = fileURLToPath(new URL('../', import.meta.url));
 const PORT = Number(process.env.PORT ?? 8888);
@@ -44,16 +45,19 @@ const MIME = {
   '.txt': 'text/plain; charset=utf-8',
 };
 
-/** Existing clip files: lang -> ids. */
+/** Existing clip files: lang -> voice -> ids. */
 async function scanClips() {
-  /** @type {Record<string, string[]>} */
+  /** @type {Record<string, Record<string, string[]>>} */
   const files = {};
   for (const lang of Object.keys(LANGUAGES)) {
-    try {
-      const names = await readdir(join(ROOT, 'assets/audio', lang));
-      files[lang] = names.filter((n) => n.endsWith('.wav')).map((n) => n.slice(0, -4));
-    } catch {
-      files[lang] = [];
+    files[lang] = {};
+    for (const voice of RECORDED_VOICES) {
+      try {
+        const names = await readdir(join(ROOT, 'assets/audio', lang, voice));
+        files[lang][voice] = names.filter((n) => n.endsWith('.wav')).map((n) => n.slice(0, -4));
+      } catch {
+        files[lang][voice] = [];
+      }
     }
   }
   return files;
@@ -97,23 +101,24 @@ async function handleApi(req, res) {
   const url = new URL(req.url ?? '/', 'http://localhost');
   if (url.pathname === '/api/clips' && req.method === 'GET') return json(res, 200, await regenerate());
 
-  const match = url.pathname.match(/^\/api\/clips\/([a-z]{2})\/([a-z0-9-]+)\.wav$/);
+  const match = url.pathname.match(/^\/api\/clips\/([a-z]{2})\/([a-z]+)\/([a-z0-9-]+)\.wav$/);
   if (!match) return json(res, 404, { error: 'not found' });
-  const [, lang, id] = match;
+  const [, lang, voice, id] = match;
   if (!(lang in LANGUAGES)) return json(res, 400, { error: `unknown language ${lang}` });
-  const file = join(ROOT, clipPath(lang, id));
+  if (!RECORDED_VOICES.includes(/** @type {any} */ (voice))) return json(res, 400, { error: `unknown voice ${voice}` });
+  const file = join(ROOT, clipPath(lang, voice, id));
 
   if (req.method === 'POST') {
     const body = await readBody(req);
     if (body.length < 44 || body.toString('latin1', 0, 4) !== 'RIFF') return json(res, 400, { error: 'not a WAV file' });
-    await mkdir(join(ROOT, 'assets/audio', lang), { recursive: true });
+    await mkdir(join(ROOT, 'assets/audio', lang, voice), { recursive: true });
     await writeFile(file, body);
-    console.log(`saved ${clipPath(lang, id)} (${body.length} bytes)`);
-    return json(res, 200, { path: clipPath(lang, id), clips: await regenerate() });
+    console.log(`saved ${clipPath(lang, voice, id)} (${body.length} bytes)`);
+    return json(res, 200, { path: clipPath(lang, voice, id), clips: await regenerate() });
   }
   if (req.method === 'DELETE') {
     await unlink(file).catch(() => {});
-    console.log(`removed ${clipPath(lang, id)}`);
+    console.log(`removed ${clipPath(lang, voice, id)}`);
     return json(res, 200, { clips: await regenerate() });
   }
   return json(res, 405, { error: 'method not allowed' });
