@@ -26,7 +26,7 @@ const ICONS = {
   vegetables: 'assets/images/vegetables/carrot.svg',
   transport: 'assets/images/transport/car.svg',
   clothes: 'assets/images/clothes/t-shirt.svg',
-  animals: 'assets/images/animals/cat.webp',
+  animals: 'assets/images/animals/rabbit.webp',
   birds: 'assets/images/birds/owl.svg',
 };
 
