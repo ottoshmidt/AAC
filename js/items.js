@@ -271,18 +271,18 @@ export const itemSets = {};
     // Page 4
     item('wolf', 'მგელი', 'Wolf', 'Волк', 'webp'),
     item('bear', 'დათვი', 'Bear', 'Медведь', 'webp'),
-    item('lion', 'ლომი', 'Lion', 'Лев'),
+    item('lion', 'ლომი', 'Lion', 'Лев', 'webp'),
     item('tiger', 'ვეფხვი', 'Tiger', 'Тигр', 'webp'),
     // Page 5
-    item('elephant', 'სპილო', 'Elephant', 'Слон'),
-    item('giraffe', 'ჟირაფი', 'Giraffe', 'Жираф'),
-    item('zebra', 'ზებრა', 'Zebra', 'Зебра'),
-    item('monkey', 'მაიმუნი', 'Monkey', 'Обезьяна'),
+    item('elephant', 'სპილო', 'Elephant', 'Слон', 'webp'),
+    item('giraffe', 'ჟირაფი', 'Giraffe', 'Жираф', 'webp'),
+    item('zebra', 'ზებრა', 'Zebra', 'Зебра', 'webp'),
+    item('monkey', 'მაიმუნი', 'Monkey', 'Обезьяна', 'webp'),
     // Page 6
-    item('camel', 'აქლემი', 'Camel', 'Верблюд'),
+    item('camel', 'აქლემი', 'Camel', 'Верблюд', 'webp'),
     item('deer', 'ირემი', 'Deer', 'Олень', 'webp'),
-    item('frog', 'ბაყაყი', 'Frog', 'Лягушка'),
-    item('turtle', 'კუ', 'Turtle', 'Черепаха'),
+    item('frog', 'ბაყაყი', 'Frog', 'Лягушка', 'webp'),
+    item('turtle', 'კუ', 'Turtle', 'Черепаха', 'webp'),
   ];
 }
 
