@@ -447,7 +447,7 @@ body {
   border-radius: var(--radius);
   /* The border is always there, just transparent, so highlighting doesn't
      shift the layout. */
-  border: 0.9rem solid transparent;
+  border: 2.7rem solid transparent;
   transition:
     border-color 150ms ease,
     opacity 200ms ease,
