@@ -39,6 +39,7 @@ export const elements = {
   gameScreen: $('#game-screen'),
   gameRoot: $('#game-root'),
   gameBack: /** @type {HTMLButtonElement} */ ($('#game-back')),
+  gameRestart: /** @type {HTMLButtonElement} */ ($('#game-restart')),
   gameControls: $('#game-controls'),
 };
 

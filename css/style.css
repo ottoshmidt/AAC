@@ -339,15 +339,31 @@ body {
 }
 
 .game-controls {
+  margin-left: auto; /* Back and Restart on the left, the game's buttons right */
   display: flex;
   gap: 0.5rem;
 }
 
-.game-screen .back-button {
+.game-screen .back-button,
+.restart-button {
   position: static; /* not the intro screen's absolute offsets */
   min-height: 2.75rem;
   padding: 0.4rem 1.25rem;
   font-size: 1.1rem;
+}
+
+.restart-button {
+  font-family: inherit;
+  border: 2px solid #3a4152;
+  border-radius: 999px;
+  background: transparent;
+  color: var(--text);
+  cursor: pointer;
+}
+
+.restart-button:focus-visible {
+  outline: 0.2rem solid var(--accent);
+  outline-offset: 0.2rem;
 }
 
 .page-button {

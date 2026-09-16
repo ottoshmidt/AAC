@@ -146,6 +146,18 @@ function startGame() {
   game.start();
 }
 
+/** Start the game over from the beginning, from wherever it is now. */
+function restartGame() {
+  if (!running || !selected) return;
+  running.stop();
+  speech.cancel();
+  // A fresh instance, so nothing (e.g. the page and the pictures already
+  // chosen) carries over from the run being replaced.
+  running = selected.create(gameContext);
+  instances.set(selected.id, running);
+  running.start();
+}
+
 /** popstate events caused by our own history.back(), to be ignored. */
 let ownBacks = 0;
 
@@ -179,6 +191,9 @@ ui.elements.backButton.addEventListener('click', closeIntro);
 // game press. It is not part of any scan, so a stray click can't leave the game.
 ui.elements.gameBack.addEventListener('pointerdown', (event) => event.stopPropagation());
 ui.elements.gameBack.addEventListener('click', stopGame);
+// Restart sits next to Back and works the same way: a direct tap only.
+ui.elements.gameRestart.addEventListener('pointerdown', (event) => event.stopPropagation());
+ui.elements.gameRestart.addEventListener('click', restartGame);
 // Same for the game's own buttons in the top bar (page arrows).
 ui.elements.gameControls.addEventListener('pointerdown', (event) => event.stopPropagation());
 
