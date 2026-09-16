@@ -1,8 +1,9 @@
 // @ts-check
 /**
- * Training: one picture at a time. It lights up for an interval, goes dark
- * for an interval, and lights up again, so the learner can connect "it is
- * lit" with "click now". The word is spoken every time the picture lights up.
+ * Training: one picture at a time. It is shown dark first, then lights up
+ * for an interval, goes dark for an interval, and lights up again, so the
+ * learner can connect "it is lit" with "click now". The word is spoken every
+ * time the picture lights up.
  *
  * A click while the picture is lit counts: the word is spoken again, the
  * picture is marked with a ✓, and the next picture follows. A click while
@@ -70,8 +71,10 @@ class TrainGame {
         this.answered = false;
         this.index = (this.index + 1) % this.items.length;
       }
-      this.lit = false; // the round's first highlight turns it on
-      this.render();
+      // A round starts dark: the first highlight (which follows immediately)
+      // turns the picture off, so every picture is shown quietly first and
+      // only lights up an interval later. No render here, so it never flashes.
+      this.lit = true;
     });
     this.scanner.addEventListener('highlight', () => {
       this.lit = !this.lit;
