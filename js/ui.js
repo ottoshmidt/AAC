@@ -63,7 +63,8 @@ export function fillIntro(game, lang) {
   elements.introName.textContent = t(lang, `games.${game.id}.name`);
   elements.introHelp.textContent = t(lang, `games.${textId}.help`);
   for (const fieldset of elements.settingsForm.querySelectorAll('fieldset[data-category]')) {
-    /** @type {HTMLElement} */ (fieldset).hidden = fieldset.getAttribute('data-category') !== game.category;
+    const shown = game.settingsCategory ?? game.category;
+    /** @type {HTMLElement} */ (fieldset).hidden = fieldset.getAttribute('data-category') !== shown;
   }
 }
 

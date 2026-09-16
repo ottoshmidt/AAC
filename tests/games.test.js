@@ -3,16 +3,27 @@ import { existsSync, readFileSync } from 'node:fs';
 import { describe, it } from 'node:test';
 import { CATEGORIES, games } from '../js/games/index.js';
 import { LANGUAGES, t } from '../js/i18n.js';
+import { itemSets } from '../js/items.js';
 
 const root = new URL('../', import.meta.url);
 const serviceWorker = readFileSync(new URL('sw.js', root), 'utf8');
 
 describe('game registry', () => {
-  it('has the seven Guess items games, with unique ids and known categories', () => {
-    const guess = games.filter((g) => g.category === 'guess').map((g) => g.id);
-    assert.deepEqual(guess, ['guess-mixed', 'guess-fruit', 'guess-vegetables', 'guess-transport', 'guess-clothes', 'guess-animals', 'guess-birds']);
+  it('has Training and the seven Guess items games in one category, with unique ids', () => {
+    const sets = ['mixed', 'fruit', 'vegetables', 'transport', 'clothes', 'animals', 'birds'];
+    const ids = (category) => games.filter((g) => g.category === category).map((g) => g.id);
+    assert.deepEqual(ids('guess'), ['train', ...sets.map((s) => `guess-${s}`)], 'Training comes first');
     assert.equal(new Set(games.map((g) => g.id)).size, games.length);
     for (const game of games) assert.ok(CATEGORIES.includes(game.category), `${game.id}: unknown category`);
+  });
+
+  it('trains on ten pictures from the Mixed set', () => {
+    const train = games.find((g) => g.id === 'train');
+    assert.equal(train?.items?.length, 10);
+    assert.deepEqual(
+      train?.items?.map((i) => i.id),
+      itemSets.mixed.slice(0, 10).map((i) => i.id),
+    );
   });
 
   it('every game has an icon file that is precached', () => {

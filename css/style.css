@@ -406,6 +406,13 @@ body {
   }
 }
 
+/* Training shows a single picture, which fills the board (after the phone
+   rule above, so it stays one cell there too). */
+.choices[data-count="1"] {
+  grid-template-columns: minmax(0, 1fr);
+  grid-template-rows: minmax(0, 1fr);
+}
+
 /* Four pictures: always a 2×2 grid, scanned left to right, top to bottom. */
 .choices[data-count="4"] {
   grid-template-columns: repeat(2, minmax(0, 1fr));

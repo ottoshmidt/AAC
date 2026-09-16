@@ -7,10 +7,11 @@ selects the lit one, so the user never has to aim the mouse. The same works
 with a touch screen, a big-button mouse or any switch that acts as a mouse
 click.
 
-The start screen is a menu of games, grouped by category. So far there is
-one category, **Guess items**, with seven games that differ only in their
-pictures: **Mixed**, **Fruit**, **Vegetables**, **Transport**, **Clothes**,
-**Animals** and **Birds**, 24 pictures each.
+The start screen is a menu of games, grouped by category. **Guess items**
+starts with **Training**, for learning the click itself, followed by seven
+games that differ only in their pictures: **Mixed**, **Fruit**,
+**Vegetables**, **Transport**, **Clothes**, **Animals** and **Birds**, 24
+pictures each.
 
 In a Guess items game, four pictures are shown in a 2×2 grid (or two side by
 side); the highlight moves through them and a click chooses the highlighted
@@ -18,6 +19,12 @@ one, which is spoken aloud. The pictures are split into pages of 4 (6 pages).
 When every picture on a page has been chosen, the game moves to the next
 page, and after the last one it starts over. The caregiver can also turn
 pages with the arrow keys.
+
+**Training** is the first step: a single picture lights up for
+an interval, goes dark for an interval and lights up again, and its name is
+spoken every time it lights up. A click while it is lit speaks the word
+again, marks the picture with a ✓ and moves on to the next; a click while it
+is dark does nothing. It uses ten everyday pictures from the Mixed set.
 
 The interface and speech are available in **Georgian (ქართული)**,
 **Russian (Русский)** and English.
@@ -237,6 +244,7 @@ css/style.css         layout and highlight styles
 js/main.js            app shell: menu, language, settings, voices
 js/games/index.js     list of games shown on the menu
 js/games/guess.js     the Guess items games (one per picture set)
+js/games/train.js     the Training game (one picture at a time)
 js/scanner.js         scanning logic (no DOM; unit-tested)
 js/pages.js           pages and progress through them (unit-tested)
 js/settings.js        defaults, limits, load/save

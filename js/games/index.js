@@ -10,6 +10,7 @@
  */
 
 import { guessGames } from './guess.js';
+import { trainGames } from './train.js';
 
 /**
  * @typedef {object} GameContext
@@ -39,6 +40,7 @@ import { guessGames } from './guess.js';
  * @property {string} id
  * @property {string} category  key of CATEGORIES
  * @property {string} [textId]  whose help text to show (default: id)
+ * @property {string} [settingsCategory]  whose settings fieldset to show (default: category; '' for none)
  * @property {string} icon  path to the menu icon
  * @property {import('../items.js').Item[]} [items]  pictures the game speaks (for voice preparation)
  * @property {(ctx: GameContext) => Game} create
@@ -48,4 +50,4 @@ import { guessGames } from './guess.js';
 export const CATEGORIES = ['guess'];
 
 /** @type {GameInfo[]} */
-export const games = [...guessGames];
+export const games = [...trainGames, ...guessGames];
