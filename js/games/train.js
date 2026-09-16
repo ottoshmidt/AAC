@@ -6,8 +6,9 @@
  * time the picture lights up.
  *
  * A click while the picture is lit counts: the word is spoken again, the
- * picture is marked with a ✓, and the next picture follows. A click while
- * the picture is dark does nothing, so nothing is lost by clicking early.
+ * picture is marked with a ✓, and the next picture follows. A click while the
+ * picture is dark is ignored entirely (see press()), so clicking early costs
+ * nothing and does not shift the rhythm.
  *
  * Timing, the pause after unanswered rounds and the sounds come from the
  * same settings as the guessing games.
@@ -85,7 +86,6 @@ class TrainGame {
       else if (settings.highlightSound) ctx.speech.tick();
     });
     this.scanner.addEventListener('select', () => {
-      if (!this.lit) return; // clicked while dark: ignored
       this.answered = true;
       this.render();
       if (ctx.settings().speakOnSelect) ctx.speakItem(this.item());
@@ -119,7 +119,10 @@ class TrainGame {
   }
 
   press() {
-    this.scanner.press();
+    // While the picture is dark a press is ignored completely, so clicking
+    // early costs nothing: it neither counts nor delays the next light-up.
+    // A press still resumes after the "Paused" overlay.
+    if (this.lit || this.scanner.state === 'paused') this.scanner.press();
   }
 
   /**
