@@ -39,6 +39,13 @@ describe('sanitize', () => {
     assert.equal(detectLanguage(undefined), 'en');
   });
 
+  it('chooses by scanning by default, and accepts touch', () => {
+    assert.equal(DEFAULTS.choiceInput, 'scan');
+    assert.equal(sanitize({ choiceInput: 'touch' }).choiceInput, 'touch');
+    assert.equal(sanitize({ choiceInput: 'eyes' }).choiceInput, 'scan', 'an unknown value falls back');
+    assert.equal(sanitize({ choiceInput: 4 }).choiceInput, 'scan', 'a wrong type falls back');
+  });
+
   it('uses the device voice for Russian by default', () => {
     assert.equal(DEFAULTS.voiceRu, '');
     assert.equal(sanitize({ language: 'ru', voiceRu: 'piper:ru_RU-denis-medium' }).voiceRu, 'piper:ru_RU-denis-medium');

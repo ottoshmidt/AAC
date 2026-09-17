@@ -1,9 +1,14 @@
 // @ts-check
 /**
- * Guess items: pictures are highlighted one after another (single-switch
- * scanning); a press anywhere selects the highlighted one, which is spoken.
- * Pictures come in pages; once every picture on a page has been chosen the
- * next page appears.
+ * Guess items: pictures come in pages, and once every picture on a page has
+ * been chosen the next page appears. There are two ways to choose, set by
+ * the "How to choose" setting:
+ *
+ *   scan  (default) pictures are highlighted one after another
+ *         (single-switch scanning) and a press anywhere selects the
+ *         highlighted one, which is spoken.
+ *   touch a tap on a picture selects that picture. Nothing is highlighted
+ *         and a press elsewhere does nothing, for a child who can aim.
  *
  * The game owns everything inside its screen. The shell (main.js) gives it a
  * root element and a context, and forwards presses and key strokes.
@@ -53,6 +58,12 @@ class GuessGame {
   constructor(ctx, items) {
     this.ctx = ctx;
     this.items = items;
+    /** Set in start(): true when picked by tapping, false when scanned. */
+    this.touch = false;
+    /** @type {ReturnType<typeof setTimeout> | null} cooldown after a tap */
+    this.touchTimer = null;
+    /** @type {number | undefined} */
+    this.lastTapAt = undefined;
     this.progress = new PageProgress(items.length, ctx.settings().choicesPerRound);
     /** Scan index -> slot on the page; chosen slots are left out. */
     this.scanSlots = this.progress.remaining;
@@ -98,6 +109,7 @@ class GuessGame {
 
   start() {
     const s = this.ctx.settings();
+    this.touch = s.choiceInput === 'touch';
     this.scanner.updateOptions({
       intervalMs: s.intervalMs,
       cooldownMs: s.cooldownMs,
@@ -107,18 +119,55 @@ class GuessGame {
     this.progress.setPerPage(s.choicesPerRound);
     this.buildScreen();
     window.addEventListener('resize', this.onResize);
-    this.scanner.start(); // emits 'round', which draws the page
+    if (this.touch) {
+      this.progress.startRound();
+      this.renderPage();
+    } else {
+      this.scanner.start(); // emits 'round', which draws the page
+    }
   }
 
   stop() {
     this.scanner.stop();
+    this.clearTouchTimer();
     window.removeEventListener('resize', this.onResize);
     this.ctx.root.replaceChildren();
     this.ctx.controls.replaceChildren();
   }
 
   press() {
-    this.scanner.press();
+    // In touch mode a picture's own tap handler does the choosing, so a
+    // press anywhere else is not a choice.
+    if (!this.touch) this.scanner.press();
+  }
+
+  clearTouchTimer() {
+    if (this.touchTimer) {
+      clearTimeout(this.touchTimer);
+      this.touchTimer = null;
+    }
+  }
+
+  /**
+   * Touch mode: the tapped picture is the choice. Taps are ignored on a
+   * picture already chosen, during the cooldown after a choice, and closer
+   * together than the debounce time.
+   * @param {number} slot
+   */
+  tap(slot) {
+    const s = this.ctx.settings();
+    const now = performance.now();
+    if (this.touchTimer || this.progress.chosen.has(slot)) return;
+    if (now - (this.lastTapAt ?? -Infinity) < s.debounceMs) return;
+    this.lastTapAt = now;
+    this.progress.choose(slot);
+    this.setSelected(slot);
+    if (s.speakOnSelect) this.ctx.speakItem(this.pageItems()[slot]);
+    this.touchTimer = setTimeout(() => {
+      this.touchTimer = null;
+      this.progress.startRound(); // turns the page once all are chosen
+      this.renderPage();
+    }, s.cooldownMs);
   }
 
   /**
@@ -138,7 +187,12 @@ class GuessGame {
     this.progress.turn(delta);
     this.ctx.speech.cancel();
     this.showPaused(false);
-    this.scanner.start();
+    if (this.touch) {
+      this.clearTouchTimer();
+      this.renderPage();
+    } else {
+      this.scanner.start();
+    }
   }
 
   // ---- Screen ----------------------------------------------------------------
@@ -185,6 +239,7 @@ class GuessGame {
         img.alt = label;
         img.draggable = false;
         figure.append(img, el('figcaption', '', label));
+        if (this.touch) figure.addEventListener('pointerdown', () => this.tap(slot));
         return figure;
       }),
     );
