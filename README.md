@@ -93,10 +93,18 @@ voice that runs entirely in the browser.
   espeak-ng data) from jsDelivr and Hugging Face. A status line under the
   game's page shows progress. After that it is kept in the browser's Cache
   Storage and works offline.
-- The picture labels are prepared in the background, so speech plays
-  instantly during the game (about 0.1–0.2 s per word to prepare).
-- Until Natia is ready, speech falls back to a device voice, which for
-  Georgian is usually silent.
+- **It runs in a Web Worker** (`js/piper-worker.js`, engine in
+  `js/piper-engine.js`), so neither the download nor synthesis blocks the
+  interface: the main thread stalls about 15 ms per word instead of the
+  150 ms the synthesis itself takes on a fast machine.
+- **Every spoken word is cached** in Cache Storage, so a word is synthesised
+  once ever rather than once per app start. If all of a game's words are
+  already cached, the 96 MB model is not loaded at all, and a cached word
+  plays even while the model is still downloading.
+- The picture labels of the chosen game are prepared in the background, so
+  speech plays instantly during the game (about 0.1–0.2 s per new word).
+- Until Natia is ready and for words not yet cached, speech falls back to a
+  device voice, which for Georgian is usually silent.
 - The Voice setting also lists any Georgian voices the device does have
   (for example `espeak-ng` or RHVoice through speech-dispatcher on Linux).
 
@@ -233,7 +241,7 @@ all of that.
 Interface text lives in `js/i18n.js`. To add a language, add it to
 `LANGUAGES` and `STRINGS` there, to `LANGUAGE_CODES` and `VOICE_KEYS` (plus
 a default voice) in `js/settings.js`, and a label to each item. Optionally
-add an in-app voice to `PIPER_VOICES` in `js/piper.js`. `npm test` checks
+add an in-app voice to `PIPER_VOICES` in `js/piper-engine.js`. `npm test` checks
 that no string or label is missing.
 
 ## Project layout
@@ -250,7 +258,9 @@ js/pages.js           pages and progress through them (unit-tested)
 js/settings.js        defaults, limits, load/save
 js/i18n.js            languages and interface strings
 js/speech.js          chooses clip, in-app voice or device voice; tick sound
-js/piper.js           in-app Piper voices (download, cache, synthesis)
+js/piper.js           in-app Piper voices: worker client, speech cache
+js/piper-engine.js    the Piper engine (download, phonemize, model, WAV)
+js/piper-worker.js    runs the engine off the main thread
 js/wav.js             WAV encoder for synthesized speech
 js/wakelock.js        keeps the screen on during a game
 js/ui.js              the shell's DOM (menu, settings form, notes)
@@ -282,7 +292,7 @@ GitHub Pages, Netlify.
 
 - The Georgian voice files come from `cdn.jsdelivr.net` and `huggingface.co`
   at pinned versions. To host them yourself, copy them to your server and
-  change the URLs in `js/piper.js`.
+  change the URLs in `js/piper-engine.js`.
 
 Example Caddy config:
 

@@ -3,103 +3,20 @@
  * In-app neural text-to-speech using Piper voices, for languages that devices
  * rarely have a voice for (Georgian).
  *
- *   text -> phoneme ids   espeak-ng compiled to WebAssembly (piper_phonemize)
- *        -> samples       Piper VITS model run by ONNX Runtime Web
- *        -> WAV           played like a recorded clip
+ * This is the page's side of it: the engine itself (js/piper-engine.js) runs
+ * in a Web Worker (js/piper-worker.js), so neither the 96 MB download nor
+ * synthesis blocks the interface.
  *
- * The large binaries (about 96 MB for Georgian) are downloaded from pinned
- * URLs on first use and kept in Cache Storage, so later sessions work
- * offline. The small JS glue files are vendored in /vendor.
+ * Every synthesised word is kept in Cache Storage, so a word is synthesised
+ * once ever, not once per app start, and playing it later needs no model at
+ * all. `cachedUrl()` answers from that cache alone.
  */
 
-import { encodeWav } from './wav.js';
+import { clipKey, PiperEngine, PIPER_VOICES, piperDownloadBytes, VOICE_CACHE } from './piper-engine.js';
 
-const VOICE_CACHE = 'aac-voices-v1';
+export { PIPER_VOICES, piperDownloadBytes };
 
-const ORT_MODULE = new URL('../vendor/onnxruntime-web/ort.wasm.bundle.min.mjs', import.meta.url).href;
-const PHONEMIZER_SCRIPT = new URL('../vendor/piper-wasm/piper_phonemize.js', import.meta.url).href;
-
-/**
- * @typedef {object} RemoteFile
- * @property {string} url
- * @property {number} bytes  uncompressed size, used for download progress
- * @property {string} type   MIME type
- */
-
-/** Files shared by every Piper voice. @type {Record<string, RemoteFile>} */
-const RUNTIME_FILES = {
-  ortWasm: {
-    url: 'https://cdn.jsdelivr.net/npm/onnxruntime-web@1.29.0/dist/ort-wasm-simd-threaded.wasm',
-    bytes: 13961845,
-    type: 'application/wasm',
-  },
-  phonemizerWasm: {
-    url: 'https://cdn.jsdelivr.net/npm/@diffusionstudio/piper-wasm@1.0.0/build/piper_phonemize.wasm',
-    bytes: 635212,
-    type: 'application/wasm',
-  },
-  phonemizerData: {
-    url: 'https://cdn.jsdelivr.net/npm/@diffusionstudio/piper-wasm@1.0.0/build/piper_phonemize.data',
-    bytes: 18077249,
-    type: 'application/octet-stream',
-  },
-};
-
-const PIPER_VOICES_BASE =
-  'https://huggingface.co/rhasspy/piper-voices/resolve/1162a9173d0ce503555aed757976b7a9912eae4c';
-
-/**
- * @typedef {object} PiperVoiceInfo
- * @property {string} name     display name
- * @property {string} lang     app language code this voice speaks
- * @property {string} license  shown to the caregiver
- * @property {boolean} nonCommercial  license forbids commercial use
- * @property {RemoteFile} model
- * @property {RemoteFile} config
- */
-
-/** @type {Record<string, PiperVoiceInfo>} */
-export const PIPER_VOICES = {
-  'ka_GE-natia-medium': {
-    name: 'Natia',
-    lang: 'ka',
-    license: 'RHVoice, CC BY-NC-SA 4.0',
-    nonCommercial: true,
-    model: {
-      url: `${PIPER_VOICES_BASE}/ka/ka_GE/natia/medium/ka_GE-natia-medium.onnx`,
-      bytes: 63201294,
-      type: 'application/octet-stream',
-    },
-    config: {
-      url: `${PIPER_VOICES_BASE}/ka/ka_GE/natia/medium/ka_GE-natia-medium.onnx.json`,
-      bytes: 4842,
-      type: 'application/json',
-    },
-  },
-  // Russian devices usually have a voice already; this is the offline option.
-  'ru_RU-denis-medium': {
-    name: 'Denis',
-    lang: 'ru',
-    license: 'CC0',
-    nonCommercial: false,
-    model: {
-      url: `${PIPER_VOICES_BASE}/ru/ru_RU/denis/medium/ru_RU-denis-medium.onnx`,
-      bytes: 63201294,
-      type: 'application/octet-stream',
-    },
-    config: {
-      url: `${PIPER_VOICES_BASE}/ru/ru_RU/denis/medium/ru_RU-denis-medium.onnx.json`,
-      bytes: 4823,
-      type: 'application/json',
-    },
-  },
-};
-
-/** @param {string} id */
-export function piperDownloadBytes(id) {
-  const voice = PIPER_VOICES[id];
-  return [...Object.values(RUNTIME_FILES), voice.model, voice.config].reduce((sum, f) => sum + f.bytes, 0);
-}
+const WORKER_URL = new URL('./piper-worker.js', import.meta.url);
 
 /** @typedef {'idle' | 'downloading' | 'loading' | 'ready' | 'error'} PiperStatus */
 
@@ -121,15 +38,19 @@ export class PiperVoice extends EventTarget {
 
     /** @type {Promise<void> | null} */
     this.loading = null;
-    /** @type {any} */ this.ort = null;
-    /** @type {any} */ this.session = null;
-    /** @type {any} */ this.phonemizer = null;
-    /** @type {any} */ this.config = null;
-    /** @type {string[]} */ this.output = [];
     /** @type {Map<string, Promise<string>>} text -> object URL of the WAV */
     this.audioUrls = new Map();
-    /** Synthesis runs one at a time; the phonemizer is not reentrant. */
-    this.queue = Promise.resolve();
+    /** @type {Worker | null} */
+    this.worker = null;
+    /** @type {PiperEngine | null} set only if workers are unavailable */
+    this.engine = null;
+    /** @type {Map<number, { resolve: (wav: ArrayBuffer) => void, reject: (error: Error) => void }>} */
+    this.pending = new Map();
+    this.nextRef = 1;
+    /** @type {(() => void) | null} */
+    this.onReady = null;
+    /** @type {((error: Error) => void) | null} */
+    this.onFailed = null;
   }
 
   /** Download (or read from cache) and initialise. Safe to call repeatedly. */
@@ -147,53 +68,104 @@ export class PiperVoice extends EventTarget {
     this.error = null;
     this.progress = 0;
     this.#set('downloading');
-
-    const files = [RUNTIME_FILES.ortWasm, RUNTIME_FILES.phonemizerWasm, RUNTIME_FILES.phonemizerData, this.info.model, this.info.config];
-    const total = files.reduce((sum, f) => sum + f.bytes, 0);
-    let loaded = 0;
-    const onBytes = (/** @type {number} */ n) => {
-      loaded += n;
-      this.progress = Math.min(1, loaded / total);
-      this.dispatchEvent(new Event('change'));
-    };
-    const [ortWasm, phonemizerWasm, phonemizerData, model, config] = await Promise.all(
-      files.map((f) => fetchCached(f, onBytes)),
-    );
-    navigator.storage?.persist?.().catch(() => {});
-
-    this.#set('loading');
-    this.config = JSON.parse(await config.text());
-
-    const ort = await loadOrt(ortWasm);
-    this.ort = ort;
-    this.session = await ort.InferenceSession.create(new Uint8Array(await model.arrayBuffer()));
-
-    await loadScript(PHONEMIZER_SCRIPT);
-    const wasmUrl = URL.createObjectURL(phonemizerWasm);
-    const dataUrl = URL.createObjectURL(phonemizerData);
-    this.phonemizer = await /** @type {any} */ (window).createPiperPhonemize({
-      print: (/** @type {string} */ line) => this.output.push(line),
-      printErr: (/** @type {string} */ line) => console.warn('[piper phonemize]', line),
-      locateFile: (/** @type {string} */ file) =>
-        file.endsWith('.wasm') ? wasmUrl : file.endsWith('.data') ? dataUrl : file,
-    });
-
+    if (this.#useWorker()) {
+      const worker = /** @type {Worker} */ (this.worker);
+      await new Promise((resolve, reject) => {
+        this.onReady = () => resolve(undefined);
+        this.onFailed = reject;
+        worker.postMessage({ type: 'load', id: this.id });
+      });
+    } else {
+      this.engine ??= new PiperEngine(this.id);
+      await this.engine.load((loaded, total) => this.#progress(loaded, total));
+    }
     this.#set('ready');
   }
 
+  /** Start the worker, unless it is running or this browser has no workers. */
+  #useWorker() {
+    if (this.worker) return true;
+    if (this.engine || typeof Worker === 'undefined') return false;
+    try {
+      this.worker = new Worker(WORKER_URL, { type: 'module' });
+    } catch (error) {
+      console.warn('[piper] no worker, running in the page instead:', error);
+      return false;
+    }
+    this.worker.addEventListener('message', (event) => this.#onMessage(event.data));
+    this.worker.addEventListener('error', (event) => {
+      const error = new Error(event.message || 'Voice worker failed');
+      this.onFailed?.(error);
+      for (const { reject } of this.pending.values()) reject(error);
+      this.pending.clear();
+    });
+    return true;
+  }
+
+  /** @param {any} message */
+  #onMessage(message) {
+    switch (message.type) {
+      case 'progress':
+        return this.#progress(message.loaded, message.total);
+      case 'ready':
+        return this.onReady?.();
+      case 'error':
+        return this.onFailed?.(new Error(message.message));
+      case 'wav': {
+        this.pending.get(message.ref)?.resolve(message.wav);
+        return void this.pending.delete(message.ref);
+      }
+      case 'failed': {
+        this.pending.get(message.ref)?.reject(new Error(message.message));
+        return void this.pending.delete(message.ref);
+      }
+    }
+  }
+
   /**
-   * URL of a WAV file speaking `text`. Results are cached, so calling this
-   * ahead of time (see `prepare`) makes later playback instant.
+   * @param {number} loaded
+   * @param {number} total
+   */
+  #progress(loaded, total) {
+    this.progress = total > 0 ? Math.min(1, loaded / total) : 0;
+    if (this.progress >= 1 && this.status === 'downloading') this.#set('loading');
+    else this.dispatchEvent(new Event('change'));
+  }
+
+  /**
+   * URL of a WAV file speaking `text`, if it was synthesised before (in this
+   * session or an earlier one). No model is loaded, so this is safe to call
+   * while the voice is still downloading.
+   * @param {string} text
+   * @returns {Promise<string | null>}
+   */
+  async cachedUrl(text) {
+    const known = this.audioUrls.get(text);
+    if (known) return known.catch(() => null);
+    if (!('caches' in globalThis)) return null;
+    try {
+      const cache = await caches.open(VOICE_CACHE);
+      const hit = await cache.match(clipKey(this.id, text));
+      if (!hit) return null;
+      const url = URL.createObjectURL(await hit.blob());
+      this.audioUrls.set(text, Promise.resolve(url));
+      return url;
+    } catch {
+      return null;
+    }
+  }
+
+  /**
+   * URL of a WAV file speaking `text`: from the cache if it is there, else
+   * synthesised (and then cached). Calling it ahead of time (see `prepare`)
+   * makes later playback instant.
    * @param {string} text
    * @returns {Promise<string>}
    */
   audioUrl(text) {
     let url = this.audioUrls.get(text);
     if (!url) {
-      url = this.#enqueue(async () => {
-        const wav = await this.#synthesize(text);
-        return URL.createObjectURL(new Blob([wav], { type: 'audio/wav' }));
-      });
+      url = this.#make(text);
       url.catch(() => this.audioUrls.delete(text));
       this.audioUrls.set(text, url);
     }
@@ -201,13 +173,15 @@ export class PiperVoice extends EventTarget {
   }
 
   /**
-   * Synthesise in the background so the texts play without delay later.
-   * @param {string[]} texts
+   * @param {string} text
+   * @returns {Promise<string>}
    */
-  async prepare(texts) {
-    await this.load();
-    if (this.status !== 'ready') return;
-    await Promise.allSettled(texts.map((t) => this.audioUrl(t)));
+  async #make(text) {
+    const cached = await this.cachedUrl(text);
+    if (cached) return cached;
+    const wav = await this.#synthesize(text);
+    this.#store(text, wav.slice(0)); // a copy: the blob below may be detached
+    return URL.createObjectURL(new Blob([wav], { type: 'audio/wav' }));
   }
 
   /**
@@ -215,56 +189,47 @@ export class PiperVoice extends EventTarget {
    * @returns {Promise<ArrayBuffer>}
    */
   async #synthesize(text) {
+    if (this.#useWorker()) {
+      const worker = /** @type {Worker} */ (this.worker);
+      const ref = this.nextRef++;
+      return new Promise((resolve, reject) => {
+        this.pending.set(ref, { resolve, reject });
+        worker.postMessage({ type: 'say', id: this.id, ref, text });
+      });
+    }
     await this.load();
     if (this.status !== 'ready') throw this.error ?? new Error('Voice not ready');
-
-    // piper_phonemize prints one JSON line per sentence.
-    this.output = [];
-    this.phonemizer.callMain([
-      '-l', this.config.espeak.voice,
-      '--input', JSON.stringify([{ text }]),
-      '--espeak_data', '/espeak-ng-data',
-    ]);
-    const sentences = this.output.map((line) => /** @type {number[]} */ (JSON.parse(line).phoneme_ids));
-
-    const { Tensor } = this.ort;
-    const { noise_scale, length_scale, noise_w } = this.config.inference;
-    const multiSpeaker = Object.keys(this.config.speaker_id_map ?? {}).length > 0;
-    /** @type {Float32Array[]} */
-    const parts = [];
-    for (const ids of sentences) {
-      /** @type {Record<string, unknown>} */
-      const feeds = {
-        input: new Tensor('int64', BigInt64Array.from(ids, BigInt), [1, ids.length]),
-        input_lengths: new Tensor('int64', BigInt64Array.from([BigInt(ids.length)]), [1]),
-        scales: new Tensor('float32', Float32Array.from([noise_scale, length_scale, noise_w]), [3]),
-      };
-      if (multiSpeaker) feeds.sid = new Tensor('int64', BigInt64Array.from([0n]), [1]);
-      const { output } = await this.session.run(feeds);
-      parts.push(output.data);
-    }
-
-    const samples = new Float32Array(parts.reduce((n, p) => n + p.length, 0));
-    let offset = 0;
-    for (const p of parts) {
-      samples.set(p, offset);
-      offset += p.length;
-    }
-    return encodeWav(normalize(samples), this.config.audio.sample_rate);
+    return /** @type {PiperEngine} */ (this.engine).say(text);
   }
 
   /**
-   * @template T
-   * @param {() => Promise<T>} task
-   * @returns {Promise<T>}
+   * Keep a synthesised word for later sessions.
+   * @param {string} text
+   * @param {ArrayBuffer} wav
    */
-  #enqueue(task) {
-    const result = this.queue.then(task);
-    this.queue = result.then(
-      () => {},
-      () => {},
-    );
-    return result;
+  #store(text, wav) {
+    if (!('caches' in globalThis)) return;
+    caches
+      .open(VOICE_CACHE)
+      .then((cache) => cache.put(clipKey(this.id, text), new Response(wav, { headers: { 'Content-Type': 'audio/wav' } })))
+      .catch((error) => console.warn('[piper] could not cache speech for', text, error));
+  }
+
+  /**
+   * Synthesise in the background so the texts play without delay later.
+   * Words already in the cache cost nothing, and if every word is cached the
+   * model is never loaded.
+   * @param {string[]} texts
+   */
+  async prepare(texts) {
+    const missing = [];
+    for (const text of texts) {
+      if (!(await this.cachedUrl(text))) missing.push(text);
+    }
+    if (missing.length === 0) return; // every word is cached; no model needed
+    await this.load();
+    if (this.status !== 'ready') return;
+    await Promise.allSettled(missing.map((text) => this.audioUrl(text)));
   }
 
   /** @param {PiperStatus} status */
@@ -272,100 +237,4 @@ export class PiperVoice extends EventTarget {
     this.status = status;
     this.dispatchEvent(new Event('change'));
   }
-}
-
-/**
- * Scale samples so the loudest one sits just below full volume. The raw model
- * output is quiet; Piper's own CLI normalises the same way.
- * @param {Float32Array} samples
- */
-function normalize(samples) {
-  let peak = 0;
-  for (const s of samples) peak = Math.max(peak, Math.abs(s));
-  const gain = 0.95 / Math.max(peak, 0.01);
-  for (let i = 0; i < samples.length; i++) samples[i] *= gain;
-  return samples;
-}
-
-/**
- * Fetch `file`, reporting bytes as they arrive, and keep a copy in Cache
- * Storage. Later calls are served from the cache, which also works offline.
- * @param {RemoteFile} file
- * @param {(bytes: number) => void} onBytes
- * @returns {Promise<Blob>}
- */
-async function fetchCached(file, onBytes) {
-  const cache = 'caches' in self ? await caches.open(VOICE_CACHE).catch(() => null) : null;
-  const hit = await cache?.match(file.url);
-  if (hit) {
-    onBytes(file.bytes);
-    return hit.blob();
-  }
-
-  const response = await fetch(file.url);
-  if (!response.ok || !response.body) throw new Error(`Download failed (${response.status}): ${file.url}`);
-  const reader = response.body.getReader();
-  /** @type {Uint8Array[]} */
-  const chunks = [];
-  let received = 0;
-  for (;;) {
-    const { done, value } = await reader.read();
-    if (done) break;
-    chunks.push(value);
-    received += value.length;
-    onBytes(value.length);
-  }
-  // Keep the total consistent if the real size differs from the listed one.
-  if (received < file.bytes) onBytes(file.bytes - received);
-
-  const blob = new Blob(chunks, { type: file.type });
-  await cache?.put(file.url, new Response(blob, { headers: { 'Content-Type': file.type } })).catch((error) => {
-    console.warn('[piper] could not cache', file.url, error); // e.g. storage quota
-  });
-  return blob;
-}
-
-/** @type {Promise<any> | null} */
-let ortRuntime = null;
-
-/**
- * Import and configure ONNX Runtime once; every voice shares it.
- * @param {Blob} wasm  the runtime's WebAssembly binary
- */
-function loadOrt(wasm) {
-  ortRuntime ??= import(ORT_MODULE).then(
-    (ort) => {
-      ort.env.wasm.numThreads = self.crossOriginIsolated ? Math.min(4, navigator.hardwareConcurrency || 1) : 1;
-      ort.env.wasm.wasmPaths = { wasm: URL.createObjectURL(wasm) };
-      return ort;
-    },
-    (error) => {
-      ortRuntime = null; // allow a retry
-      throw error;
-    },
-  );
-  return ortRuntime;
-}
-
-/** @type {Map<string, Promise<void>>} */
-const scripts = new Map();
-
-/** @param {string} src */
-function loadScript(src) {
-  let promise = scripts.get(src);
-  if (!promise) {
-    promise = new Promise((resolve, reject) => {
-      const script = document.createElement('script');
-      script.src = src;
-      script.onload = () => resolve();
-      script.onerror = () => {
-        scripts.delete(src); // allow a retry
-        script.remove();
-        reject(new Error(`Failed to load ${src}`));
-      };
-      document.head.append(script);
-    });
-    scripts.set(src, promise);
-  }
-  return promise;
 }

@@ -89,17 +89,27 @@ export class Speech {
     if (clip) return this.#play(clip);
 
     const piper = this.piperVoice(voice);
-    if (piper?.status === 'ready') {
+    if (piper) {
       const generation = this.generation;
+      // A word synthesised before (this session or an earlier one) is in the
+      // cache and plays without the model. Otherwise the in-app voice speaks
+      // only once it is ready; until then the device voice stands in.
       piper
-        .audioUrl(text)
+        .cachedUrl(text)
         .then((url) => {
-          if (generation === this.generation) this.#play(url);
+          if (generation !== this.generation) return;
+          if (url) return this.#play(url);
+          if (piper.status === 'ready') {
+            return piper.audioUrl(text).then((fresh) => {
+              if (generation === this.generation) this.#play(fresh);
+            });
+          }
+          this.#say(text, lang, '');
         })
         .catch((error) => console.warn('[speech] in-app voice failed:', error));
       return;
     }
-    this.#say(text, lang, piper ? '' : voice);
+    this.#say(text, lang, voice);
   }
 
   /**

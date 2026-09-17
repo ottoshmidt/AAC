@@ -160,6 +160,35 @@ body {
   transform: translateY(-2px);
 }
 
+/* Pressing a card: it sinks a little and takes the accent colour, so a tap
+   is visibly registered even before the page changes. */
+.game-card:active {
+  transform: scale(0.94);
+  border-color: var(--accent);
+  background: #fff;
+}
+
+.game-card:active img {
+  transform: scale(0.94);
+}
+
+.game-card img {
+  transition: transform 150ms ease;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .game-card,
+  .game-card img {
+    transition: none;
+  }
+
+  .game-card:hover,
+  .game-card:active,
+  .game-card:active img {
+    transform: none;
+  }
+}
+
 /* Keyboard focus is a thin blue ring; yellow is reserved for the scan. */
 .game-card:focus-visible {
   outline: 0.2rem solid var(--accent);
