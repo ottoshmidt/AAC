@@ -184,9 +184,9 @@ export const items = [
 **Picture credits.** The Mixed set and a few pictures in the other sets
 (pomegranate, plum, fig, apricot, quince, persimmon, cabbage, pumpkin, beet,
 radish, zucchini, cauliflower, ostrich, magpie, swallow, heron) were drawn
-for this app; the whole Animals set, the banana and the sparrow, stork,
-woodpecker, hummingbird, crow and seagull are the project owner's own
-illustrations. All other pictures are [Twemoji](https://github.com/jdecked/twemoji) graphics,
+for this app; the whole Animals set, the banana, orange, grapes, cake and
+the sparrow, stork, woodpecker, hummingbird, crow and seagull are the
+project owner's own pictures. All other pictures are [Twemoji](https://github.com/jdecked/twemoji) graphics,
 © Twitter and contributors, licensed
 [CC-BY 4.0](https://creativecommons.org/licenses/by/4.0/); files are named
 by item rather than by emoji code.

@@ -76,13 +76,13 @@ export const itemSets = {};
     // Page 1: fruit
     item('apple', 'ვაშლი', 'Apple', 'Яблоко'),
     item('banana', 'ბანანი', 'Banana', 'Банан', 'webp'),
-    item('orange', 'ფორთოხალი', 'Orange', 'Апельсин'),
-    item('grapes', 'ყურძენი', 'Grapes', 'Виноград'),
+    item('orange', 'ფორთოხალი', 'Orange', 'Апельсин', 'webp'),
+    item('grapes', 'ყურძენი', 'Grapes', 'Виноград', 'webp'),
     // Page 2: food
     item('strawberry', 'მარწყვი', 'Strawberry', 'Клубника'),
     item('carrot', 'სტაფილო', 'Carrot', 'Морковь'),
     item('bread', 'პური', 'Bread', 'Хлеб'),
-    item('cake', 'ტორტი', 'Cake', 'Торт'),
+    item('cake', 'ტორტი', 'Cake', 'Торт', 'webp'),
     // Page 3: drinks and home
     item('milk', 'რძე', 'Milk', 'Молоко'),
     item('water', 'წყალი', 'Water', 'Вода'),
@@ -113,12 +113,12 @@ export const itemSets = {};
     item('apple', 'ვაშლი', 'Apple', 'Яблоко'),
     item('green-apple', 'მწვანე ვაშლი', 'Green apple', 'Зелёное яблоко'),
     item('pear', 'მსხალი', 'Pear', 'Груша'),
-    item('orange', 'ფორთოხალი', 'Orange', 'Апельсин'),
+    item('orange', 'ფორთოხალი', 'Orange', 'Апельсин', 'webp'),
     // Page 2
     item('lemon', 'ლიმონი', 'Lemon', 'Лимон'),
     item('banana', 'ბანანი', 'Banana', 'Банан', 'webp'),
     item('watermelon', 'საზამთრო', 'Watermelon', 'Арбуз'),
-    item('grapes', 'ყურძენი', 'Grapes', 'Виноград'),
+    item('grapes', 'ყურძენი', 'Grapes', 'Виноград', 'webp'),
     // Page 3
     item('strawberry', 'მარწყვი', 'Strawberry', 'Клубника'),
     item('blueberries', 'მოცვი', 'Blueberries', 'Черника'),
