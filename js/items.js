@@ -101,7 +101,7 @@ export const itemSets = {};
     // Page 6: flower and animals
     item('flower', 'ყვავილი', 'Flower', 'Цветок'),
     item('fish', 'თევზი', 'Fish', 'Рыба'),
-    item('cat', 'კატა', 'Cat', 'Кошка'),
+    item('cat', 'კატა', 'Cat', 'Кошка', 'webp'),
     item('bird', 'ჩიტი', 'Bird', 'Птица', 'webp'),
   ];
 }
