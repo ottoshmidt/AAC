@@ -102,7 +102,7 @@ export const itemSets = {};
     item('flower', 'ყვავილი', 'Flower', 'Цветок'),
     item('fish', 'თევზი', 'Fish', 'Рыба'),
     item('cat', 'კატა', 'Cat', 'Кошка'),
-    item('bird', 'ჩიტი', 'Bird', 'Птица'),
+    item('bird', 'ჩიტი', 'Bird', 'Птица', 'webp'),
   ];
 }
 
