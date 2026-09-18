@@ -1,6 +1,0 @@
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 200 200" role="img" aria-label="Apple">
-  <path d="M100 58c-12-10-30-14-46-6-26 13-30 50-18 84 10 28 30 50 50 46 7-1 10-4 14-4s7 3 14 4c20 4 40-18 50-46 12-34 8-71-18-84-16-8-34-4-46 6z" fill="#e2332f"/>
-  <path d="M58 72c-12 8-16 26-12 44" fill="none" stroke="#ff8a80" stroke-width="8" stroke-linecap="round"/>
-  <path d="M100 58c0-14 2-26 10-38" fill="none" stroke="#6b4226" stroke-width="8" stroke-linecap="round"/>
-  <path d="M108 40c10-16 30-20 44-14-6 16-26 24-44 14z" fill="#3fa34d"/>
-</svg>

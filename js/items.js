@@ -74,18 +74,18 @@ export const itemSets = {};
   const item = inFolder('');
   itemSets.mixed = [
     // Page 1: fruit
-    item('apple', 'ვაშლი', 'Apple', 'Яблоко'),
+    item('apple', 'ვაშლი', 'Apple', 'Яблоко', 'webp'),
     item('banana', 'ბანანი', 'Banana', 'Банан', 'webp'),
     item('orange', 'ფორთოხალი', 'Orange', 'Апельсин', 'webp'),
     item('grapes', 'ყურძენი', 'Grapes', 'Виноград', 'webp'),
     // Page 2: food
-    item('strawberry', 'მარწყვი', 'Strawberry', 'Клубника'),
-    item('carrot', 'სტაფილო', 'Carrot', 'Морковь'),
-    item('bread', 'პური', 'Bread', 'Хлеб'),
+    item('strawberry', 'მარწყვი', 'Strawberry', 'Клубника', 'webp'),
+    item('carrot', 'სტაფილო', 'Carrot', 'Морковь', 'webp'),
+    item('bread', 'პური', 'Bread', 'Хлеб', 'webp'),
     item('cake', 'ტორტი', 'Cake', 'Торт', 'webp'),
     // Page 3: drinks and home
-    item('milk', 'რძე', 'Milk', 'Молоко'),
-    item('water', 'წყალი', 'Water', 'Вода'),
+    item('milk', 'რძე', 'Milk', 'Молоко', 'webp'),
+    item('water', 'წყალი', 'Water', 'Вода', 'webp'),
     item('bed', 'საწოლი', 'Bed', 'Кровать'),
     item('house', 'სახლი', 'House', 'Дом'),
     // Page 4: toys
@@ -110,7 +110,7 @@ export const itemSets = {};
   const item = inFolder('fruit');
   itemSets.fruit = [
     // Page 1
-    item('apple', 'ვაშლი', 'Apple', 'Яблоко'),
+    item('apple', 'ვაშლი', 'Apple', 'Яблоко', 'webp'),
     item('green-apple', 'მწვანე ვაშლი', 'Green apple', 'Зелёное яблоко'),
     item('pear', 'მსხალი', 'Pear', 'Груша'),
     item('orange', 'ფორთოხალი', 'Orange', 'Апельсин', 'webp'),
@@ -120,7 +120,7 @@ export const itemSets = {};
     item('watermelon', 'საზამთრო', 'Watermelon', 'Арбуз'),
     item('grapes', 'ყურძენი', 'Grapes', 'Виноград', 'webp'),
     // Page 3
-    item('strawberry', 'მარწყვი', 'Strawberry', 'Клубника'),
+    item('strawberry', 'მარწყვი', 'Strawberry', 'Клубника', 'webp'),
     item('blueberries', 'მოცვი', 'Blueberries', 'Черника'),
     item('melon', 'ნესვი', 'Melon', 'Дыня'),
     item('cherries', 'ბალი', 'Cherries', 'Черешня'),
@@ -149,7 +149,7 @@ export const itemSets = {};
     item('tomato', 'პომიდორი', 'Tomato', 'Помидор'),
     item('eggplant', 'ბადრიჯანი', 'Eggplant', 'Баклажан'),
     item('potato', 'კარტოფილი', 'Potato', 'Картофель'),
-    item('carrot', 'სტაფილო', 'Carrot', 'Морковь'),
+    item('carrot', 'სტაფილო', 'Carrot', 'Морковь', 'webp'),
     // Page 2
     item('corn', 'სიმინდი', 'Corn', 'Кукуруза'),
     item('hot-pepper', 'წიწაკა', 'Hot pepper', 'Острый перец'),

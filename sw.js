@@ -9,7 +9,7 @@
 // Downloaded voices live in a separate cache managed by js/piper.js
 // ('aac-voices-…'); it is left alone here so updates never re-download them.
 
-const CACHE_NAME = 'aac-app-v52';
+const CACHE_NAME = 'aac-app-v53';
 const VOICE_CACHE_PREFIX = 'aac-voices-';
 
 const PRECACHE = [
@@ -61,7 +61,7 @@ const PRECACHE = [
   'assets/images/animals/turtle.webp',
   'assets/images/animals/wolf.webp',
   'assets/images/animals/zebra.webp',
-  'assets/images/apple.svg',
+  'assets/images/apple.webp',
   'assets/images/ball.svg',
   'assets/images/balloon.svg',
   'assets/images/banana.webp',
@@ -92,10 +92,10 @@ const PRECACHE = [
   'assets/images/birds/turkey.svg',
   'assets/images/birds/woodpecker.webp',
   'assets/images/book.svg',
-  'assets/images/bread.svg',
+  'assets/images/bread.webp',
   'assets/images/cake.webp',
   'assets/images/car.svg',
-  'assets/images/carrot.svg',
+  'assets/images/carrot.webp',
   'assets/images/cat.svg',
   'assets/images/clothes/backpack.svg',
   'assets/images/clothes/blouse.svg',
@@ -123,7 +123,7 @@ const PRECACHE = [
   'assets/images/clothes/umbrella.svg',
   'assets/images/fish.svg',
   'assets/images/flower.svg',
-  'assets/images/fruit/apple.svg',
+  'assets/images/fruit/apple.webp',
   'assets/images/fruit/apricot.svg',
   'assets/images/fruit/avocado.svg',
   'assets/images/fruit/banana.webp',
@@ -145,15 +145,15 @@ const PRECACHE = [
   'assets/images/fruit/plum.svg',
   'assets/images/fruit/pomegranate.svg',
   'assets/images/fruit/quince.svg',
-  'assets/images/fruit/strawberry.svg',
+  'assets/images/fruit/strawberry.webp',
   'assets/images/fruit/watermelon.svg',
   'assets/images/grapes.webp',
   'assets/images/house.svg',
-  'assets/images/milk.svg',
+  'assets/images/milk.webp',
   'assets/images/moon.svg',
   'assets/images/orange.webp',
   'assets/images/star.svg',
-  'assets/images/strawberry.svg',
+  'assets/images/strawberry.webp',
   'assets/images/sun.svg',
   'assets/images/transport/airplane.svg',
   'assets/images/transport/ambulance.svg',
@@ -185,7 +185,7 @@ const PRECACHE = [
   'assets/images/vegetables/bell-pepper.svg',
   'assets/images/vegetables/broccoli.svg',
   'assets/images/vegetables/cabbage.svg',
-  'assets/images/vegetables/carrot.svg',
+  'assets/images/vegetables/carrot.webp',
   'assets/images/vegetables/cauliflower.svg',
   'assets/images/vegetables/corn.svg',
   'assets/images/vegetables/cucumber.svg',
@@ -204,7 +204,7 @@ const PRECACHE = [
   'assets/images/vegetables/sweet-potato.svg',
   'assets/images/vegetables/tomato.svg',
   'assets/images/vegetables/zucchini.svg',
-  'assets/images/water.svg',
+  'assets/images/water.webp',
   'assets/icons/icon.svg',
   'assets/icons/game-guess.svg',
   'assets/icons/icon-192.png',

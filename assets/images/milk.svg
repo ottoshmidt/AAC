@@ -1,8 +1,0 @@
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 200 200" role="img" aria-label="Milk">
-  <path d="M130 72l24-22v116l-24 20z" fill="#d6dbe3" stroke="#8a93a3" stroke-width="4" stroke-linejoin="round"/>
-  <path d="M60 72l30-38h40l24 16-24 22z" fill="#eef1f5" stroke="#8a93a3" stroke-width="4" stroke-linejoin="round"/>
-  <path d="M90 34v-10h40v10" fill="#eef1f5" stroke="#8a93a3" stroke-width="4" stroke-linejoin="round"/>
-  <rect x="60" y="72" width="70" height="114" fill="#ffffff" stroke="#8a93a3" stroke-width="4"/>
-  <rect x="60" y="110" width="70" height="40" fill="#3d7eff"/>
-  <path d="M95 118c-8 10-12 16-12 20a12 12 0 0 0 24 0c0-4-4-10-12-20z" fill="#ffffff"/>
-</svg>

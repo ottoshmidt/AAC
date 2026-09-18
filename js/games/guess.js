@@ -27,8 +27,8 @@ const TRIANGLE_RIGHT = '<svg viewBox="0 0 20 20" aria-hidden="true"><path d="M6 
 /** Menu icon per set (an item's own picture, or the game icon for Mixed). */
 const ICONS = {
   mixed: 'assets/icons/game-guess.svg',
-  fruit: 'assets/images/fruit/apple.svg',
-  vegetables: 'assets/images/vegetables/carrot.svg',
+  fruit: 'assets/images/fruit/apple.webp',
+  vegetables: 'assets/images/vegetables/carrot.webp',
   transport: 'assets/images/transport/car.svg',
   clothes: 'assets/images/clothes/t-shirt.svg',
   animals: 'assets/images/animals/rabbit.webp',
