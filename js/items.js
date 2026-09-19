@@ -168,7 +168,7 @@ export const itemSets = {};
     item('mushroom', 'სოკო', 'Mushroom', 'Гриб'),
     item('peas', 'ბარდა', 'Peas', 'Горох'),
     item('beans', 'ლობიო', 'Beans', 'Фасоль', 'webp'),
-    item('ginger', 'ჯანჯაფილი', 'Ginger', 'Имбирь'),
+    item('green-beans', 'მწვანე ლობიო', 'Green beans', 'Стручковая фасоль', 'webp'),
     // Page 5
     item('sweet-potato', 'ბატატი', 'Sweet potato', 'Батат', 'webp'),
     item('olives', 'ზეთისხილი', 'Olives', 'Оливки'),
