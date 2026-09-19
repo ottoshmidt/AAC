@@ -37,7 +37,8 @@ bubble fills up while it is held, so the wait can be watched, and letting go
 early empties it with nothing lost. Hold the bubble itself, or turn on
 scanning and hold a press anywhere to burst the lit one — scanning stops
 while the press is held, so the bubble can't move away mid-hold. The bubbles
-stand still by default and can be set to float about. When the last one
+stand still by default and can be set to float about, and how many there are
+(2, 3, 4 or 6) and how big they are (small, medium, large) can both be set. When the last one
 bursts a new set arrives; **←** / **→** bring one at any time.
 
 **Training** is the first step: a single picture lights up for
@@ -90,6 +91,7 @@ Then open <http://localhost:8080>.
 | Shapes at a time (Matching) | 2 | 2, 3 or 4 shapes per round |
 | Hold a bubble for (Bubbles) | 3 s | 0.5–10 s before it bursts |
 | Bubbles at a time | 4 | 2, 3, 4 or 6 |
+| Bubble size | Medium | Small, Medium or Large; a large bubble fills its share of the screen, a small one leaves room to wander |
 | Bubbles move (Bubbles) | Stay still | Or float about |
 | How to burst (Bubbles) | Hold the bubble | Or Scanning: hold a press anywhere to burst the lit one |
 | How to move a shape (Matching) | Dragging | Dragging, Scanning (two clicks, no aiming) or Both at once |

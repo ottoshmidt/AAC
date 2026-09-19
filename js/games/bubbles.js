@@ -26,6 +26,13 @@ const ICON = 'assets/icons/game-bubbles.svg';
 /** How long the burst animation runs before the bubble is removed (ms). */
 const BURST_MS = 320;
 
+/**
+ * How much of its own cell a bubble fills, per `bubbleSize` setting. At 1 the
+ * bubbles fill their cells completely and sit side by side; below that they
+ * are smaller and get room to be placed at random within the cell.
+ */
+export const BUBBLE_SIZES = Object.freeze({ small: 0.5, medium: 0.78, large: 1 });
+
 /** @type {import('./index.js').GameInfo[]} */
 export const bubbleGames = [
   {
@@ -48,16 +55,17 @@ export const bubbleGames = [
  *
  * @param {number} count  how many bubbles
  * @param {() => number} [random]  0–1, injectable for tests
+ * @param {number} [scale]  how much of its cell a bubble fills (BUBBLE_SIZES)
  * @returns {{ x: number, y: number, size: number }[]}
  */
-export function layout(count, random = Math.random) {
+export function layout(count, random = Math.random, scale = BUBBLE_SIZES.medium) {
   const columns = count <= 2 ? count : Math.ceil(count / 2);
   const rows = count <= 2 ? 1 : 2;
   const cellWidth = 1 / columns;
   const cellHeight = 1 / rows;
-  // Bubbles are a little smaller than their cell, so two neighbours can
-  // never touch even when both are jittered towards each other.
-  const size = Math.min(cellWidth, cellHeight) * 0.78;
+  // A bubble is at most its cell, so two neighbours can never overlap however
+  // the jitter falls; the smaller it is, the more room it has to wander.
+  const size = Math.min(cellWidth, cellHeight) * Math.min(Math.max(scale, 0.1), 1);
   return Array.from({ length: count }, (_, i) => {
     const column = i % columns;
     const row = Math.floor(i / columns);
@@ -80,10 +88,12 @@ export class BubbleField {
   /**
    * @param {number} count
    * @param {() => number} [random]
+   * @param {number} [scale]  how much of its cell a bubble fills
    */
-  constructor(count, random = Math.random) {
+  constructor(count, random = Math.random, scale = BUBBLE_SIZES.medium) {
     this.random = random;
     this.count = count;
+    this.scale = scale;
     /** @type {{ x: number, y: number, size: number, burst: boolean }[]} */
     this.bubbles = [];
     this.fill();
@@ -91,7 +101,7 @@ export class BubbleField {
 
   /** A fresh set of bubbles, none of them burst. */
   fill() {
-    this.bubbles = layout(this.count, this.random).map((b) => ({ ...b, burst: false }));
+    this.bubbles = layout(this.count, this.random, this.scale).map((b) => ({ ...b, burst: false }));
   }
 
   /** Indices of the bubbles still floating. */
@@ -132,7 +142,7 @@ class BubbleGame {
   constructor(ctx) {
     this.ctx = ctx;
     const s = ctx.settings();
-    this.field = new BubbleField(s.bubbleCount);
+    this.field = new BubbleField(s.bubbleCount, Math.random, BUBBLE_SIZES[s.bubbleSize]);
     /** Set in start() from `bubbleInput`. */
     this.scanInput = false;
     /** The bubble being held and when the hold began. @type {{ index: number, startedAt: number } | null} */
@@ -174,7 +184,7 @@ class BubbleGame {
   start() {
     const s = this.ctx.settings();
     this.scanInput = s.bubbleInput === 'scan';
-    this.field = new BubbleField(s.bubbleCount);
+    this.field = new BubbleField(s.bubbleCount, Math.random, BUBBLE_SIZES[s.bubbleSize]);
     this.scanner.updateOptions({
       intervalMs: s.intervalMs,
       cooldownMs: s.cooldownMs,

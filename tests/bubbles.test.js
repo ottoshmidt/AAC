@@ -1,15 +1,15 @@
 import assert from 'node:assert/strict';
 import { describe, it } from 'node:test';
-import { BubbleField, holdProgress, layout } from '../js/games/bubbles.js';
+import { BUBBLE_SIZES, BubbleField, holdProgress, layout } from '../js/games/bubbles.js';
 
 /** A predictable "random": always the middle of the range, so no jitter. */
 const middle = () => 0.5;
 
 describe('bubble layout', () => {
-  it('keeps every bubble inside the board', () => {
+  it('keeps every bubble inside the board, at every size', () => {
     for (const count of [2, 3, 4, 6]) {
       for (const random of [middle, () => 0, () => 1]) {
-        for (const b of layout(count, random)) {
+        for (const b of Object.values(BUBBLE_SIZES).flatMap((scale) => layout(count, random, scale))) {
           assert.ok(b.x - b.size / 2 >= -0.001 && b.x + b.size / 2 <= 1.001, `${count}: x ${b.x} off the board`);
           assert.ok(b.y - b.size / 2 >= -0.001 && b.y + b.size / 2 <= 1.001, `${count}: y ${b.y} off the board`);
         }
@@ -22,15 +22,23 @@ describe('bubble layout', () => {
     // Alternating extremes: neighbours are jittered towards each other.
     const worst = () => [0, 1][seed++ % 2];
     for (const count of [2, 3, 4, 6]) {
-      const bubbles = layout(count, worst);
-      for (let i = 0; i < bubbles.length; i += 1) {
-        for (let j = i + 1; j < bubbles.length; j += 1) {
-          const gap = Math.hypot(bubbles[i].x - bubbles[j].x, bubbles[i].y - bubbles[j].y);
-          const touching = (bubbles[i].size + bubbles[j].size) / 2;
-          assert.ok(gap >= touching - 0.001, `${count}: bubbles ${i} and ${j} overlap`);
+      for (const scale of Object.values(BUBBLE_SIZES)) {
+        const bubbles = layout(count, worst, scale);
+        for (let i = 0; i < bubbles.length; i += 1) {
+          for (let j = i + 1; j < bubbles.length; j += 1) {
+            const gap = Math.hypot(bubbles[i].x - bubbles[j].x, bubbles[i].y - bubbles[j].y);
+            const touching = (bubbles[i].size + bubbles[j].size) / 2;
+            assert.ok(gap >= touching - 0.001, `${count} at ${scale}: bubbles ${i} and ${j} overlap`);
+          }
         }
       }
     }
+  });
+
+  it('draws a large bubble bigger than a small one, and never wider than its cell', () => {
+    const [small, medium, large] = ['small', 'medium', 'large'].map((size) => layout(4, middle, BUBBLE_SIZES[size])[0].size);
+    assert.ok(small < medium && medium < large, `${small} < ${medium} < ${large}`);
+    assert.ok(large <= 0.5 + 0.001, 'four bubbles: never wider than half the board');
   });
 
   it('gives one bubble per count, all the same size', () => {
