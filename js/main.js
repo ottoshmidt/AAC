@@ -58,16 +58,19 @@ function recordedWords(language, voice) {
 
 /** @param {import('./items.js').Item} item */
 function utteranceFor(item) {
+  // A letter carries its own language, so the Georgian alphabet is read in
+  // Georgian even when the interface is in English.
+  const language = item.lang ?? lang();
   return {
-    text: labelFor(item, lang()),
-    lang: LANGUAGES[lang()].speechLang,
-    clip: clipFor(item, lang(), recordedVoiceOf(voiceFor())),
+    text: item.text ?? labelFor(item, language),
+    lang: LANGUAGES[language]?.speechLang ?? '',
+    clip: item.text ? undefined : clipFor(item, language, recordedVoiceOf(voiceFor(language))),
   };
 }
 
 /** @param {import('./items.js').Item} item */
 function speakItem(item) {
-  speech.speak(utteranceFor(item), spokenVoiceFor());
+  speech.speak(utteranceFor(item), spokenVoiceFor(item.lang ?? lang()));
 }
 
 /** Speak any text in the current language and voice. @param {string} text */
@@ -80,12 +83,20 @@ function say(text) {
  * the chosen game (or, before one is chosen, of the first game).
  */
 function prepareInAppVoice() {
-  const piper = speech.piperVoice(spokenVoiceFor());
-  if (!piper) return;
   const items = (selected ?? games[0]).items ?? [];
-  const recorded = recordedVoiceOf(voiceFor());
-  const texts = items.filter((item) => !clipFor(item, lang(), recorded)).map((item) => labelFor(item, lang()));
-  piper.prepare(texts);
+  // Items may belong to different languages (the alphabets), so prepare each
+  // language with its own voice.
+  /** @type {Map<string, string[]>} */
+  const byLanguage = new Map();
+  for (const item of items) {
+    const language = item.lang ?? lang();
+    const text = item.text ?? labelFor(item, language);
+    if (!item.text && clipFor(item, language, recordedVoiceOf(voiceFor(language)))) continue;
+    byLanguage.set(language, [...(byLanguage.get(language) ?? []), text]);
+  }
+  for (const [language, texts] of byLanguage) {
+    speech.piperVoice(spokenVoiceFor(language))?.prepare(texts);
+  }
 }
 
 // ---- Games -------------------------------------------------------------------

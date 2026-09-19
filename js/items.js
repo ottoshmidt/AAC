@@ -7,6 +7,8 @@
  * Fields:
  *   id     unique within its set; also the image file name
  *   image  path to the picture (SVG, PNG, JPG, WebP)
+ *   text   a letter shown instead of a picture (js/letters.js), with `lang`
+ *   lang   the language `text` belongs to, so it is spoken in that language
  *   label  text per language: shown under the picture and spoken on selection
  *   audio  optional recorded clip per language, played instead of text-to-speech
  *          (clips recorded with `npm run record` are found by label and voice, see clipFor)
@@ -51,7 +53,9 @@ export function recordedCount(lang, voice) {
 /**
  * @typedef {object} Item
  * @property {string} id
- * @property {string} image
+ * @property {string} [image]
+ * @property {string} [text]  a letter, drawn instead of a picture
+ * @property {string} [lang]  the language `text` is spoken in
  * @property {Record<string, string>} label
  * @property {Record<string, string>} [audio]
  */
@@ -100,7 +104,7 @@ export const itemSets = {};
     item('tree', 'ხე', 'Tree', 'Дерево'),
     // Page 6: flower and animals
     item('flower', 'ყვავილი', 'Flower', 'Цветок'),
-    item('fish', 'თევზი', 'Fish', 'Рыба'),
+    item('fish', 'თევზი', 'Fish', 'Рыба', 'webp'),
     item('cat', 'კატა', 'Cat', 'Кошка', 'webp'),
     item('bird', 'ჩიტი', 'Bird', 'Птица', 'webp'),
   ];

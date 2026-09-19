@@ -49,8 +49,13 @@ export const guessGames = Object.entries(ICONS).map(([set, icon]) => ({
   create: (ctx) => new GuessGame(ctx, itemSets[set]),
 }));
 
-/** @implements {import('./index.js').Game} */
-class GuessGame {
+/**
+ * The guessing game. Used with pictures (Guess items) and with letters
+ * (Alphabet, see ./letters.js): an item with `text` is drawn as the letter
+ * itself instead of a picture.
+ * @implements {import('./index.js').Game}
+ */
+export class GuessGame {
   /**
    * @param {import('./index.js').GameContext} ctx
    * @param {import('../items.js').Item[]} items  the pictures, in page order
@@ -234,11 +239,17 @@ class GuessGame {
         const figure = el('figure', 'choice');
         figure.classList.toggle('done', this.progress.chosen.has(slot));
         figure.dataset.index = String(slot);
-        const img = el('img');
-        img.src = item.image;
-        img.alt = label;
-        img.draggable = false;
-        figure.append(img, el('figcaption', '', label));
+        if (item.text) {
+          // A letter is its own picture, so it fills the card and needs no caption.
+          figure.classList.add('letter');
+          figure.append(el('div', 'glyph', item.text));
+        } else {
+          const img = el('img');
+          img.src = item.image;
+          img.alt = label;
+          img.draggable = false;
+          figure.append(img, el('figcaption', '', label));
+        }
         if (this.touch) figure.addEventListener('pointerdown', () => this.tap(slot));
         return figure;
       }),
