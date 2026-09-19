@@ -25,7 +25,7 @@ const TRAINING_ITEMS = itemSets.mixed.slice(0, 10);
 
 /**
  * One Training game for the whole app, not one per picture set. It sits in
- * the Guess items category, first, because it teaches the click the other
+ * the Guess category, first, because it teaches the click the other
  * games rely on; it has no picture-count setting of its own.
  * @type {import('./index.js').GameInfo[]}
  */

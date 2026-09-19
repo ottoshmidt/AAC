@@ -1,6 +1,6 @@
 // @ts-check
 /**
- * Guess items: pictures come in pages, and once every picture on a page has
+ * Guess: pictures come in pages, and once every picture on a page has
  * been chosen the next page appears. There are two ways to choose, set by
  * the "How to choose" setting:
  *
@@ -36,7 +36,7 @@ const ICONS = {
 };
 
 /**
- * One "Guess items" game per picture set, all in the 'guess' category and
+ * One "Guess" game per picture set, all in the 'guess' category and
  * sharing the same description, help and settings (textId 'guess').
  * @type {import('./index.js').GameInfo[]}
  */
@@ -50,7 +50,7 @@ export const guessGames = Object.entries(ICONS).map(([set, icon]) => ({
 }));
 
 /**
- * The guessing game. Used with pictures (Guess items) and with letters
+ * The guessing game. Used with pictures (Guess) and with letters
  * (Alphabet, see ./letters.js): an item with `text` is drawn as the letter
  * itself instead of a picture.
  * @implements {import('./index.js').Game}

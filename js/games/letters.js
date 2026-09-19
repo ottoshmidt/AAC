@@ -21,7 +21,7 @@ const ICONS = {
 
 /**
  * One game per alphabet, all in the 'letters' category, sharing the help
- * text and the Guess items settings (pictures at a time, how to choose).
+ * text and the Guess settings (pictures at a time, how to choose).
  * @type {import('./index.js').GameInfo[]}
  */
 export const letterGames = Object.keys(letterSets).map((lang) => ({

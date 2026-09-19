@@ -7,13 +7,13 @@ selects the lit one, so the user never has to aim the mouse. The same works
 with a touch screen, a big-button mouse or any switch that acts as a mouse
 click.
 
-The start screen is a menu of games, grouped by category. **Guess items**
+The start screen is a menu of games, grouped by category. **Guess**
 starts with **Training**, for learning the click itself, followed by seven
 games that differ only in their pictures: **Mixed**, **Fruit**,
 **Vegetables**, **Transport**, **Clothes**, **Animals** and **Birds**, 24
 pictures each.
 
-In a Guess items game, four pictures are shown in a 2×2 grid (or two side by
+In a Guess game, four pictures are shown in a 2×2 grid (or two side by
 side); the highlight moves through them and a click chooses the highlighted
 one, which is spoken aloud. The pictures are split into pages of 4 (6 pages).
 When every picture on a page has been chosen, the game moves to the next
@@ -57,7 +57,7 @@ Then open <http://localhost:8080>.
    clicks **Start**. This goes fullscreen and enables sound. (Scanning
    happens only inside the games; the menu and game pages are operated
    directly.)
-3. In **Guess items**, the highlight moves through the pictures (left to right,
+3. In **Guess**, the highlight moves through the pictures (left to right,
    top to bottom).
    A click anywhere selects the highlighted picture, which is spoken aloud.
 4. A chosen picture stays in place with a ✓ and is skipped from then on.
@@ -269,7 +269,7 @@ index.html            start screen and game screen
 css/style.css         layout and highlight styles
 js/main.js            app shell: menu, language, settings, voices
 js/games/index.js     list of games shown on the menu
-js/games/guess.js     the Guess items games (one per picture set)
+js/games/guess.js     the Guess games (one per picture set)
 js/games/train.js     the Training game (one picture at a time)
 js/games/match.js     the Matching game (shapes into slots; rules unit-tested)
 js/shapes.js          the shapes, drawn as SVG paths

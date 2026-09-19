@@ -1,6 +1,6 @@
 // @ts-check
 /**
- * Picture sets. Each "Guess items" game uses one set. Pages of 4 (or 2, see
+ * Picture sets. Each "Guess" game uses one set. Pages of 4 (or 2, see
  * the "Pictures at a time" setting) are cut from a set in order, so related
  * pictures are grouped in runs of 4.
  *

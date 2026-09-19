@@ -9,7 +9,7 @@ const root = new URL('../', import.meta.url);
 const serviceWorker = readFileSync(new URL('sw.js', root), 'utf8');
 
 describe('game registry', () => {
-  it('has Training and the seven Guess items games in one category, with unique ids', () => {
+  it('has Training and the seven Guess games in one category, with unique ids', () => {
     const sets = ['mixed', 'fruit', 'vegetables', 'transport', 'clothes', 'animals', 'birds'];
     const ids = (category) => games.filter((g) => g.category === category).map((g) => g.id);
     assert.deepEqual(ids('guess'), ['train', ...sets.map((s) => `guess-${s}`)], 'Training comes first');
