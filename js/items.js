@@ -101,9 +101,9 @@ export const itemSets = {};
     item('sun', 'მზე', 'Sun', 'Солнце'),
     item('moon', 'მთვარე', 'Moon', 'Луна'),
     item('star', 'ვარსკვლავი', 'Star', 'Звезда'),
-    item('tree', 'ხე', 'Tree', 'Дерево'),
+    item('tree', 'ხე', 'Tree', 'Дерево', 'webp'),
     // Page 6: flower and animals
-    item('flower', 'ყვავილი', 'Flower', 'Цветок'),
+    item('flower', 'ყვავილი', 'Flower', 'Цветок', 'webp'),
     item('fish', 'თევზი', 'Fish', 'Рыба', 'webp'),
     item('cat', 'კატა', 'Cat', 'Кошка', 'webp'),
     item('bird', 'ჩიტი', 'Bird', 'Птица', 'webp'),
