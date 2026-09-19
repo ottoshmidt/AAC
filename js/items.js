@@ -172,7 +172,7 @@ export const itemSets = {};
     // Page 5
     item('sweet-potato', 'ბატატი', 'Sweet potato', 'Батат'),
     item('olives', 'ზეთისხილი', 'Olives', 'Оливки'),
-    item('cabbage', 'კომბოსტო', 'Cabbage', 'Капуста'),
+    item('cabbage', 'კომბოსტო', 'Cabbage', 'Капуста', 'webp'),
     item('pumpkin', 'გოგრა', 'Pumpkin', 'Тыква'),
     // Page 6
     item('beet', 'ჭარხალი', 'Beet', 'Свёкла'),
