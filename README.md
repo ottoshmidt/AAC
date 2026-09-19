@@ -76,6 +76,7 @@ Then open <http://localhost:8080>.
 | Setting | Default | Notes |
 |---|---|---|
 | Pictures at a time | 4 | Page size: 4 (2×2 grid, 6 pages) or 2 (side by side, 12 pages) |
+| How to choose (Guess) | Touch | Tap the picture itself, or Scanning: the highlight moves and a click anywhere takes the lit one |
 | Shapes at a time (Matching) | 2 | 2, 3 or 4 shapes per round |
 | How to move a shape (Matching) | Dragging | Dragging, Scanning (two clicks, no aiming) or Both at once |
 | Highlight each picture for | 2 s | 0.5–10 s |

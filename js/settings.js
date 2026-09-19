@@ -51,7 +51,7 @@ export function detectLanguage(browserLanguage) {
 /** @type {Readonly<Settings>} */
 export const DEFAULTS = Object.freeze({
   choicesPerRound: 4,
-  choiceInput: 'scan',
+  choiceInput: 'touch',
   matchShapes: 2,
   matchInput: 'drag',
   intervalMs: 2000,
