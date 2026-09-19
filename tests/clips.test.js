@@ -3,6 +3,7 @@ import { readFileSync } from 'node:fs';
 import { describe, it } from 'node:test';
 import { buildRegistry, renderClipsModule, updateServiceWorker, wordsFor } from '../scripts/clips-registry.mjs';
 import { itemSets } from '../js/items.js';
+import { letterSets } from '../js/letters.js';
 
 const serviceWorker = readFileSync(new URL('../sw.js', import.meta.url), 'utf8');
 
@@ -10,11 +11,20 @@ describe('clip registry', () => {
   it('lists one word per distinct label, named after the first item with it', () => {
     const words = wordsFor('ka');
     const labels = words.map((w) => w.label);
+    const pictures = Object.values(itemSets).flat().length;
     assert.equal(new Set(labels).size, labels.length);
-    assert.ok(words.length < Object.values(itemSets).flat().length, 'shared words are recorded once');
+    assert.ok(words.length < pictures + letterSets.ka.length, 'shared words are recorded once');
     const apple = words.find((w) => w.label === 'ვაშლი');
     assert.equal(apple?.id, 'apple');
     assert.equal(apple?.image, itemSets.mixed.find((i) => i.id === 'apple')?.image);
+  });
+
+  it('includes the letters of the language own alphabet, not the others', () => {
+    const ka = wordsFor('ka');
+    assert.ok(ka.some((w) => w.label === 'ა' && w.text === 'ა' && !w.image), 'Georgian letters are recordable');
+    assert.ok(!ka.some((w) => w.label === 'Щ'), 'the Russian alphabet is not in the Georgian list');
+    assert.ok(wordsFor('ru').some((w) => w.label === 'Щ'));
+    assert.ok(wordsFor('en').some((w) => w.label === 'W'));
   });
 
   it('maps existing files to labels and ignores unknown ids', () => {

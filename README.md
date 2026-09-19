@@ -130,8 +130,10 @@ project through a small development server:
 npm run record            # then open http://localhost:8888/record.html
 ```
 
-Pick the language, the voice (**Female voice** or **Male voice**: each
-word can be recorded in both) and the **Microphone** (e.g. a USB mic; the
+The page lists every word of the chosen language: the picture labels and
+then the letters of that language's own alphabet, shown large instead of a
+picture. Pick the language, the voice (**Female voice** or **Male voice**:
+each word can be recorded in both) and the **Microphone** (e.g. a USB mic; the
 choice is remembered, and the list shows device names once the page has
 been allowed to use the microphone), and for each picture click **Record**, say
 the word, click **Stop** (or press Space). The clip is trimmed, normalized,

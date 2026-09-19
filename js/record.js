@@ -12,6 +12,7 @@
 
 import { LANGUAGES } from './i18n.js';
 import { itemSets, labelFor, RECORDED_VOICES } from './items.js';
+import { letterSets } from './letters.js';
 import { encodeWav } from './wav.js';
 
 const SAMPLE_RATE = 16000;
@@ -27,6 +28,7 @@ const ui = {
   mic: /** @type {HTMLSelectElement} */ ($('#record-mic')),
   progress: $('#record-progress'),
   image: /** @type {HTMLImageElement} */ ($('#record-image')),
+  glyph: $('#record-glyph'),
   word: $('#record-word'),
   status: $('#record-status'),
   record: /** @type {HTMLButtonElement} */ ($('#record-button')),
@@ -37,7 +39,7 @@ const ui = {
   list: $('#record-list'),
 };
 
-/** @typedef {{ id: string, label: string, image: string }} Word */
+/** @typedef {{ id: string, label: string, image: string, text?: string }} Word */
 
 const state = {
   lang: 'ka',
@@ -65,9 +67,10 @@ let player = null;
 function wordsFor(lang) {
   /** @type {Map<string, Word>} */
   const byLabel = new Map();
-  for (const item of Object.values(itemSets).flat()) {
+  // The pictures first, then the letters of that language's own alphabet.
+  for (const item of [...Object.values(itemSets).flat(), ...(letterSets[lang] ?? [])]) {
     const label = labelFor(item, lang);
-    if (!byLabel.has(label)) byLabel.set(label, { id: item.id, label, image: item.image });
+    if (!byLabel.has(label)) byLabel.set(label, { id: item.id, label, image: item.image ?? '', text: item.text });
   }
   return [...byLabel.values()];
 }
@@ -323,8 +326,15 @@ function render() {
   const word = current();
   const done = state.words.filter((w) => clipOf(w)).length;
   ui.progress.textContent = `${done} / ${state.words.length}`;
-  ui.image.src = word.image;
-  ui.image.alt = word.label;
+  // A letter has no picture: the letter itself is shown, large.
+  ui.image.hidden = !word.image;
+  ui.glyph.hidden = Boolean(word.image);
+  if (word.image) {
+    ui.image.src = word.image;
+    ui.image.alt = word.label;
+  } else {
+    ui.glyph.textContent = word.text ?? word.label;
+  }
   ui.word.textContent = word.label;
 
   const has = Boolean(clipOf(word));

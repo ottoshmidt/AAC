@@ -688,6 +688,17 @@ body {
   object-fit: contain;
 }
 
+.record-glyph {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: clamp(8rem, 40vmin, 18rem);
+  height: clamp(8rem, 40vmin, 18rem);
+  font-size: clamp(5rem, 30vmin, 14rem);
+  font-weight: 700;
+  line-height: 1;
+}
+
 .record-word {
   margin: 0;
   font-size: clamp(1.5rem, 5vw, 3rem);

@@ -64,7 +64,9 @@ function utteranceFor(item) {
   return {
     text: item.text ?? labelFor(item, language),
     lang: LANGUAGES[language]?.speechLang ?? '',
-    clip: item.text ? undefined : clipFor(item, language, recordedVoiceOf(voiceFor(language))),
+    // Letters are found in the clips too: they are keyed by the label, which
+    // for a letter is the letter itself.
+    clip: clipFor(item, language, recordedVoiceOf(voiceFor(language))),
   };
 }
 
@@ -91,7 +93,7 @@ function prepareInAppVoice() {
   for (const item of items) {
     const language = item.lang ?? lang();
     const text = item.text ?? labelFor(item, language);
-    if (!item.text && clipFor(item, language, recordedVoiceOf(voiceFor(language)))) continue;
+    if (clipFor(item, language, recordedVoiceOf(voiceFor(language)))) continue;
     byLanguage.set(language, [...(byLanguage.get(language) ?? []), text]);
   }
   for (const [language, texts] of byLanguage) {
