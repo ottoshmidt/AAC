@@ -167,7 +167,7 @@ export const itemSets = {};
     // Page 4
     item('mushroom', 'სოკო', 'Mushroom', 'Гриб'),
     item('peas', 'ბარდა', 'Peas', 'Горох'),
-    item('beans', 'ლობიო', 'Beans', 'Фасоль'),
+    item('beans', 'ლობიო', 'Beans', 'Фасоль', 'webp'),
     item('ginger', 'ჯანჯაფილი', 'Ginger', 'Имбирь'),
     // Page 5
     item('sweet-potato', 'ბატატი', 'Sweet potato', 'Батат', 'webp'),
@@ -175,8 +175,8 @@ export const itemSets = {};
     item('cabbage', 'კომბოსტო', 'Cabbage', 'Капуста', 'webp'),
     item('pumpkin', 'გოგრა', 'Pumpkin', 'Тыква'),
     // Page 6
-    item('beet', 'ჭარხალი', 'Beet', 'Свёкла'),
-    item('radish', 'ბოლოკი', 'Radish', 'Редис'),
+    item('beet', 'ჭარხალი', 'Beet', 'Свёкла', 'webp'),
+    item('radish', 'ბოლოკი', 'Radish', 'Редис', 'webp'),
     item('zucchini', 'ყაბაყი', 'Zucchini', 'Кабачок'),
     item('cauliflower', 'ყვავილოვანი კომბოსტო', 'Cauliflower', 'Цветная капуста'),
   ];
