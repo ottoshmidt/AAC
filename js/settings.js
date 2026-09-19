@@ -17,7 +17,7 @@ const STORAGE_KEY = 'aac.settings.v1';
  * @property {string}  matchInput        how a shape is moved: 'drag', 'scan' or 'both'
  * @property {number}  bubbleCount       bubbles on screen at once
  * @property {number}  bubbleHoldMs      how long a bubble must be held before it bursts
- * @property {string}  bubbleSize        bubble size: 'small', 'medium' or 'large'
+ * @property {string}  bubbleSize        bubble size: 'small', 'medium', 'large' or 'xlarge'
  * @property {string}  bubbleMotion      'still' or 'drift' (bubbles float about)
  * @property {string}  bubbleInput       how a bubble is burst: 'touch' (hold it) or 'scan' (hold anywhere)
  * @property {number}  intervalMs        how long each picture stays highlighted
@@ -87,7 +87,7 @@ export const CHOICES = Object.freeze({
   matchShapes: [2, 3, 4],
   matchInput: ['drag', 'scan', 'both'],
   bubbleCount: [2, 3, 4, 6],
-  bubbleSize: ['small', 'medium', 'large'],
+  bubbleSize: ['small', 'medium', 'large', 'xlarge'],
   bubbleMotion: ['still', 'drift'],
   bubbleInput: ['touch', 'scan'],
   language: LANGUAGE_CODES,

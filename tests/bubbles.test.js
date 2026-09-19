@@ -5,16 +5,49 @@ import { BUBBLE_SIZES, BubbleField, holdProgress, layout } from '../js/games/bub
 /** A predictable "random": always the middle of the range, so no jitter. */
 const middle = () => 0.5;
 
+/** Board shapes to try: square, a wide screen, a phone held upright. */
+const ASPECTS = [1, 16 / 9, 3 / 4];
+
+/** A board of `aspect`, measured in units of its own smaller side. */
+const boardSize = (aspect) => ({ width: aspect >= 1 ? aspect : 1, height: aspect >= 1 ? 1 : 1 / aspect });
+
 describe('bubble layout', () => {
-  it('keeps every bubble inside the board, at every size', () => {
+  it('keeps every bubble inside the board, at every size and shape', () => {
     for (const count of [2, 3, 4, 6]) {
       for (const random of [middle, () => 0, () => 1]) {
-        for (const b of Object.values(BUBBLE_SIZES).flatMap((scale) => layout(count, random, scale))) {
-          assert.ok(b.x - b.size / 2 >= -0.001 && b.x + b.size / 2 <= 1.001, `${count}: x ${b.x} off the board`);
-          assert.ok(b.y - b.size / 2 >= -0.001 && b.y + b.size / 2 <= 1.001, `${count}: y ${b.y} off the board`);
+        for (const scale of Object.values(BUBBLE_SIZES)) {
+          for (const aspect of ASPECTS) {
+            const board = boardSize(aspect);
+            for (const b of layout(count, random, scale, aspect)) {
+              // x and y are fractions of the board; the size is in units of
+              // the board's smaller side, so it is converted to compare.
+              const halfX = b.size / 2 / board.width;
+              const halfY = b.size / 2 / board.height;
+              assert.ok(b.x - halfX >= -0.001 && b.x + halfX <= 1.001, `${count}@${aspect}: x ${b.x} off the board`);
+              assert.ok(b.y - halfY >= -0.001 && b.y + halfY <= 1.001, `${count}@${aspect}: y ${b.y} off the board`);
+            }
+          }
         }
       }
     }
+  });
+
+  it('uses the room a wide board has, rather than the room a square one would', () => {
+    for (const count of [2, 3]) {
+      const square = layout(count, middle, BUBBLE_SIZES.medium, 1)[0].size;
+      const wide = layout(count, middle, BUBBLE_SIZES.medium, 16 / 9)[0].size;
+      assert.ok(wide > square, `${count} bubbles: ${wide} should beat ${square}`);
+    }
+  });
+
+  it('arranges the bubbles to suit the board it is on', () => {
+    // Three bubbles: a row on a wide screen, but not on a tall one.
+    const wide = layout(3, middle, BUBBLE_SIZES.medium, 16 / 9);
+    assert.equal(new Set(wide.map((b) => b.y.toFixed(3))).size, 1, 'a wide board puts them in one row');
+    // A phone held upright has no room for a row of three: they stack up
+    // instead, which leaves each one bigger.
+    const tall = layout(3, middle, BUBBLE_SIZES.medium, 3 / 4);
+    assert.ok(new Set(tall.map((b) => b.y.toFixed(3))).size > 1, 'a tall board stacks them');
   });
 
   it('never lets two bubbles overlap, however the jitter falls', () => {
@@ -23,22 +56,30 @@ describe('bubble layout', () => {
     const worst = () => [0, 1][seed++ % 2];
     for (const count of [2, 3, 4, 6]) {
       for (const scale of Object.values(BUBBLE_SIZES)) {
-        const bubbles = layout(count, worst, scale);
-        for (let i = 0; i < bubbles.length; i += 1) {
-          for (let j = i + 1; j < bubbles.length; j += 1) {
-            const gap = Math.hypot(bubbles[i].x - bubbles[j].x, bubbles[i].y - bubbles[j].y);
-            const touching = (bubbles[i].size + bubbles[j].size) / 2;
-            assert.ok(gap >= touching - 0.001, `${count} at ${scale}: bubbles ${i} and ${j} overlap`);
+        for (const aspect of ASPECTS) {
+          const board = boardSize(aspect);
+          const bubbles = layout(count, worst, scale, aspect);
+          for (let i = 0; i < bubbles.length; i += 1) {
+            for (let j = i + 1; j < bubbles.length; j += 1) {
+              // Distances in the same unit as the sizes, or a wide board
+              // would look as though its bubbles were on top of each other.
+              const dx = (bubbles[i].x - bubbles[j].x) * board.width;
+              const dy = (bubbles[i].y - bubbles[j].y) * board.height;
+              const touching = (bubbles[i].size + bubbles[j].size) / 2;
+              assert.ok(Math.hypot(dx, dy) >= touching - 0.001, `${count}@${aspect} at ${scale}: ${i} and ${j} overlap`);
+            }
           }
         }
       }
     }
   });
 
-  it('draws a large bubble bigger than a small one, and never wider than its cell', () => {
-    const [small, medium, large] = ['small', 'medium', 'large'].map((size) => layout(4, middle, BUBBLE_SIZES[size])[0].size);
-    assert.ok(small < medium && medium < large, `${small} < ${medium} < ${large}`);
-    assert.ok(large <= 0.5 + 0.001, 'four bubbles: never wider than half the board');
+  it('grows with every size step, up to the whole cell', () => {
+    const sizes = ['small', 'medium', 'large', 'xlarge'].map((size) => layout(4, middle, BUBBLE_SIZES[size])[0].size);
+    for (let i = 1; i < sizes.length; i += 1) {
+      assert.ok(sizes[i] > sizes[i - 1], `${sizes[i - 1]} -> ${sizes[i]}: each step is bigger`);
+    }
+    assert.ok(sizes.at(-1) <= 0.5 + 0.001, 'four bubbles on a square board: never wider than half of it');
   });
 
   it('gives one bubble per count, all the same size', () => {

@@ -31,7 +31,7 @@ const BURST_MS = 320;
  * bubbles fill their cells completely and sit side by side; below that they
  * are smaller and get room to be placed at random within the cell.
  */
-export const BUBBLE_SIZES = Object.freeze({ small: 0.5, medium: 0.78, large: 1 });
+export const BUBBLE_SIZES = Object.freeze({ small: 0.5, medium: 0.78, large: 0.9, xlarge: 1 });
 
 /** @type {import('./index.js').GameInfo[]} */
 export const bubbleGames = [
@@ -46,23 +46,32 @@ export const bubbleGames = [
 
 /**
  * Where the bubbles sit, as fractions of the board (0–1), and how big they
- * are relative to the board's smaller side.
+ * are in units of the board's smaller side (the cqmin the CSS draws them in).
  *
  * The board is cut into a grid with a cell per bubble and each bubble is
  * placed inside its own cell, away from the edges. That keeps them apart
  * without any collision test, and the jitter keeps the set from looking like
- * a grid. No DOM, so it can be unit-tested.
+ * a grid.
+ *
+ * The cells are measured in the same unit the bubbles are drawn in, so a wide
+ * board really does give wider cells and bigger bubbles; measuring them as
+ * fractions of the board instead would throw that space away on any screen
+ * that is not square. No DOM, so it can be unit-tested.
  *
  * @param {number} count  how many bubbles
  * @param {() => number} [random]  0–1, injectable for tests
  * @param {number} [scale]  how much of its cell a bubble fills (BUBBLE_SIZES)
+ * @param {number} [aspect]  the board's width / height
  * @returns {{ x: number, y: number, size: number }[]}
  */
-export function layout(count, random = Math.random, scale = BUBBLE_SIZES.medium) {
-  const columns = count <= 2 ? count : Math.ceil(count / 2);
-  const rows = count <= 2 ? 1 : 2;
-  const cellWidth = 1 / columns;
-  const cellHeight = 1 / rows;
+export function layout(count, random = Math.random, scale = BUBBLE_SIZES.medium, aspect = 1) {
+  // The board in units of its own smaller side: 1 across the short way.
+  const safeAspect = Number.isFinite(aspect) && aspect > 0 ? aspect : 1;
+  const boardWidth = safeAspect >= 1 ? safeAspect : 1;
+  const boardHeight = safeAspect >= 1 ? 1 : 1 / safeAspect;
+  const { columns, rows } = grid(count, boardWidth, boardHeight);
+  const cellWidth = boardWidth / columns;
+  const cellHeight = boardHeight / rows;
   // A bubble is at most its cell, so two neighbours can never overlap however
   // the jitter falls; the smaller it is, the more room it has to wander.
   const size = Math.min(cellWidth, cellHeight) * Math.min(Math.max(scale, 0.1), 1);
@@ -73,11 +82,31 @@ export function layout(count, random = Math.random, scale = BUBBLE_SIZES.medium)
     const slackX = Math.max(cellWidth - size, 0);
     const slackY = Math.max(cellHeight - size, 0);
     return {
-      x: (column + 0.5) * cellWidth + (random() - 0.5) * slackX,
-      y: (row + 0.5) * cellHeight + (random() - 0.5) * slackY,
+      x: ((column + 0.5) * cellWidth + (random() - 0.5) * slackX) / boardWidth,
+      y: ((row + 0.5) * cellHeight + (random() - 0.5) * slackY) / boardHeight,
       size,
     };
   });
+}
+
+/**
+ * The arrangement that makes the bubbles as big as possible on this board:
+ * every column count is tried and the one with the largest cell wins. Three
+ * bubbles then stand in a row on a wide screen but in a square on a narrow
+ * one, which is where the room actually is.
+ *
+ * @param {number} count
+ * @param {number} boardWidth   in units of the board's smaller side
+ * @param {number} boardHeight
+ */
+function grid(count, boardWidth, boardHeight) {
+  let best = { columns: count, rows: 1, cell: 0 };
+  for (let columns = 1; columns <= count; columns += 1) {
+    const rows = Math.ceil(count / columns);
+    const cell = Math.min(boardWidth / columns, boardHeight / rows);
+    if (cell > best.cell) best = { columns, rows, cell };
+  }
+  return best;
 }
 
 /**
@@ -89,19 +118,32 @@ export class BubbleField {
    * @param {number} count
    * @param {() => number} [random]
    * @param {number} [scale]  how much of its cell a bubble fills
+   * @param {number} [aspect]  the board's width / height
    */
-  constructor(count, random = Math.random, scale = BUBBLE_SIZES.medium) {
+  constructor(count, random = Math.random, scale = BUBBLE_SIZES.medium, aspect = 1) {
     this.random = random;
     this.count = count;
     this.scale = scale;
+    this.aspect = aspect;
     /** @type {{ x: number, y: number, size: number, burst: boolean }[]} */
     this.bubbles = [];
     this.fill();
   }
 
+  /**
+   * Place the bubbles again for a new board shape (a rotated phone, a resized
+   * window), keeping which of them are already burst.
+   * @param {number} aspect
+   */
+  relayout(aspect) {
+    this.aspect = aspect;
+    const places = layout(this.count, this.random, this.scale, aspect);
+    this.bubbles = this.bubbles.map((bubble, i) => ({ ...places[i], burst: bubble.burst }));
+  }
+
   /** A fresh set of bubbles, none of them burst. */
   fill() {
-    this.bubbles = layout(this.count, this.random, this.scale).map((b) => ({ ...b, burst: false }));
+    this.bubbles = layout(this.count, this.random, this.scale, this.aspect).map((b) => ({ ...b, burst: false }));
   }
 
   /** Indices of the bubbles still floating. */
@@ -177,6 +219,14 @@ class BubbleGame {
     this.scanner.addEventListener('resume', () => this.showPaused(false));
 
     this.tick = () => this.step();
+    // A rotated phone or a resized window changes the board's shape, so the
+    // bubbles are placed again — never mid-hold, which would move the bubble
+    // out from under the press.
+    this.onResize = () => {
+      if (this.hold) return;
+      this.field.relayout(this.boardAspect());
+      this.render();
+    };
   }
 
   // ---- Game interface --------------------------------------------------------
@@ -192,12 +242,17 @@ class BubbleGame {
       maxCycles: s.maxCycles,
     });
     this.buildScreen();
+    // The board exists now, so its shape is known and the bubbles can be
+    // placed to fit it.
+    this.field = new BubbleField(s.bubbleCount, Math.random, BUBBLE_SIZES[s.bubbleSize], this.boardAspect());
     this.render();
+    window.addEventListener('resize', this.onResize);
     if (this.scanInput) this.scanner.start();
   }
 
   stop() {
     this.scanner.stop();
+    window.removeEventListener('resize', this.onResize);
     this.cancelHold();
     this.stopFrames();
     if (this.refillTimer) clearTimeout(this.refillTimer);
@@ -310,6 +365,7 @@ class BubbleGame {
     if (this.refillTimer) clearTimeout(this.refillTimer);
     this.refillTimer = null;
     this.cancelHold();
+    this.field.aspect = this.boardAspect();
     this.field.fill();
     this.highlight = -1;
     this.showPaused(false);
@@ -372,6 +428,12 @@ class BubbleGame {
       node.classList.toggle('highlighted', this.highlight === i);
       node.style.setProperty('--fill', held ? progress.toFixed(3) : '0');
     }
+  }
+
+  /** The board's width / height, 1 before it is on screen. */
+  boardAspect() {
+    const rect = this.board?.getBoundingClientRect();
+    return rect && rect.height > 0 ? rect.width / rect.height : 1;
   }
 
   bubbleElements() {
