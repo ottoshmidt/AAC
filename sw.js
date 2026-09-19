@@ -9,7 +9,7 @@
 // Downloaded voices live in a separate cache managed by js/piper.js
 // ('aac-voices-…'); it is left alone here so updates never re-download them.
 
-const CACHE_NAME = 'aac-app-v59';
+const CACHE_NAME = 'aac-app-v60';
 const VOICE_CACHE_PREFIX = 'aac-voices-';
 
 const PRECACHE = [
@@ -192,18 +192,18 @@ const PRECACHE = [
   'assets/images/vegetables/corn.svg',
   'assets/images/vegetables/cucumber.svg',
   'assets/images/vegetables/eggplant.svg',
-  'assets/images/vegetables/garlic.svg',
+  'assets/images/vegetables/garlic.webp',
   'assets/images/vegetables/ginger.svg',
   'assets/images/vegetables/hot-pepper.svg',
-  'assets/images/vegetables/lettuce.svg',
+  'assets/images/vegetables/lettuce.webp',
   'assets/images/vegetables/mushroom.svg',
   'assets/images/vegetables/olives.svg',
-  'assets/images/vegetables/onion.svg',
+  'assets/images/vegetables/onion.webp',
   'assets/images/vegetables/peas.svg',
   'assets/images/vegetables/potato.svg',
   'assets/images/vegetables/pumpkin.svg',
   'assets/images/vegetables/radish.svg',
-  'assets/images/vegetables/sweet-potato.svg',
+  'assets/images/vegetables/sweet-potato.webp',
   'assets/images/vegetables/tomato.svg',
   'assets/images/vegetables/zucchini.svg',
   'assets/images/water.webp',

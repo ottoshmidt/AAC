@@ -160,17 +160,17 @@ export const itemSets = {};
     item('bell-pepper', 'ბულგარული წიწაკა', 'Bell pepper', 'Болгарский перец'),
     item('cucumber', 'კიტრი', 'Cucumber', 'Огурец'),
     // Page 3
-    item('lettuce', 'სალათა', 'Lettuce', 'Салат'),
+    item('lettuce', 'სალათა', 'Lettuce', 'Салат', 'webp'),
     item('broccoli', 'ბროკოლი', 'Broccoli', 'Брокколи'),
-    item('garlic', 'ნიორი', 'Garlic', 'Чеснок'),
-    item('onion', 'ხახვი', 'Onion', 'Лук'),
+    item('garlic', 'ნიორი', 'Garlic', 'Чеснок', 'webp'),
+    item('onion', 'ხახვი', 'Onion', 'Лук', 'webp'),
     // Page 4
     item('mushroom', 'სოკო', 'Mushroom', 'Гриб'),
     item('peas', 'ბარდა', 'Peas', 'Горох'),
     item('beans', 'ლობიო', 'Beans', 'Фасоль'),
     item('ginger', 'ჯანჯაფილი', 'Ginger', 'Имбирь'),
     // Page 5
-    item('sweet-potato', 'ბატატი', 'Sweet potato', 'Батат'),
+    item('sweet-potato', 'ბატატი', 'Sweet potato', 'Батат', 'webp'),
     item('olives', 'ზეთისხილი', 'Olives', 'Оливки'),
     item('cabbage', 'კომბოსტო', 'Cabbage', 'Капуста', 'webp'),
     item('pumpkin', 'გოგრა', 'Pumpkin', 'Тыква'),
