@@ -151,8 +151,8 @@ export const itemSets = {};
   itemSets.vegetables = [
     // Page 1
     item('tomato', 'პომიდორი', 'Tomato', 'Помидор', 'webp'),
-    item('eggplant', 'ბადრიჯანი', 'Eggplant', 'Баклажан'),
-    item('potato', 'კარტოფილი', 'Potato', 'Картофель'),
+    item('eggplant', 'ბადრიჯანი', 'Eggplant', 'Баклажан', 'webp'),
+    item('potato', 'კარტოფილი', 'Potato', 'Картофель', 'webp'),
     item('carrot', 'სტაფილო', 'Carrot', 'Морковь', 'webp'),
     // Page 2
     item('corn', 'სიმინდი', 'Corn', 'Кукуруза', 'webp'),
@@ -165,20 +165,20 @@ export const itemSets = {};
     item('garlic', 'ნიორი', 'Garlic', 'Чеснок', 'webp'),
     item('onion', 'ხახვი', 'Onion', 'Лук', 'webp'),
     // Page 4
-    item('mushroom', 'სოკო', 'Mushroom', 'Гриб'),
+    item('mushroom', 'სოკო', 'Mushroom', 'Гриб', 'webp'),
     item('peas', 'ბარდა', 'Peas', 'Горох'),
     item('beans', 'ლობიო', 'Beans', 'Фасоль', 'webp'),
     item('green-beans', 'მწვანე ლობიო', 'Green beans', 'Стручковая фасоль', 'webp'),
     // Page 5
     item('sweet-potato', 'ბატატი', 'Sweet potato', 'Батат', 'webp'),
-    item('olives', 'ზეთისხილი', 'Olives', 'Оливки'),
+    item('olives', 'ზეთისხილი', 'Olives', 'Оливки', 'webp'),
     item('cabbage', 'კომბოსტო', 'Cabbage', 'Капуста', 'webp'),
-    item('pumpkin', 'გოგრა', 'Pumpkin', 'Тыква'),
+    item('pumpkin', 'გოგრა', 'Pumpkin', 'Тыква', 'webp'),
     // Page 6
     item('beet', 'ჭარხალი', 'Beet', 'Свёкла', 'webp'),
     item('radish', 'ბოლოკი', 'Radish', 'Редис', 'webp'),
     item('zucchini', 'ყაბაყი', 'Zucchini', 'Кабачок'),
-    item('cauliflower', 'ყვავილოვანი კომბოსტო', 'Cauliflower', 'Цветная капуста'),
+    item('cauliflower', 'ყვავილოვანი კომბოსტო', 'Cauliflower', 'Цветная капуста', 'webp'),
   ];
 }
 
