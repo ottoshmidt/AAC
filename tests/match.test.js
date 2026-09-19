@@ -28,6 +28,8 @@ describe('shapes', () => {
     for (const shape of SHAPES) {
       for (const lang of ['ka', 'en', 'ru']) assert.ok(shape.label[lang], `${shape.id}: no ${lang} name`);
       assert.match(shape.path, /^M/, `${shape.id}: no path`);
+      // The viewBox is the path's own bounds, so the shape fills its cell.
+      assert.match(shape.box, /^-?\d+ -?\d+ \d+ \d+$/, `${shape.id}: no viewBox`);
       assert.match(shape.color, /^#[0-9a-f]{6}$/, `${shape.id}: no colour`);
     }
     assert.equal(new Set(SHAPES.map((s) => s.id)).size, SHAPES.length, 'ids are unique');

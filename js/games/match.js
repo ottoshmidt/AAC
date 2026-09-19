@@ -470,7 +470,7 @@ class MatchGame {
  */
 function shapeSvg(shape, outline) {
   const svg = document.createElementNS('http://www.w3.org/2000/svg', 'svg');
-  svg.setAttribute('viewBox', '0 0 100 100');
+  svg.setAttribute('viewBox', shape.box);
   svg.setAttribute('aria-hidden', 'true');
   const path = document.createElementNS('http://www.w3.org/2000/svg', 'path');
   path.setAttribute('d', shape.path);

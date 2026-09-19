@@ -818,12 +818,14 @@ body {
 /* ---- Matching ------------------------------------------------------------ */
 
 /* Two rows filling the board: the shapes on top, their slots below. Both
-   rows are the same height, so a shape never changes size as it moves. */
+   rows are the same height, so a shape never changes size as it moves.
+   The gaps are half the usual one: the shapes themselves are the target
+   here, so they get the room instead of the space between them. */
 .match-board {
   height: 100%;
   display: grid;
   grid-template-rows: repeat(2, minmax(0, 1fr));
-  gap: var(--gap);
+  gap: calc(var(--gap) * 0.5);
 }
 
 .match-row {
@@ -831,7 +833,7 @@ body {
   grid-auto-flow: column;
   grid-auto-columns: minmax(0, 1fr);
   align-items: center;
-  gap: var(--gap);
+  gap: calc(var(--gap) * 0.5);
   min-height: 0;
 }
 
@@ -841,7 +843,7 @@ body {
   place-items: center;
   height: 100%;
   min-height: 0;
-  padding: 0.5rem;
+  padding: 0.15rem;
   border: 0.35rem solid transparent;
   border-radius: var(--radius);
   /* The whole cell is the drop target, so a drop near a slot still counts. */
