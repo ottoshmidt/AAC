@@ -150,18 +150,18 @@ export const itemSets = {};
   const item = inFolder('vegetables');
   itemSets.vegetables = [
     // Page 1
-    item('tomato', 'პომიდორი', 'Tomato', 'Помидор'),
+    item('tomato', 'პომიდორი', 'Tomato', 'Помидор', 'webp'),
     item('eggplant', 'ბადრიჯანი', 'Eggplant', 'Баклажан'),
     item('potato', 'კარტოფილი', 'Potato', 'Картофель'),
     item('carrot', 'სტაფილო', 'Carrot', 'Морковь', 'webp'),
     // Page 2
-    item('corn', 'სიმინდი', 'Corn', 'Кукуруза'),
+    item('corn', 'სიმინდი', 'Corn', 'Кукуруза', 'webp'),
     item('hot-pepper', 'წიწაკა', 'Hot pepper', 'Острый перец'),
-    item('bell-pepper', 'ბულგარული წიწაკა', 'Bell pepper', 'Болгарский перец'),
-    item('cucumber', 'კიტრი', 'Cucumber', 'Огурец'),
+    item('bell-pepper', 'ბულგარული წიწაკა', 'Bell pepper', 'Болгарский перец', 'webp'),
+    item('cucumber', 'კიტრი', 'Cucumber', 'Огурец', 'webp'),
     // Page 3
     item('lettuce', 'სალათა', 'Lettuce', 'Салат', 'webp'),
-    item('broccoli', 'ბროკოლი', 'Broccoli', 'Брокколи'),
+    item('broccoli', 'ბროკოლი', 'Broccoli', 'Брокколи', 'webp'),
     item('garlic', 'ნიორი', 'Garlic', 'Чеснок', 'webp'),
     item('onion', 'ხახვი', 'Onion', 'Лук', 'webp'),
     // Page 4
