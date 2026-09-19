@@ -192,15 +192,16 @@ export const items = [
   they are found by label and voice through `js/clips.js`.
 
 **Picture credits.** The Mixed set and a few pictures in the other sets
-(pomegranate, plum, fig, apricot, quince, persimmon, zucchini, ostrich,
-magpie, swallow, heron) were drawn for this app; the whole Animals set, the
-apple, banana, orange, grapes, strawberry, carrot, cabbage, lettuce, garlic,
-onion, sweet potato, tomato, cucumber, corn, broccoli, bell pepper, beans,
-green beans, radish, beet, cauliflower, olives, eggplant, pumpkin, mushroom,
-potato, bread, cake, milk, water and the sparrow, stork, woodpecker,
-hummingbird, crow and seagull are the project owner's own pictures. All
-other pictures are [Twemoji](https://github.com/jdecked/twemoji) graphics, ©
-Twitter and contributors, licensed
+(pomegranate, plum, fig, apricot, quince, persimmon, ostrich, magpie,
+swallow, heron) were drawn for this app; the whole Animals set, the apple,
+banana, orange, grapes, strawberry, carrot, cabbage, lettuce, garlic, onion,
+sweet potato, tomato, cucumber, corn, broccoli, bell pepper, beans, green
+beans, radish, beet, cauliflower, olives, eggplant, pumpkin, mushroom,
+potato, peas, zucchini, bread, cake, milk, water and the sparrow, stork,
+woodpecker, hummingbird, crow and seagull are the project owner's own
+pictures. All other pictures are
+[Twemoji](https://github.com/jdecked/twemoji) graphics, © Twitter and
+contributors, licensed
 [CC-BY 4.0](https://creativecommons.org/licenses/by/4.0/); files are named
 by item rather than by emoji code.
 
