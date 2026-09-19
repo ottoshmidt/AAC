@@ -14,7 +14,7 @@
  *          (clips recorded with `npm run record` are found by label and voice, see clipFor)
  *
  * Example with a Georgian recording:
- *   { id: 'ball', image: 'assets/images/ball.svg',
+ *   { id: 'ball', image: 'assets/images/ball.webp',
  *     label: { ka: 'ბურთი', en: 'Ball', ru: 'Мяч' },
  *     audio: { ka: 'assets/audio/ka/ball.mp3' } }
  *
@@ -90,13 +90,13 @@ export const itemSets = {};
     // Page 3: drinks and home
     item('milk', 'რძე', 'Milk', 'Молоко', 'webp'),
     item('water', 'წყალი', 'Water', 'Вода', 'webp'),
-    item('bed', 'საწოლი', 'Bed', 'Кровать'),
-    item('house', 'სახლი', 'House', 'Дом'),
+    item('bed', 'საწოლი', 'Bed', 'Кровать', 'webp'),
+    item('house', 'სახლი', 'House', 'Дом', 'webp'),
     // Page 4: toys
-    item('ball', 'ბურთი', 'Ball', 'Мяч'),
-    item('balloon', 'ბუშტი', 'Balloon', 'Шарик'),
-    item('car', 'მანქანა', 'Car', 'Машина'),
-    item('book', 'წიგნი', 'Book', 'Книга'),
+    item('ball', 'ბურთი', 'Ball', 'Мяч', 'webp'),
+    item('balloon', 'ბუშტი', 'Balloon', 'Шарик', 'webp'),
+    item('car', 'მანქანა', 'Car', 'Машина', 'webp'),
+    item('book', 'წიგნი', 'Book', 'Книга', 'webp'),
     // Page 5: sky and tree
     item('sun', 'მზე', 'Sun', 'Солнце'),
     item('moon', 'მთვარე', 'Moon', 'Луна'),
