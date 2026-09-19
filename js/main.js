@@ -225,6 +225,13 @@ ui.elements.gameScreen.addEventListener('pointerdown', (event) => {
 });
 ui.elements.gameScreen.addEventListener('contextmenu', (event) => event.preventDefault());
 
+// Letting go matters to games built on holding (Bubbles). It is taken from
+// the whole document, so a press that ends off the game screen, or is taken
+// away by the system, still counts as letting go.
+for (const type of ['pointerup', 'pointercancel']) {
+  document.addEventListener(type, () => running?.release?.());
+}
+
 // Keyboard is for the caregiver: Escape returns to the intro screen, other
 // keys go to the game. Only during a game, so keys still work in settings.
 document.addEventListener('keydown', (event) => {

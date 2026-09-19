@@ -15,6 +15,10 @@ const STORAGE_KEY = 'aac.settings.v1';
  * @property {string}  choiceInput       how a picture is chosen: 'scan' (highlight, click anywhere) or 'touch' (tap it)
  * @property {number}  matchShapes       shapes in a Matching round: 2, 3 or 4
  * @property {string}  matchInput        how a shape is moved: 'drag', 'scan' or 'both'
+ * @property {number}  bubbleCount       bubbles on screen at once
+ * @property {number}  bubbleHoldMs      how long a bubble must be held before it bursts
+ * @property {string}  bubbleMotion      'still' or 'drift' (bubbles float about)
+ * @property {string}  bubbleInput       how a bubble is burst: 'touch' (hold it) or 'scan' (hold anywhere)
  * @property {number}  intervalMs        how long each picture stays highlighted
  * @property {number}  cooldownMs        pause after a selection before scanning resumes
  * @property {number}  debounceMs        ignore presses closer together than this
@@ -54,6 +58,10 @@ export const DEFAULTS = Object.freeze({
   choiceInput: 'touch',
   matchShapes: 2,
   matchInput: 'drag',
+  bubbleCount: 4,
+  bubbleHoldMs: 3000,
+  bubbleMotion: 'still',
+  bubbleInput: 'touch',
   intervalMs: 2000,
   cooldownMs: 2000,
   debounceMs: 300,
@@ -76,11 +84,15 @@ export const CHOICES = Object.freeze({
   choiceInput: ['scan', 'touch'],
   matchShapes: [2, 3, 4],
   matchInput: ['drag', 'scan', 'both'],
+  bubbleCount: [2, 3, 4, 6],
+  bubbleMotion: ['still', 'drift'],
+  bubbleInput: ['touch', 'scan'],
   language: LANGUAGE_CODES,
 });
 
 /** Allowed ranges for numeric settings. */
 export const LIMITS = Object.freeze({
+  bubbleHoldMs: { min: 500, max: 10000 },
   intervalMs: { min: 500, max: 10000 },
   cooldownMs: { min: 0, max: 10000 },
   debounceMs: { min: 0, max: 2000 },

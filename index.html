@@ -76,6 +76,40 @@
             </label>
           </fieldset>
 
+          <fieldset data-category="hold">
+            <legend data-i18n="categories.hold.name"></legend>
+            <label>
+              <span data-i18n="bubbleHoldBefore"></span>
+              <span class="field">
+                <input name="bubbleHoldMs" type="number" min="0.5" max="10" step="0.1" data-scale="1000" />
+                <span data-i18n="bubbleHoldAfter"></span>
+              </span>
+            </label>
+            <label>
+              <span data-i18n="bubbleCount"></span>
+              <select name="bubbleCount">
+                <option value="2">2</option>
+                <option value="3">3</option>
+                <option value="4">4</option>
+                <option value="6">6</option>
+              </select>
+            </label>
+            <label>
+              <span data-i18n="bubbleMotion"></span>
+              <select name="bubbleMotion">
+                <option value="still" data-i18n="bubbleMotionStill"></option>
+                <option value="drift" data-i18n="bubbleMotionDrift"></option>
+              </select>
+            </label>
+            <label>
+              <span data-i18n="bubbleInput"></span>
+              <select name="bubbleInput">
+                <option value="touch" data-i18n="bubbleInputTouch"></option>
+                <option value="scan" data-i18n="bubbleInputScan"></option>
+              </select>
+            </label>
+          </fieldset>
+
           <fieldset>
             <legend data-i18n="timing"></legend>
             <label>

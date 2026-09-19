@@ -132,6 +132,27 @@ export class Speech {
     this.clip.play().catch(() => {});
   }
 
+  /**
+   * A bubble bursting: a short blip whose pitch drops away, which sounds
+   * like a pop without needing an audio file.
+   */
+  pop() {
+    const ctx = this.audioCtx;
+    if (!ctx || ctx.state !== 'running') return;
+    const t = ctx.currentTime;
+    const osc = ctx.createOscillator();
+    const gain = ctx.createGain();
+    osc.type = 'triangle';
+    osc.frequency.setValueAtTime(880, t);
+    osc.frequency.exponentialRampToValueAtTime(180, t + 0.18);
+    gain.gain.setValueAtTime(0.0001, t);
+    gain.gain.exponentialRampToValueAtTime(0.3, t + 0.01);
+    gain.gain.exponentialRampToValueAtTime(0.0001, t + 0.2);
+    osc.connect(gain).connect(ctx.destination);
+    osc.start(t);
+    osc.stop(t + 0.21);
+  }
+
   /** Short, soft tick for highlight movement. Generated, so no audio file is needed. */
   tick() {
     const ctx = this.audioCtx;

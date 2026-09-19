@@ -9,6 +9,7 @@
  * PRECACHE list of sw.js (tests check this).
  */
 
+import { bubbleGames } from './bubbles.js';
 import { guessGames } from './guess.js';
 import { letterGames } from './letters.js';
 import { matchGames } from './match.js';
@@ -34,6 +35,8 @@ import { trainGames } from './train.js';
  * @property {() => void} start  show the game in `root` and begin
  * @property {() => void} stop   stop timers and sounds and clear `root`
  * @property {() => void} press  the user pressed (click, tap, switch)
+ * @property {() => void} [release]  the user let go; only games built on
+ *   holding (js/games/bubbles.js) need it
  * @property {(event: KeyboardEvent) => boolean} key  a caregiver key; return true if used
  */
 
@@ -49,7 +52,7 @@ import { trainGames } from './train.js';
  */
 
 /** Category ids in menu order. */
-export const CATEGORIES = ['guess', 'letters', 'match'];
+export const CATEGORIES = ['guess', 'letters', 'match', 'hold'];
 
 /** @type {GameInfo[]} */
-export const games = [...trainGames, ...guessGames, ...letterGames, ...matchGames];
+export const games = [...trainGames, ...guessGames, ...letterGames, ...matchGames, ...bubbleGames];

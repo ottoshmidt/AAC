@@ -917,3 +917,111 @@ body {
     transition: none;
   }
 }
+
+/* ---- Bubbles ------------------------------------------------------------- */
+
+.bubble-board {
+  position: relative;
+  height: 100%;
+  container-type: size; /* bubble sizes are a share of the board */
+}
+
+/* A bubble is placed by its centre, so the layout can put it anywhere. */
+.bubble {
+  position: absolute;
+  translate: -50% -50%;
+  /* `--size` is a share of the board's smaller side (cqmin), so a bubble is
+     always round and fits whichever way the screen is turned. */
+  width: calc(var(--size) * 1cqmin);
+  aspect-ratio: 1;
+  border-radius: 50%;
+  /* Soap skin: bright where the light hits it, deeper at the rim. */
+  background:
+    radial-gradient(circle at 32% 28%, rgb(255 255 255 / 0.95) 0%, rgb(143 216 255 / 0.5) 45%, rgb(61 126 255 / 0.7) 100%);
+  border: 0.2rem solid rgb(210 240 255 / 0.9);
+  box-shadow: 0 0 2rem rgb(143 216 255 / 0.35);
+  touch-action: none;
+  cursor: pointer;
+  transition:
+    scale 200ms ease,
+    opacity 200ms ease;
+}
+
+.bubble-shine {
+  position: absolute;
+  top: 16%;
+  left: 18%;
+  width: 26%;
+  height: 18%;
+  border-radius: 50%;
+  background: rgb(255 255 255 / 0.9);
+  rotate: -25deg;
+  pointer-events: none;
+}
+
+/* Filling up while it is held: the fill rises from the bottom, so the wait
+   is something to watch. `--fill` is 0–1, set as the hold goes on. */
+.bubble::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  border-radius: 50%;
+  background: linear-gradient(
+    to top,
+    rgb(255 255 255 / 0.85) calc(var(--fill, 0) * 100%),
+    rgb(255 255 255 / 0) calc(var(--fill, 0) * 100%)
+  );
+  pointer-events: none;
+}
+
+/* Held: it swells a little, which reads as "nearly there". */
+.bubble.holding {
+  scale: calc(1 + var(--fill, 0) * 0.18);
+}
+
+/* The scan highlight, the same yellow as everywhere else. */
+.bubble.highlighted {
+  border-color: var(--highlight);
+  box-shadow: 0 0 0 0.4rem var(--highlight);
+}
+
+/* Bursting: it swells and vanishes. */
+.bubble.bursting {
+  animation: bubble-burst 320ms ease-out forwards;
+  pointer-events: none;
+}
+
+.bubble.gone {
+  display: none;
+}
+
+@keyframes bubble-burst {
+  0% { scale: 1; opacity: 1; }
+  40% { scale: 1.35; opacity: 0.9; }
+  100% { scale: 1.7; opacity: 0; }
+}
+
+/* Floating about, when the caregiver turns movement on. Each bubble gets its
+   own delay and duration (set in bubbles.js), so they never move in step. */
+.bubble-board.drifting .bubble {
+  animation: bubble-drift var(--drift-time, 8s) ease-in-out var(--drift-delay, 0s) infinite alternate;
+}
+
+/* A burst always wins over the drift. */
+.bubble-board.drifting .bubble.bursting {
+  animation: bubble-burst 320ms ease-out forwards;
+}
+
+@keyframes bubble-drift {
+  0% { translate: -50% -50%; }
+  50% { translate: calc(-50% + 3cqw) calc(-50% - 4cqh); }
+  100% { translate: calc(-50% - 3cqw) calc(-50% + 3cqh); }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .bubble,
+  .bubble-board.drifting .bubble {
+    animation: none;
+    transition: none;
+  }
+}

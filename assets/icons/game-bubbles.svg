@@ -1,0 +1,16 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 200 200" role="img" aria-label="Bubbles">
+  <defs>
+    <radialGradient id="skin" cx="35%" cy="30%" r="75%">
+      <stop offset="0%" stop-color="#ffffff" stop-opacity="0.95"/>
+      <stop offset="45%" stop-color="#8fd8ff" stop-opacity="0.55"/>
+      <stop offset="100%" stop-color="#3d7eff" stop-opacity="0.75"/>
+    </radialGradient>
+  </defs>
+  <circle cx="72" cy="86" r="56" fill="url(#skin)" stroke="#bfe6ff" stroke-width="3"/>
+  <circle cx="150" cy="52" r="30" fill="url(#skin)" stroke="#bfe6ff" stroke-width="3"/>
+  <circle cx="148" cy="142" r="40" fill="url(#skin)" stroke="#bfe6ff" stroke-width="3"/>
+  <!-- The shine that makes a circle read as a bubble. -->
+  <ellipse cx="52" cy="62" rx="16" ry="11" fill="#fff" opacity="0.85" transform="rotate(-25 52 62)"/>
+  <ellipse cx="141" cy="42" rx="9" ry="6" fill="#fff" opacity="0.85" transform="rotate(-25 141 42)"/>
+  <ellipse cx="136" cy="128" rx="11" ry="7" fill="#fff" opacity="0.85" transform="rotate(-25 136 128)"/>
+</svg>

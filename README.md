@@ -30,6 +30,16 @@ lit one. A wrong slot costs nothing — the shape returns to the row and can be
 tried again. When the last shape is placed the round is praised and a new one
 is shuffled; **←** / **→** shuffle one at any time.
 
+**Bubbles** (category **Holding**) trains the opposite skill: not letting
+go. Soap bubbles float on the screen and a bubble bursts only after the
+press has been held on it for a few seconds (3 by default, 0.5–10). The
+bubble fills up while it is held, so the wait can be watched, and letting go
+early empties it with nothing lost. Hold the bubble itself, or turn on
+scanning and hold a press anywhere to burst the lit one — scanning stops
+while the press is held, so the bubble can't move away mid-hold. The bubbles
+stand still by default and can be set to float about. When the last one
+bursts a new set arrives; **←** / **→** bring one at any time.
+
 **Training** is the first step: a single picture lights up for
 an interval, goes dark for an interval and lights up again, and its name is
 spoken every time it lights up. A click while it is lit speaks the word
@@ -78,6 +88,10 @@ Then open <http://localhost:8080>.
 | Pictures at a time | 4 | Page size: 4 (2×2 grid, 6 pages) or 2 (side by side, 12 pages) |
 | How to choose (Guess) | Touch | Tap the picture itself, or Scanning: the highlight moves and a click anywhere takes the lit one |
 | Shapes at a time (Matching) | 2 | 2, 3 or 4 shapes per round |
+| Hold a bubble for (Bubbles) | 3 s | 0.5–10 s before it bursts |
+| Bubbles at a time | 4 | 2, 3, 4 or 6 |
+| Bubbles move (Bubbles) | Stay still | Or float about |
+| How to burst (Bubbles) | Hold the bubble | Or Scanning: hold a press anywhere to burst the lit one |
 | How to move a shape (Matching) | Dragging | Dragging, Scanning (two clicks, no aiming) or Both at once |
 | Highlight each picture for | 2 s | 0.5–10 s |
 | Wait after a choice | 2 s | Clicks are ignored during this time |
@@ -273,6 +287,7 @@ js/games/index.js     list of games shown on the menu
 js/games/guess.js     the Guess games (one per picture set)
 js/games/train.js     the Training game (one picture at a time)
 js/games/match.js     the Matching game (shapes into slots; rules unit-tested)
+js/games/bubbles.js   the Bubbles game (hold to burst; layout unit-tested)
 js/shapes.js          the shapes, drawn as SVG paths
 js/scanner.js         scanning logic (no DOM; unit-tested)
 js/pages.js           pages and progress through them (unit-tested)
