@@ -20,6 +20,16 @@ When every picture on a page has been chosen, the game moves to the next
 page, and after the last one it starts over. The caregiver can also turn
 pages with the arrow keys.
 
+**Matching** is a different kind of game: **Shapes**. Two to four shapes
+sit in the top row and their empty outlines in the bottom row, both shuffled,
+and each shape has to go into the outline of the same shape. A shape can be
+dragged with a finger or a mouse (the default), or moved by scanning without
+any aiming: the highlight runs along the shapes, a click takes the lit one,
+the highlight then runs along the empty slots, and a click drops it into the
+lit one. A wrong slot costs nothing — the shape returns to the row and can be
+tried again. When the last shape is placed the round is praised and a new one
+is shuffled; **←** / **→** shuffle one at any time.
+
 **Training** is the first step: a single picture lights up for
 an interval, goes dark for an interval and lights up again, and its name is
 spoken every time it lights up. A click while it is lit speaks the word
@@ -66,6 +76,8 @@ Then open <http://localhost:8080>.
 | Setting | Default | Notes |
 |---|---|---|
 | Pictures at a time | 4 | Page size: 4 (2×2 grid, 6 pages) or 2 (side by side, 12 pages) |
+| Shapes at a time (Matching) | 2 | 2, 3 or 4 shapes per round |
+| How to move a shape (Matching) | Dragging | Dragging, Scanning (two clicks, no aiming) or Both at once |
 | Highlight each picture for | 2 s | 0.5–10 s |
 | Wait after a choice | 2 s | Clicks are ignored during this time |
 | Ignore repeated clicks within | 0.3 s | Helps with tremor and double clicks |
@@ -259,6 +271,8 @@ js/main.js            app shell: menu, language, settings, voices
 js/games/index.js     list of games shown on the menu
 js/games/guess.js     the Guess items games (one per picture set)
 js/games/train.js     the Training game (one picture at a time)
+js/games/match.js     the Matching game (shapes into slots; rules unit-tested)
+js/shapes.js          the shapes, drawn as SVG paths
 js/scanner.js         scanning logic (no DOM; unit-tested)
 js/pages.js           pages and progress through them (unit-tested)
 js/settings.js        defaults, limits, load/save

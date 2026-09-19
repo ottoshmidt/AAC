@@ -9,7 +9,7 @@
 // Downloaded voices live in a separate cache managed by js/piper.js
 // ('aac-voices-…'); it is left alone here so updates never re-download them.
 
-const CACHE_NAME = 'aac-app-v66';
+const CACHE_NAME = 'aac-app-v67';
 const VOICE_CACHE_PREFIX = 'aac-voices-';
 
 const PRECACHE = [
@@ -21,10 +21,12 @@ const PRECACHE = [
   'js/games/index.js',
   'js/games/guess.js',
   'js/games/letters.js',
+  'js/games/match.js',
   'js/games/train.js',
   'js/i18n.js',
   'js/items.js',
   'js/letters.js',
+  'js/shapes.js',
   'js/piper.js',
   'js/piper-engine.js',
   'js/piper-worker.js',
@@ -210,6 +212,7 @@ const PRECACHE = [
   'assets/icons/icon.svg',
   'assets/icons/game-guess.svg',
   'assets/icons/letters-ka.svg',
+  'assets/icons/game-match.svg',
   'assets/icons/letters-en.svg',
   'assets/icons/letters-ru.svg',
   'assets/icons/icon-192.png',

@@ -814,3 +814,104 @@ body {
 .record-list .current button {
   border-color: var(--accent);
 }
+
+/* ---- Matching ------------------------------------------------------------ */
+
+/* Two rows filling the board: the shapes on top, their slots below. Both
+   rows are the same height, so a shape never changes size as it moves. */
+.match-board {
+  height: 100%;
+  display: grid;
+  grid-template-rows: repeat(2, minmax(0, 1fr));
+  gap: var(--gap);
+}
+
+.match-row {
+  display: grid;
+  grid-auto-flow: column;
+  grid-auto-columns: minmax(0, 1fr);
+  align-items: center;
+  gap: var(--gap);
+  min-height: 0;
+}
+
+.match-shape,
+.match-slot {
+  display: grid;
+  place-items: center;
+  height: 100%;
+  min-height: 0;
+  padding: 0.5rem;
+  border: 0.35rem solid transparent;
+  border-radius: var(--radius);
+  /* The whole cell is the drop target, so a drop near a slot still counts. */
+  touch-action: none;
+}
+
+.match-shape svg,
+.match-slot svg {
+  width: 100%;
+  height: 100%;
+  max-height: 100%;
+  pointer-events: none; /* the cell handles the pointer, not the drawing */
+}
+
+.match-slot {
+  color: var(--muted);
+}
+
+/* A shape waiting to be moved. Dragging is a grab; scanning never needs the
+   pointer, so the cursor only matters for the caregiver. */
+.match-shape {
+  cursor: grab;
+  transition:
+    transform 150ms ease,
+    opacity 150ms ease;
+}
+
+/* Placed: the space stays, so the shapes that are left never jump. */
+.match-shape.placed {
+  visibility: hidden;
+}
+
+/* Held, waiting for a slot. */
+.match-shape.picked {
+  transform: scale(1.08);
+}
+
+/* The scan highlight, the same yellow as everywhere else. */
+.match-shape.highlighted,
+.match-slot.highlighted {
+  border-color: var(--highlight);
+}
+
+/* Under the pointer during a drag: the slot leans forward to invite the drop. */
+.match-slot.over {
+  border-color: var(--highlight);
+  transform: scale(1.06);
+}
+
+.match-slot.full {
+  color: var(--selected);
+}
+
+/* The dragged shape follows the pointer above everything else. Its own
+   transform is set as it moves, so none is given here. */
+.match-shape.dragging {
+  cursor: grabbing;
+  position: relative;
+  z-index: 2;
+  transition: none;
+}
+
+/* The round is complete. */
+.match-board.done .match-slot {
+  border-color: var(--selected);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .match-shape,
+  .match-slot {
+    transition: none;
+  }
+}

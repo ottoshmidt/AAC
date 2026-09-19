@@ -11,6 +11,7 @@
 
 import { guessGames } from './guess.js';
 import { letterGames } from './letters.js';
+import { matchGames } from './match.js';
 import { trainGames } from './train.js';
 
 /**
@@ -48,7 +49,7 @@ import { trainGames } from './train.js';
  */
 
 /** Category ids in menu order. */
-export const CATEGORIES = ['guess', 'letters'];
+export const CATEGORIES = ['guess', 'letters', 'match'];
 
 /** @type {GameInfo[]} */
-export const games = [...trainGames, ...guessGames, ...letterGames];
+export const games = [...trainGames, ...guessGames, ...letterGames, ...matchGames];

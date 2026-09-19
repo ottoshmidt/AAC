@@ -13,6 +13,8 @@ const STORAGE_KEY = 'aac.settings.v1';
  * @typedef {object} Settings
  * @property {number}  choicesPerRound   pictures shown at once: 2 (side by side) or 4 (2×2)
  * @property {string}  choiceInput       how a picture is chosen: 'scan' (highlight, click anywhere) or 'touch' (tap it)
+ * @property {number}  matchShapes       shapes in a Matching round: 2, 3 or 4
+ * @property {string}  matchInput        how a shape is moved: 'drag', 'scan' or 'both'
  * @property {number}  intervalMs        how long each picture stays highlighted
  * @property {number}  cooldownMs        pause after a selection before scanning resumes
  * @property {number}  debounceMs        ignore presses closer together than this
@@ -50,6 +52,8 @@ export function detectLanguage(browserLanguage) {
 export const DEFAULTS = Object.freeze({
   choicesPerRound: 4,
   choiceInput: 'scan',
+  matchShapes: 2,
+  matchInput: 'drag',
   intervalMs: 2000,
   cooldownMs: 2000,
   debounceMs: 300,
@@ -70,6 +74,8 @@ export const DEFAULTS = Object.freeze({
 export const CHOICES = Object.freeze({
   choicesPerRound: [2, 4],
   choiceInput: ['scan', 'touch'],
+  matchShapes: [2, 3, 4],
+  matchInput: ['drag', 'scan', 'both'],
   language: LANGUAGE_CODES,
 });
 
