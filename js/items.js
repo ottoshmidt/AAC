@@ -126,7 +126,7 @@ export const itemSets = {};
     // Page 3
     item('strawberry', 'მარწყვი', 'Strawberry', 'Клубника', 'webp'),
     item('blueberries', 'მოცვი', 'Blueberries', 'Черника'),
-    item('melon', 'ნესვი', 'Melon', 'Дыня'),
+    item('melon', 'ნესვი', 'Melon', 'Дыня', 'webp'),
     item('cherries', 'ბალი', 'Cherries', 'Черешня'),
     // Page 4
     item('peach', 'ატამი', 'Peach', 'Персик'),

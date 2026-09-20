@@ -141,7 +141,7 @@ const PRECACHE = [
   'assets/images/fruit/kiwi.svg',
   'assets/images/fruit/lemon.svg',
   'assets/images/fruit/mango.svg',
-  'assets/images/fruit/melon.svg',
+  'assets/images/fruit/melon.webp',
   'assets/images/fruit/orange.webp',
   'assets/images/fruit/peach.svg',
   'assets/images/fruit/pear.svg',
