@@ -19,7 +19,7 @@
  *             anywhere bursts the lit one. Scanning stops while the press is
  *             held, so the bubble cannot move away mid-hold.
  *
- * When the last bubble is gone a new set floats in.
+ * When the last bubble is gone the set is praised and a new one floats in.
  */
 
 import { Scanner } from '../scanner.js';
@@ -385,8 +385,12 @@ class BubbleGame {
     setTimeout(() => {
       if (!node?.isConnected) return;
       node.classList.add('gone');
-      if (this.field.empty) this.refillSoon();
-      else if (this.scanInput) this.scanner.start();
+      if (this.field.empty) {
+        // The last bubble of the set: praised like a finished round of
+        // Matching, then a new set floats in.
+        this.ctx.say(this.ctx.t('wellDone'));
+        this.refillSoon();
+      } else if (this.scanInput) this.scanner.start();
     }, BURST_MS);
   }
 

@@ -52,7 +52,7 @@ stand still by default and can be set to float about, and how many there are
 arranged to suit the screen — three stand in a row on a wide one and stack up
 on a phone held upright — and are placed again if the screen is rotated,
 though never while a bubble is being held. When the last one
-bursts a new set arrives; **←** / **→** bring one at any time.
+bursts the set is praised and a new one arrives; **←** / **→** bring one at any time.
 
 **Training** is the first step: a single picture lights up for
 an interval, goes dark for an interval and lights up again, and its name is
