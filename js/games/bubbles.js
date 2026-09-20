@@ -10,7 +10,11 @@
  *
  * Two ways to burst one, set by `bubbleInput`:
  *
- *   touch     hold the bubble itself, with a finger, mouse or pen
+ *   touch     hold the bubble itself, with a finger, mouse or pen. The press
+ *             does not have to start on the bubble: a finger can go down on
+ *             an empty part of the screen and slide onto one, which is far
+ *             easier than landing on a target, and the hold begins the moment
+ *             it arrives. Sliding off the bubble lets go of it again.
  *   scanning  the highlight moves from bubble to bubble; holding a press
  *             anywhere bursts the lit one. Scanning stops while the press is
  *             held, so the bubble cannot move away mid-hold.
@@ -193,6 +197,8 @@ class BubbleGame {
     this.frame = null;
     /** @type {ReturnType<typeof setTimeout> | null} */
     this.refillTimer = null;
+    /** Whether a press is down right now (touch mode). */
+    this.pressing = false;
     /** Highlighted bubble while scanning, or -1. */
     this.highlight = -1;
     /** Scan index -> bubble index. @type {number[]} */
@@ -252,6 +258,7 @@ class BubbleGame {
 
   stop() {
     this.scanner.stop();
+    this.pressing = false;
     window.removeEventListener('resize', this.onResize);
     this.cancelHold();
     this.stopFrames();
@@ -275,6 +282,7 @@ class BubbleGame {
 
   /** The press ended (shell forwards pointerup/pointercancel). */
   release() {
+    this.pressing = false;
     if (!this.hold) return;
     this.cancelHold();
     if (this.scanInput && !this.field.empty) this.scanner.start();
@@ -291,6 +299,36 @@ class BubbleGame {
   }
 
   // ---- Holding ---------------------------------------------------------------
+
+  /**
+   * Hold whichever bubble is under the pointer, starting again if the finger
+   * has moved to another one and letting go if it is over none.
+   * @param {number} x
+   * @param {number} y
+   */
+  holdAt(x, y) {
+    const index = this.bubbleAt(x, y);
+    if (index === this.hold?.index) return;
+    if (index === null) {
+      if (this.hold) this.cancelHold();
+      return;
+    }
+    this.startHold(index);
+  }
+
+  /**
+   * The bubble at a point, or null. Bubbles that are bursting or gone are
+   * not in the way, because they take no pointer events at all.
+   * @param {number} x
+   * @param {number} y
+   * @returns {number | null}
+   */
+  bubbleAt(x, y) {
+    const node = document.elementFromPoint(x, y)?.closest?.('.bubble');
+    if (!(node instanceof HTMLElement)) return null;
+    const index = Number(node.dataset.index);
+    return Number.isInteger(index) && !this.field.bubbles[index]?.burst ? index : null;
+  }
 
   /** @param {number} index */
   startHold(index) {
@@ -379,6 +417,21 @@ class BubbleGame {
     const { root, t } = this.ctx;
     this.board = document.createElement('div');
     this.board.className = 'bubble-board';
+    // The board follows the pointer, rather than each bubble waiting to be
+    // hit: a press that starts anywhere and slides onto a bubble counts, and
+    // sliding off lets go again. In scanning mode the press means the lit
+    // bubble, wherever the pointer happens to be, so none of this applies.
+    if (!this.scanInput) {
+      this.board.addEventListener('pointerdown', (event) => {
+        this.pressing = true;
+        // Keeps the moves coming even if the finger leaves the board.
+        this.board?.setPointerCapture(event.pointerId);
+        this.holdAt(event.clientX, event.clientY);
+      });
+      this.board.addEventListener('pointermove', (event) => {
+        if (this.pressing) this.holdAt(event.clientX, event.clientY);
+      });
+    }
     this.pauseOverlay = document.createElement('div');
     this.pauseOverlay.className = 'pause-overlay';
     this.pauseOverlay.hidden = true;
@@ -411,7 +464,7 @@ class BubbleGame {
         node.style.setProperty('--drift-delay', `${(i * 1.7).toFixed(2)}s`);
         node.style.setProperty('--drift-time', `${(7 + (i % 3) * 2).toFixed(0)}s`);
         node.append(shine());
-        if (!this.scanInput) node.addEventListener('pointerdown', () => this.startHold(i));
+
         return node;
       }),
     );

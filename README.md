@@ -42,8 +42,10 @@ is shuffled; **←** / **→** shuffle one at any time.
 go. Soap bubbles float on the screen and a bubble bursts only after the
 press has been held on it for a few seconds (3 by default, 0.5–10). The
 bubble fills up while it is held, so the wait can be watched, and letting go
-early empties it with nothing lost. Hold the bubble itself, or turn on
-scanning and hold a press anywhere to burst the lit one — scanning stops
+early empties it with nothing lost. Hold the bubble itself — the finger can also go down on an empty part of the
+screen and slide onto a bubble, which is easier than landing on one, and
+sliding off lets go again — or turn on scanning and hold a press anywhere to
+burst the lit one — scanning stops
 while the press is held, so the bubble can't move away mid-hold. The bubbles
 stand still by default and can be set to float about, and how many there are
 (2, 3, 4 or 6) and how big they are (small to extra large) can both be set. The bubbles are
