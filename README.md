@@ -27,8 +27,10 @@ shape. How the rows line up is the difficulty: every outline can sit right
 under its own shape (the first step, where the move is straight down), fall
 where chance puts it, or never sit under its own shape, so every move
 crosses the board and the picture has to be matched rather than the place. A shape can be
-dragged with a finger or a mouse (the default), or moved by scanning without
-any aiming: the highlight runs along the shapes, a click takes the lit one,
+dragged with a finger or a mouse (the default); tapped to take it and then
+tapped onto a slot, for someone who can hit a target but cannot hold a press
+while moving it (tapping the held shape again puts it back); or moved by
+scanning without any aiming: the highlight runs along the shapes, a click takes the lit one,
 the highlight then runs along the empty slots, and a click drops it into the
 lit one. A shape clicks as it seats into its slot. A wrong slot costs nothing — it
 ticks, and the shape returns to the row to be tried again. When the last shape is placed the round is praised and a new one
@@ -102,7 +104,7 @@ Then open <http://localhost:8080>.
 | Bubble size | Medium | Small, Medium, Large or Extra large; an extra large bubble fills its share of the screen completely, a small one leaves room to wander |
 | Bubbles move (Bubbles) | Stay still | Or float about |
 | How to burst (Bubbles) | Hold the bubble | Or Scanning: hold a press anywhere to burst the lit one |
-| How to move a shape (Matching) | Dragging | Dragging, Scanning (two clicks, no aiming) or Both at once |
+| How to move a shape (Matching) | Dragging | Dragging; Tap the shape, then the slot; Scanning (two clicks, no aiming); or dragging and scanning at once |
 | Highlight each picture for | 2 s | 0.5–10 s |
 | Wait after a choice | 2 s | Clicks are ignored during this time |
 | Ignore repeated clicks within | 0.3 s | Helps with tremor and double clicks |

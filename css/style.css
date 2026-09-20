@@ -876,9 +876,11 @@ body {
   visibility: hidden;
 }
 
-/* Held, waiting for a slot. */
+/* Held, waiting for a slot: it lifts and glows, so it is obvious which shape
+   the next tap will place. */
 .match-shape.picked {
   transform: scale(1.08);
+  filter: drop-shadow(0 0 0.7rem rgb(255 212 0 / 0.65));
 }
 
 /* The scan highlight, the same yellow as everywhere else. */
@@ -1024,4 +1026,10 @@ body {
     animation: none;
     transition: none;
   }
+}
+
+/* Tapping mode: with a shape in hand, the empty slots invite the next tap.
+   A plain edge, not a dashed one: the slot's own outline is already dashed. */
+.match-slot.open {
+  border-color: rgb(255 212 0 / 0.35);
 }

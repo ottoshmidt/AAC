@@ -14,7 +14,8 @@ const STORAGE_KEY = 'aac.settings.v1';
  * @property {number}  choicesPerRound   pictures shown at once: 2 (side by side) or 4 (2×2)
  * @property {string}  choiceInput       how a picture is chosen: 'scan' (highlight, click anywhere) or 'touch' (tap it)
  * @property {number}  matchShapes       shapes in a Matching round: 2, 3 or 4
- * @property {string}  matchInput        how a shape is moved: 'drag', 'scan' or 'both'
+ * @property {string}  matchInput        how a shape is moved: 'drag', 'tap' (tap it, then tap a slot),
+ *                                       'scan' or 'both' (dragging and scanning at once)
  * @property {string}  matchDeal         how the slots line up with the shapes:
  *                                       'aligned' (each under its own shape), 'random' or
  *                                       'crossed' (never under its own shape)
@@ -89,7 +90,7 @@ export const CHOICES = Object.freeze({
   choicesPerRound: [2, 4],
   choiceInput: ['scan', 'touch'],
   matchShapes: [2, 3, 4],
-  matchInput: ['drag', 'scan', 'both'],
+  matchInput: ['drag', 'tap', 'scan', 'both'],
   matchDeal: ['aligned', 'random', 'crossed'],
   bubbleCount: [2, 3, 4, 6],
   bubbleSize: ['small', 'medium', 'large', 'xlarge'],

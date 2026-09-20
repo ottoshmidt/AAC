@@ -13,11 +13,15 @@
  *   crossed  no slot is ever under its own shape, so every move crosses the
  *            board and the picture has to be matched, not the position
  *
- * Two ways to move a shape, set by `matchInput`:
+ * Ways to move a shape, set by `matchInput`:
  *
  *   dragging  pick the shape up with a finger, mouse or stylus and drop it on
  *             a slot; dropping it anywhere else sends it home. A slot also
  *             takes a drop that lands near it, not only dead centre.
+ *   tapping   tap the shape to take it, then tap a slot to put it there. No
+ *             dragging and no waiting: for someone who can hit a target but
+ *             cannot hold a press while moving it. Tapping the held shape
+ *             again puts it back.
  *   scanning  two clicks, the same rule as the rest of the app: the highlight
  *             moves across the shapes, a click takes the lit one; then the
  *             highlight moves across the empty slots, and a click drops the
@@ -203,6 +207,9 @@ class MatchGame {
     /** Set in start() from `matchInput`. */
     this.scanInput = true;
     this.dragInput = false;
+    this.tapInput = false;
+    /** When the last tap was taken, for the debounce. */
+    this.lastTapAt = -Infinity;
     /** Which row the highlight is moving across. @type {'shapes' | 'slots'} */
     this.phase = 'shapes';
     /** Scan index -> row index (placed shapes and filled slots are skipped). @type {number[]} */
@@ -259,6 +266,7 @@ class MatchGame {
     const s = this.ctx.settings();
     this.scanInput = s.matchInput === 'scan' || s.matchInput === 'both';
     this.dragInput = s.matchInput === 'drag' || s.matchInput === 'both';
+    this.tapInput = s.matchInput === 'tap';
     this.round = new MatchRound(shapesFor(s.matchShapes), undefined, dealMode(s.matchDeal));
     this.scanner.updateOptions({
       intervalMs: s.intervalMs,
@@ -345,6 +353,32 @@ class MatchGame {
       this.round.deal();
       this.render();
     }, ctx.settings().cooldownMs);
+  }
+
+  /**
+   * Tapping mode: the first tap takes a shape, the second puts it somewhere.
+   * Taps closer together than the debounce are ignored, so a tremor or a
+   * double tap cannot take a shape and place it in one go.
+   * @param {'shape' | 'slot'} what
+   * @param {number} index
+   */
+  tap(what, index) {
+    const now = performance.now();
+    if (now - this.lastTapAt < this.ctx.settings().debounceMs) return;
+    this.lastTapAt = now;
+    if (what === 'shape') {
+      // Tapping the shape that is already held puts it back down.
+      if (this.round.picked === index) {
+        this.round.drop();
+        this.render();
+        return;
+      }
+      this.take(index);
+      return;
+    }
+    // A slot does nothing until a shape is in hand, so a stray tap on the
+    // board below is harmless.
+    if (this.round.picked !== null) this.put(index);
   }
 
   // ---- Dragging --------------------------------------------------------------
@@ -475,6 +509,7 @@ class MatchGame {
         cell.classList.toggle('highlighted', this.phase === 'shapes' && this.highlight === i);
         cell.append(shapeSvg(shape, false));
         if (this.dragInput) cell.addEventListener('pointerdown', (e) => this.startDrag(e, i));
+        if (this.tapInput) cell.addEventListener('pointerdown', () => this.tap('shape', i));
         return cell;
       }),
     );
@@ -489,7 +524,10 @@ class MatchGame {
         const full = this.round.filled.has(i);
         cell.classList.toggle('full', full);
         cell.classList.toggle('highlighted', this.phase === 'slots' && this.highlight === i);
+        // A slot waiting for the shape in hand invites the next tap.
+        cell.classList.toggle('open', this.tapInput && !full && this.round.picked !== null);
         cell.append(shapeSvg(shape, !full));
+        if (this.tapInput) cell.addEventListener('pointerdown', () => this.tap('slot', i));
         return cell;
       }),
     );
