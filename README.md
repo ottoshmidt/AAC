@@ -23,8 +23,10 @@ pages with the arrow keys.
 **Matching** is a different kind of game: **Shapes**. Two to four shapes
 sit in the top row and their empty outlines in the bottom row, each row
 shuffled on its own, and each shape has to go into the outline of the same
-shape. Sometimes a shape stands right above its own outline and sometimes
-nowhere near it: the deal is left to chance rather than forced to differ. A shape can be
+shape. How the rows line up is the difficulty: every outline can sit right
+under its own shape (the first step, where the move is straight down), fall
+where chance puts it, or never sit under its own shape, so every move
+crosses the board and the picture has to be matched rather than the place. A shape can be
 dragged with a finger or a mouse (the default), or moved by scanning without
 any aiming: the highlight runs along the shapes, a click takes the lit one,
 the highlight then runs along the empty slots, and a click drops it into the
@@ -94,6 +96,7 @@ Then open <http://localhost:8080>.
 | Pictures at a time | 4 | Page size: 4 (2×2 grid, 6 pages) or 2 (side by side, 12 pages) |
 | How to choose (Guess) | Touch | Tap the picture itself, or Scanning: the highlight moves and a click anywhere takes the lit one |
 | Shapes at a time (Matching) | 2 | 2, 3 or 4 shapes per round |
+| Where the slots are (Matching) | Anywhere (random) | Under their own shape (easiest), random, or never under their own shape (hardest) |
 | Hold a bubble for (Bubbles) | 3 s | 0.5–10 s before it bursts |
 | Bubbles at a time | 4 | 2, 3, 4 or 6 |
 | Bubble size | Medium | Small, Medium, Large or Extra large; an extra large bubble fills its share of the screen completely, a small one leaves room to wander |

@@ -2,9 +2,16 @@
 /**
  * Matching: put each shape into the slot of the same shape.
  *
- * The shapes sit in the top row, their empty slots in the bottom row, each
- * row shuffled on its own: sometimes a shape stands right above its slot,
- * sometimes nowhere near it.
+ * The shapes sit in the top row and their empty slots in the bottom row. How
+ * the slots line up with the shapes is the game's difficulty, set by
+ * `matchDeal`:
+ *
+ *   aligned  every slot sits right under its own shape, so the move is
+ *            straight down: the first step, where only the shapes matter
+ *   random   each row is shuffled on its own and the deal is kept as it
+ *            comes, so a shape is sometimes above its slot and sometimes not
+ *   crossed  no slot is ever under its own shape, so every move crosses the
+ *            board and the picture has to be matched, not the position
  *
  * Two ways to move a shape, set by `matchInput`:
  *
@@ -54,10 +61,13 @@ export class MatchRound {
    * @param {import('../shapes.js').Shape[]} shapes  the shapes to play with
    * @param {(n: number) => number[]} [order]  a shuffle, injectable for tests:
    *   given a count it returns those indices in the order to use
+   * @param {'aligned' | 'random' | 'crossed'} [mode]  how the rows line up
    */
-  constructor(shapes, order = shuffled) {
+  constructor(shapes, order = shuffled, mode = 'random') {
     this.shapes = shapes;
     this.order = order;
+    /** @type {'aligned' | 'random' | 'crossed'} */
+    this.mode = mode;
     /** Shape ids in the top row. @type {string[]} */
     this.top = [];
     /** Shape ids in the slot row. @type {string[]} */
@@ -70,19 +80,43 @@ export class MatchRound {
   }
 
   /**
-   * Shuffle both rows and empty every slot.
+   * Shuffle the rows for `mode` (see the top of this file) and empty every
+   * slot.
    *
-   * Each row is shuffled on its own and the result is taken as it comes, so a
-   * shape sometimes sits right above its own slot. Rejecting those deals
-   * would make the game predictable rather than varied: with two shapes there
-   * is only one other arrangement, so every round would be the swapped one.
+   * 'random' keeps whatever the two shuffles give, straight-down deals
+   * included: rejecting those would make the game predictable rather than
+   * varied, since with two shapes there is only one other arrangement.
+   *
+   * @param {'aligned' | 'random' | 'crossed'} [mode]
    */
-  deal() {
+  deal(mode = this.mode) {
+    this.mode = mode;
     const ids = this.shapes.map((s) => s.id);
     this.top = this.order(ids.length).map((i) => ids[i]);
-    this.slots = this.order(ids.length).map((i) => ids[i]);
+    if (mode === 'aligned') {
+      this.slots = [...this.top];
+    } else if (mode === 'crossed') {
+      this.slots = this.crossedSlots(ids.length);
+    } else {
+      this.slots = this.order(ids.length).map((i) => ids[i]);
+    }
     this.filled.clear();
     this.picked = null;
+  }
+
+  /**
+   * A slot order in which no slot is under its own shape (a derangement).
+   * Shuffles until one comes up — with two to four shapes that is a third to
+   * a half of all deals, so it is quick — and falls back to shifting every
+   * shape along by one, which can never line up.
+   * @param {number} n
+   */
+  crossedSlots(n) {
+    for (let attempt = 0; attempt < 20; attempt += 1) {
+      const slots = this.order(n).map((i) => this.shapes[i].id);
+      if (slots.every((id, i) => id !== this.top[i])) return slots;
+    }
+    return this.top.map((_, i) => this.top[(i + 1) % n]);
   }
 
   /** Top-row indices still waiting to be placed. */
@@ -140,6 +174,15 @@ export class MatchRound {
   }
 }
 
+/**
+ * The deal a setting asks for, falling back to 'random' for anything else.
+ * @param {string} setting
+ * @returns {'aligned' | 'random' | 'crossed'}
+ */
+function dealMode(setting) {
+  return setting === 'aligned' || setting === 'crossed' ? setting : 'random';
+}
+
 /** Indices 0…n-1 in random order (Fisher-Yates). */
 function shuffled(n) {
   const a = Array.from({ length: n }, (_, i) => i);
@@ -156,7 +199,7 @@ class MatchGame {
   constructor(ctx) {
     this.ctx = ctx;
     const s = ctx.settings();
-    this.round = new MatchRound(shapesFor(s.matchShapes));
+    this.round = new MatchRound(shapesFor(s.matchShapes), undefined, dealMode(s.matchDeal));
     /** Set in start() from `matchInput`. */
     this.scanInput = true;
     this.dragInput = false;
@@ -216,7 +259,7 @@ class MatchGame {
     const s = this.ctx.settings();
     this.scanInput = s.matchInput === 'scan' || s.matchInput === 'both';
     this.dragInput = s.matchInput === 'drag' || s.matchInput === 'both';
-    this.round = new MatchRound(shapesFor(s.matchShapes));
+    this.round = new MatchRound(shapesFor(s.matchShapes), undefined, dealMode(s.matchDeal));
     this.scanner.updateOptions({
       intervalMs: s.intervalMs,
       cooldownMs: s.cooldownMs,

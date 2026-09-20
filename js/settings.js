@@ -15,6 +15,9 @@ const STORAGE_KEY = 'aac.settings.v1';
  * @property {string}  choiceInput       how a picture is chosen: 'scan' (highlight, click anywhere) or 'touch' (tap it)
  * @property {number}  matchShapes       shapes in a Matching round: 2, 3 or 4
  * @property {string}  matchInput        how a shape is moved: 'drag', 'scan' or 'both'
+ * @property {string}  matchDeal         how the slots line up with the shapes:
+ *                                       'aligned' (each under its own shape), 'random' or
+ *                                       'crossed' (never under its own shape)
  * @property {number}  bubbleCount       bubbles on screen at once
  * @property {number}  bubbleHoldMs      how long a bubble must be held before it bursts
  * @property {string}  bubbleSize        bubble size: 'small', 'medium', 'large' or 'xlarge'
@@ -59,6 +62,7 @@ export const DEFAULTS = Object.freeze({
   choiceInput: 'touch',
   matchShapes: 2,
   matchInput: 'drag',
+  matchDeal: 'random',
   bubbleCount: 4,
   bubbleHoldMs: 3000,
   bubbleSize: 'medium',
@@ -86,6 +90,7 @@ export const CHOICES = Object.freeze({
   choiceInput: ['scan', 'touch'],
   matchShapes: [2, 3, 4],
   matchInput: ['drag', 'scan', 'both'],
+  matchDeal: ['aligned', 'random', 'crossed'],
   bubbleCount: [2, 3, 4, 6],
   bubbleSize: ['small', 'medium', 'large', 'xlarge'],
   bubbleMotion: ['still', 'drift'],

@@ -46,6 +46,46 @@ describe('MatchRound', () => {
     assert.equal(r.done, false);
   });
 
+  it('deals every slot under its own shape on the easiest setting', () => {
+    for (const count of [2, 3, 4]) {
+      for (let i = 0; i < 50; i += 1) {
+        const r = new MatchRound(shapesFor(count), undefined, 'aligned');
+        assert.deepEqual(r.slots, r.top, `${count} shapes: the slots should line up`);
+      }
+    }
+  });
+
+  it('never deals a slot under its own shape on the hardest setting', () => {
+    for (const count of [2, 3, 4]) {
+      for (let i = 0; i < 200; i += 1) {
+        const r = new MatchRound(shapesFor(count), undefined, 'crossed');
+        assert.ok(
+          r.slots.every((id, j) => id !== r.top[j]),
+          `${count} shapes: ${r.top.join()} over ${r.slots.join()} lines up somewhere`,
+        );
+        assert.deepEqual([...r.slots].sort(), [...r.top].sort(), 'and every shape still has a slot');
+      }
+    }
+  });
+
+  it('crosses the rows even when the shuffle keeps offering aligned deals', () => {
+    // A shuffle that only ever returns the same order: the fallback has to
+    // cross the rows by itself.
+    const r = new MatchRound(shapesFor(3), inOrder, 'crossed');
+    assert.ok(r.slots.every((id, i) => id !== r.top[i]), `${r.slots.join()} under ${r.top.join()}`);
+    assert.deepEqual([...r.slots].sort(), [...r.top].sort());
+  });
+
+  it('keeps the deal mode when a new round is dealt', () => {
+    const r = new MatchRound(shapesFor(3), undefined, 'aligned');
+    r.deal();
+    assert.deepEqual(r.slots, r.top, 'still aligned');
+    r.deal('crossed');
+    assert.ok(r.slots.every((id, i) => id !== r.top[i]), 'switched to crossed');
+    r.deal();
+    assert.ok(r.slots.every((id, i) => id !== r.top[i]), 'and stays crossed');
+  });
+
   it('shuffles each row on its own, and keeps the deal it gets', () => {
     // A deal where every shape sits above its own slot is a fair deal, not
     // one to be shuffled away: rejecting it would make the game predictable.
