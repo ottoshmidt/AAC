@@ -24,9 +24,9 @@
  *             shape into the lit one.
  *   both      scanning runs, and dragging works at the same time.
  *
- * A wrong slot costs nothing: the shape goes back to the top row and can be
- * tried again. When the last shape is placed the round is praised and a new
- * one is shuffled.
+ * A shape seating into its slot clicks; a wrong slot ticks and sends the
+ * shape back to the top row, costing nothing. When the last shape is placed
+ * the round is praised and a new one is shuffled.
  */
 
 import { Scanner } from '../scanner.js';
@@ -328,6 +328,8 @@ class MatchGame {
       this.ctx.speech.tick();
       return;
     }
+    // The click of the shape seating into its slot.
+    this.ctx.speech.snap();
     if (this.round.done) this.finish();
   }
 

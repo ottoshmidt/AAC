@@ -30,8 +30,8 @@ crosses the board and the picture has to be matched rather than the place. A sha
 dragged with a finger or a mouse (the default), or moved by scanning without
 any aiming: the highlight runs along the shapes, a click takes the lit one,
 the highlight then runs along the empty slots, and a click drops it into the
-lit one. A wrong slot costs nothing — the shape returns to the row and can be
-tried again. When the last shape is placed the round is praised and a new one
+lit one. A shape clicks as it seats into its slot. A wrong slot costs nothing — it
+ticks, and the shape returns to the row to be tried again. When the last shape is placed the round is praised and a new one
 is shuffled; **←** / **→** shuffle one at any time.
 
 **Bubbles** (category **Holding**) trains the opposite skill: not letting

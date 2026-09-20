@@ -133,6 +133,41 @@ export class Speech {
   }
 
   /**
+   * A shape dropping into its slot: a short, bright click over a low knock,
+   * the sound of something seating into place. Generated, so no audio file
+   * is needed.
+   */
+  snap() {
+    const ctx = this.audioCtx;
+    if (!ctx || ctx.state !== 'running') return;
+    const t = ctx.currentTime;
+    // The click: high and almost instant.
+    const click = ctx.createOscillator();
+    const clickGain = ctx.createGain();
+    click.type = 'square';
+    click.frequency.setValueAtTime(1600, t);
+    click.frequency.exponentialRampToValueAtTime(900, t + 0.04);
+    clickGain.gain.setValueAtTime(0.0001, t);
+    clickGain.gain.exponentialRampToValueAtTime(0.18, t + 0.004);
+    clickGain.gain.exponentialRampToValueAtTime(0.0001, t + 0.06);
+    click.connect(clickGain).connect(ctx.destination);
+    click.start(t);
+    click.stop(t + 0.07);
+    // The knock underneath: what gives it weight.
+    const knock = ctx.createOscillator();
+    const knockGain = ctx.createGain();
+    knock.type = 'sine';
+    knock.frequency.setValueAtTime(320, t);
+    knock.frequency.exponentialRampToValueAtTime(160, t + 0.09);
+    knockGain.gain.setValueAtTime(0.0001, t);
+    knockGain.gain.exponentialRampToValueAtTime(0.22, t + 0.008);
+    knockGain.gain.exponentialRampToValueAtTime(0.0001, t + 0.11);
+    knock.connect(knockGain).connect(ctx.destination);
+    knock.start(t);
+    knock.stop(t + 0.12);
+  }
+
+  /**
    * A bubble bursting: a short blip whose pitch drops away, which sounds
    * like a pop without needing an audio file.
    */
