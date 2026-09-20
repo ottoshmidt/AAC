@@ -115,13 +115,13 @@ export const itemSets = {};
   itemSets.fruit = [
     // Page 1
     item('apple', 'ვაშლი', 'Apple', 'Яблоко', 'webp'),
-    item('green-apple', 'მწვანე ვაშლი', 'Green apple', 'Зелёное яблоко'),
-    item('pear', 'მსხალი', 'Pear', 'Груша'),
+    item('green-apple', 'მწვანე ვაშლი', 'Green apple', 'Зелёное яблоко', 'webp'),
+    item('pear', 'მსხალი', 'Pear', 'Груша', 'webp'),
     item('orange', 'ფორთოხალი', 'Orange', 'Апельсин', 'webp'),
     // Page 2
-    item('lemon', 'ლიმონი', 'Lemon', 'Лимон'),
+    item('lemon', 'ლიმონი', 'Lemon', 'Лимон', 'webp'),
     item('banana', 'ბანანი', 'Banana', 'Банан', 'webp'),
-    item('watermelon', 'საზამთრო', 'Watermelon', 'Арбуз'),
+    item('watermelon', 'საზამთრო', 'Watermelon', 'Арбуз', 'webp'),
     item('grapes', 'ყურძენი', 'Grapes', 'Виноград', 'webp'),
     // Page 3
     item('strawberry', 'მარწყვი', 'Strawberry', 'Клубника', 'webp'),
