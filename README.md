@@ -21,7 +21,9 @@ page, and after the last one it starts over. The caregiver can also turn
 pages with the arrow keys.
 
 **Matching** is a different kind of game: **Shapes**. Two to four shapes
-sit in the top row and their empty outlines in the bottom row, each row
+sit in one row and their empty outlines in another — below them, or beside
+them as two columns, which suits a screen that is taller than it is wide —
+each row
 shuffled on its own, and each shape has to go into the outline of the same
 shape. How the rows line up is the difficulty: every outline can sit right
 under its own shape (the first step, where the move is straight down), fall
@@ -98,6 +100,7 @@ Then open <http://localhost:8080>.
 | Pictures at a time | 4 | Page size: 4 (2×2 grid, 6 pages) or 2 (side by side, 12 pages) |
 | How to choose (Guess) | Touch | Tap the picture itself, or Scanning: the highlight moves and a click anywhere takes the lit one |
 | Shapes at a time (Matching) | 2 | 2, 3 or 4 shapes per round |
+| Slots (Matching) | Below the shapes | Below, or beside them as two columns; beside gives bigger shapes on a tall screen, below on a wide one |
 | Where the slots are (Matching) | Anywhere (random) | Under their own shape (easiest), random, or never under their own shape (hardest) |
 | Hold a bubble for (Bubbles) | 3 s | 0.5–10 s before it bursts |
 | Bubbles at a time | 4 | 2, 3, 4 or 6 |

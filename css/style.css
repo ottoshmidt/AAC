@@ -862,6 +862,20 @@ body {
   color: var(--muted);
 }
 
+/* Slots beside the shapes instead of below them: two columns, each row of
+   the board becoming a column of its own. On a wide screen this gives every
+   shape more room than stacking the rows does. */
+.match-board[data-layout="beside"] {
+  grid-template-rows: minmax(0, 1fr);
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+}
+
+.match-board[data-layout="beside"] .match-row {
+  grid-auto-flow: row;
+  grid-auto-rows: minmax(0, 1fr);
+  grid-auto-columns: auto;
+}
+
 /* A shape waiting to be moved. Dragging is a grab; scanning never needs the
    pointer, so the cursor only matters for the caregiver. */
 .match-shape {

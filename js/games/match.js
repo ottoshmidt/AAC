@@ -2,7 +2,9 @@
 /**
  * Matching: put each shape into the slot of the same shape.
  *
- * The shapes sit in the top row and their empty slots in the bottom row. How
+ * The shapes sit in one row and their empty slots in another: below them, or
+ * beside them as two columns (`matchLayout`), which suits a wide screen and
+ * makes the move a sideways one. How
  * the slots line up with the shapes is the game's difficulty, set by
  * `matchDeal`:
  *
@@ -493,6 +495,7 @@ class MatchGame {
     if (!board || !this.shapeRow || !this.slotRow) return;
     board.classList.toggle('done', this.round.done);
     board.dataset.count = String(this.round.top.length);
+    board.dataset.layout = this.ctx.settings().matchLayout === 'beside' ? 'beside' : 'below';
     const waiting = new Set(this.round.remaining());
 
     this.shapeRow.replaceChildren(
