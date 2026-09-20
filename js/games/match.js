@@ -2,8 +2,9 @@
 /**
  * Matching: put each shape into the slot of the same shape.
  *
- * The shapes sit in the top row, their empty slots in the bottom row, both
- * shuffled independently so the answer is never simply "the one below".
+ * The shapes sit in the top row, their empty slots in the bottom row, each
+ * row shuffled on its own: sometimes a shape stands right above its slot,
+ * sometimes nowhere near it.
  *
  * Two ways to move a shape, set by `matchInput`:
  *
@@ -68,17 +69,18 @@ export class MatchRound {
     this.deal();
   }
 
-  /** Shuffle both rows and empty every slot. */
+  /**
+   * Shuffle both rows and empty every slot.
+   *
+   * Each row is shuffled on its own and the result is taken as it comes, so a
+   * shape sometimes sits right above its own slot. Rejecting those deals
+   * would make the game predictable rather than varied: with two shapes there
+   * is only one other arrangement, so every round would be the swapped one.
+   */
   deal() {
     const ids = this.shapes.map((s) => s.id);
     this.top = this.order(ids.length).map((i) => ids[i]);
-    // The slots get their own order. With more than one shape, an order that
-    // repeats the top row would make the game "drop it straight down", so it
-    // is shuffled again (a few tries, then taken as it comes).
-    for (let attempt = 0; attempt < 10; attempt += 1) {
-      this.slots = this.order(ids.length).map((i) => ids[i]);
-      if (ids.length < 2 || this.slots.some((id, i) => id !== this.top[i])) break;
-    }
+    this.slots = this.order(ids.length).map((i) => ids[i]);
     this.filled.clear();
     this.picked = null;
   }

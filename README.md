@@ -21,8 +21,10 @@ page, and after the last one it starts over. The caregiver can also turn
 pages with the arrow keys.
 
 **Matching** is a different kind of game: **Shapes**. Two to four shapes
-sit in the top row and their empty outlines in the bottom row, both shuffled,
-and each shape has to go into the outline of the same shape. A shape can be
+sit in the top row and their empty outlines in the bottom row, each row
+shuffled on its own, and each shape has to go into the outline of the same
+shape. Sometimes a shape stands right above its own outline and sometimes
+nowhere near it: the deal is left to chance rather than forced to differ. A shape can be
 dragged with a finger or a mouse (the default), or moved by scanning without
 any aiming: the highlight runs along the shapes, a click takes the lit one,
 the highlight then runs along the empty slots, and a click drops it into the

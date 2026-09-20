@@ -46,12 +46,26 @@ describe('MatchRound', () => {
     assert.equal(r.done, false);
   });
 
-  it('shuffles the slots away from the top row, so the answer is never straight down', () => {
-    // An order that would repeat the top row is dealt again (see deal()).
+  it('shuffles each row on its own, and keeps the deal it gets', () => {
+    // A deal where every shape sits above its own slot is a fair deal, not
+    // one to be shuffled away: rejecting it would make the game predictable.
+    const straightDown = new MatchRound(shapesFor(3), inOrder);
+    assert.deepEqual(straightDown.slots, straightDown.top);
+    // The rows are shuffled separately, so they can differ.
     let calls = 0;
-    const sameThenReversed = (n) => (calls++ < 2 ? inOrder(n) : reversed(n));
-    const r = new MatchRound(shapesFor(3), sameThenReversed);
-    assert.notDeepEqual(r.slots, r.top);
+    const topThenReversed = (n) => (calls++ === 0 ? inOrder(n) : reversed(n));
+    const swapped = new MatchRound(shapesFor(3), topThenReversed);
+    assert.deepEqual(swapped.slots, [...swapped.top].reverse());
+  });
+
+  it('puts a shape above its own slot about as often as chance says', () => {
+    // Two shapes: half the deals should line up, half should be swapped.
+    let sameSide = 0;
+    for (let i = 0; i < 400; i += 1) {
+      const r = new MatchRound(shapesFor(2));
+      if (r.slots[0] === r.top[0]) sameSide += 1;
+    }
+    assert.ok(sameSide > 120 && sameSide < 280, `${sameSide} of 400 deals lined up; expected around 200`);
   });
 
   it('places a shape in its matching slot', () => {
