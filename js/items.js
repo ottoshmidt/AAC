@@ -125,18 +125,18 @@ export const itemSets = {};
     item('grapes', 'ყურძენი', 'Grapes', 'Виноград', 'webp'),
     // Page 3
     item('strawberry', 'მარწყვი', 'Strawberry', 'Клубника', 'webp'),
-    item('blueberries', 'მოცვი', 'Blueberries', 'Черника'),
+    item('blueberries', 'მოცვი', 'Blueberries', 'Черника', 'webp'),
     item('melon', 'ნესვი', 'Melon', 'Дыня', 'webp'),
-    item('cherries', 'ბალი', 'Cherries', 'Черешня'),
+    item('cherries', 'ბალი', 'Cherries', 'Черешня', 'webp'),
     // Page 4
-    item('peach', 'ატამი', 'Peach', 'Персик'),
-    item('mango', 'მანგო', 'Mango', 'Манго'),
-    item('pineapple', 'ანანასი', 'Pineapple', 'Ананас'),
-    item('coconut', 'ქოქოსი', 'Coconut', 'Кокос'),
+    item('peach', 'ატამი', 'Peach', 'Персик', 'webp'),
+    item('mango', 'მანგო', 'Mango', 'Манго', 'webp'),
+    item('pineapple', 'ანანასი', 'Pineapple', 'Ананас', 'webp'),
+    item('coconut', 'ქოქოსი', 'Coconut', 'Кокос', 'webp'),
     // Page 5
-    item('kiwi', 'კივი', 'Kiwi', 'Киви'),
-    item('avocado', 'ავოკადო', 'Avocado', 'Авокадо'),
-    item('pomegranate', 'ბროწეული', 'Pomegranate', 'Гранат'),
+    item('kiwi', 'კივი', 'Kiwi', 'Киви', 'webp'),
+    item('avocado', 'ავოკადო', 'Avocado', 'Авокадо', 'webp'),
+    item('pomegranate', 'ბროწეული', 'Pomegranate', 'Гранат', 'webp'),
     item('plum', 'ქლიავი', 'Plum', 'Слива'),
     // Page 6
     item('fig', 'ლეღვი', 'Fig', 'Инжир'),
