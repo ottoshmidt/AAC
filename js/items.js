@@ -131,7 +131,7 @@ export const itemSets = {};
     item('melon', 'ნესვი', 'Melon', 'Дыня', 'webp'),
     item('cherries', 'ბალი', 'Sweet cherry', 'Черешня', 'webp'),
     // Page 4
-    item('sour-cherry', 'ალუბალი', 'Sour cherry', 'Вишня'),
+    item('sour-cherry', 'ალუბალი', 'Sour cherry', 'Вишня', 'webp'),
     item('peach', 'ატამი', 'Peach', 'Персик', 'webp'),
     item('mango', 'მანგო', 'Mango', 'Манго', 'webp'),
     item('pineapple', 'ანანასი', 'Pineapple', 'Ананас', 'webp'),
@@ -141,16 +141,16 @@ export const itemSets = {};
     item('avocado', 'ავოკადო', 'Avocado', 'Авокадо', 'webp'),
     item('pomegranate', 'ბროწეული', 'Pomegranate', 'Гранат', 'webp'),
     // Page 6
-    item('plum', 'ქლიავი', 'Plum', 'Слива'),
-    item('fig', 'ლეღვი', 'Fig', 'Инжир'),
-    item('apricot', 'გარგარი', 'Apricot', 'Абрикос'),
-    item('quince', 'კომში', 'Quince', 'Айва'),
+    item('plum', 'ქლიავი', 'Plum', 'Слива', 'webp'),
+    item('fig', 'ლეღვი', 'Fig', 'Инжир', 'webp'),
+    item('apricot', 'გარგარი', 'Apricot', 'Абрикос', 'webp'),
+    item('quince', 'კომში', 'Quince', 'Айва', 'webp'),
     // Page 7: the two mulberries together, and the pumpkin, which is a fruit
     // however it is cooked (its picture is the vegetable set's, since it is
     // the same pumpkin).
     item('persimmon', 'ხურმა', 'Persimmon', 'Хурма'),
-    item('mulberry', 'თუთა', 'Mulberry', 'Шелковица'),
-    item('white-mulberry', 'თეთრი თუთა', 'White mulberry', 'Белая шелковица'),
+    item('mulberry', 'თუთა', 'Mulberry', 'Шелковица', 'webp'),
+    item('white-mulberry', 'თეთრი თუთა', 'White mulberry', 'Белая шелковица', 'webp'),
     item('pumpkin', 'გოგრა', 'Pumpkin', 'Тыква', 'webp'),
   ];
 }

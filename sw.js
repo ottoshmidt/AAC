@@ -9,7 +9,7 @@
 // Downloaded voices live in a separate cache managed by js/piper.js
 // ('aac-voices-…'); it is left alone here so updates never re-download them.
 
-const CACHE_NAME = 'aac-app-v70';
+const CACHE_NAME = 'aac-app-v71';
 const VOICE_CACHE_PREFIX = 'aac-voices-';
 
 const PRECACHE = [
@@ -129,13 +129,13 @@ const PRECACHE = [
   'assets/images/fish.webp',
   'assets/images/flower.webp',
   'assets/images/fruit/apple.webp',
-  'assets/images/fruit/apricot.svg',
+  'assets/images/fruit/apricot.webp',
   'assets/images/fruit/avocado.webp',
   'assets/images/fruit/banana.webp',
   'assets/images/fruit/blueberries.webp',
   'assets/images/fruit/cherries.webp',
   'assets/images/fruit/coconut.webp',
-  'assets/images/fruit/fig.svg',
+  'assets/images/fruit/fig.webp',
   'assets/images/fruit/grapes.webp',
   'assets/images/fruit/green-apple.webp',
   'assets/images/fruit/kiwi.webp',
@@ -144,18 +144,18 @@ const PRECACHE = [
   'assets/images/fruit/melon.webp',
   'assets/images/fruit/orange.webp',
   'assets/images/fruit/peach.webp',
-  'assets/images/fruit/mulberry.svg',
+  'assets/images/fruit/mulberry.webp',
   'assets/images/fruit/pear.webp',
   'assets/images/fruit/pumpkin.webp',
   'assets/images/fruit/persimmon.svg',
   'assets/images/fruit/pineapple.webp',
-  'assets/images/fruit/plum.svg',
+  'assets/images/fruit/plum.webp',
   'assets/images/fruit/pomegranate.webp',
-  'assets/images/fruit/quince.svg',
-  'assets/images/fruit/sour-cherry.svg',
+  'assets/images/fruit/quince.webp',
+  'assets/images/fruit/sour-cherry.webp',
   'assets/images/fruit/strawberry.webp',
   'assets/images/fruit/watermelon.webp',
-  'assets/images/fruit/white-mulberry.svg',
+  'assets/images/fruit/white-mulberry.webp',
   'assets/images/grapes.webp',
   'assets/images/house.webp',
   'assets/images/milk.webp',
