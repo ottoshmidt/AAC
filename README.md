@@ -237,12 +237,12 @@ export const items = [
   they are found by label and voice through `js/clips.js`.
 
 **Picture credits.** The Mixed set and a few pictures in the other sets
-(pomegranate, persimmon, ostrich, magpie, swallow, heron) were drawn for
-this app; the whole Animals set, the apple, banana, orange, grapes,
-strawberry, carrot, cabbage, lettuce, garlic, onion, sweet potato, tomato,
-cucumber, corn, broccoli, bell pepper, beans, green beans, radish, beet,
-cauliflower, olives, eggplant, pumpkin, mushroom, potato, peas, zucchini,
-plum, fig, apricot, sour cherry, quince, mulberry, white mulberry, bread,
+(pomegranate, ostrich, magpie, swallow, heron) were drawn for this app; the
+whole Animals set, the apple, banana, orange, grapes, strawberry, carrot,
+cabbage, lettuce, garlic, onion, sweet potato, tomato, cucumber, corn,
+broccoli, bell pepper, beans, green beans, radish, beet, cauliflower,
+olives, eggplant, pumpkin, mushroom, potato, peas, zucchini, plum, fig,
+apricot, sour cherry, quince, mulberry, white mulberry, persimmon, bread,
 cake, milk, water and the sparrow, stork, woodpecker, hummingbird, crow and
 seagull are the project owner's own pictures. All other pictures are
 [Twemoji](https://github.com/jdecked/twemoji) graphics, © Twitter and

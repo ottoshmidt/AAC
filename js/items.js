@@ -148,7 +148,7 @@ export const itemSets = {};
     // Page 7: the two mulberries together, and the pumpkin, which is a fruit
     // however it is cooked (its picture is the vegetable set's, since it is
     // the same pumpkin).
-    item('persimmon', 'ხურმა', 'Persimmon', 'Хурма'),
+    item('persimmon', 'კარალიოკი', 'Persimmon', 'Королёк', 'webp'),
     item('mulberry', 'თუთა', 'Mulberry', 'Шелковица', 'webp'),
     item('white-mulberry', 'თეთრი თუთა', 'White mulberry', 'Белая шелковица', 'webp'),
     item('pumpkin', 'გოგრა', 'Pumpkin', 'Тыква', 'webp'),
