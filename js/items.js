@@ -123,30 +123,32 @@ export const itemSets = {};
     item('banana', 'ბანანი', 'Banana', 'Банан', 'webp'),
     item('watermelon', 'საზამთრო', 'Watermelon', 'Арбуз', 'webp'),
     item('grapes', 'ყურძენი', 'Grapes', 'Виноград', 'webp'),
-    // Page 3
+    // Page 3. The two cherries follow each other across the page break: they
+    // are the pair to tell apart, so they belong side by side in the list
+    // even where a page cannot hold both.
     item('strawberry', 'მარწყვი', 'Strawberry', 'Клубника', 'webp'),
     item('blueberries', 'მოცვი', 'Blueberries', 'Черника', 'webp'),
     item('melon', 'ნესვი', 'Melon', 'Дыня', 'webp'),
     item('cherries', 'ბალი', 'Sweet cherry', 'Черешня', 'webp'),
     // Page 4
+    item('sour-cherry', 'ალუბალი', 'Sour cherry', 'Вишня'),
     item('peach', 'ატამი', 'Peach', 'Персик', 'webp'),
     item('mango', 'მანგო', 'Mango', 'Манго', 'webp'),
     item('pineapple', 'ანანასი', 'Pineapple', 'Ананас', 'webp'),
-    item('coconut', 'ქოქოსი', 'Coconut', 'Кокос', 'webp'),
     // Page 5
+    item('coconut', 'ქოქოსი', 'Coconut', 'Кокос', 'webp'),
     item('kiwi', 'კივი', 'Kiwi', 'Киви', 'webp'),
     item('avocado', 'ავოკადო', 'Avocado', 'Авокадо', 'webp'),
     item('pomegranate', 'ბროწეული', 'Pomegranate', 'Гранат', 'webp'),
-    item('plum', 'ქლიავი', 'Plum', 'Слива'),
     // Page 6
+    item('plum', 'ქლიავი', 'Plum', 'Слива'),
     item('fig', 'ლეღვი', 'Fig', 'Инжир'),
     item('apricot', 'გარგარი', 'Apricot', 'Абрикос'),
     item('quince', 'კომში', 'Quince', 'Айва'),
+    // Page 7: the two mulberries together, and the pumpkin, which is a fruit
+    // however it is cooked (its picture is the vegetable set's, since it is
+    // the same pumpkin).
     item('persimmon', 'ხურმა', 'Persimmon', 'Хурма'),
-    // Page 7: the sour cherry next to the two mulberries, and the pumpkin,
-    // which is a fruit however it is cooked (its picture is the vegetable
-    // set's, since it is the same pumpkin).
-    item('sour-cherry', 'ალუბალი', 'Sour cherry', 'Вишня'),
     item('mulberry', 'თუთა', 'Mulberry', 'Шелковица'),
     item('white-mulberry', 'თეთრი თუთა', 'White mulberry', 'Белая шелковица'),
     item('pumpkin', 'გოგრა', 'Pumpkin', 'Тыква', 'webp'),
