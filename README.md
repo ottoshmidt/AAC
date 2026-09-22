@@ -11,7 +11,7 @@ The start screen is a menu of games, grouped by category. **Guess**
 starts with **Training**, for learning the click itself, followed by seven
 games that differ only in their pictures: **Mixed**, **Fruit**,
 **Vegetables**, **Transport**, **Clothes**, **Animals** and **Birds**, 24
-pictures each.
+pictures each (Fruit has 28).
 
 In a Guess game, four pictures are shown in a 2×2 grid (or two side by
 side); the highlight moves through them and a click chooses the highlighted
@@ -213,7 +213,8 @@ use.
 ## Changing the pictures
 
 The picture sets live in `js/items.js` (`itemSets`), one list per Guess
-game, 24 pictures each. Pages are cut from a list in order, so keep
+game, 24 pictures each (Fruit has 28). A set is cut into pages of 4, so its
+length has to be a multiple of 4. Pages are cut from a list in order, so keep
 related pictures together in runs of 4. Each item has a label per language
 and, optionally, a recorded clip per language:
 

@@ -9,10 +9,14 @@ const root = new URL('../', import.meta.url);
 const serviceWorker = readFileSync(new URL('sw.js', root), 'utf8');
 
 describe('picture sets', () => {
-  it('are the seven expected sets of 24 items with unique ids', () => {
+  it('are the seven expected sets, whole pages of 4, with unique ids', () => {
     assert.deepEqual(Object.keys(itemSets), ['mixed', 'fruit', 'vegetables', 'transport', 'clothes', 'animals', 'birds']);
+    // Pages are cut from a set in fours, so a set that is not a multiple of
+    // four would end on a short page.
+    const expected = { fruit: 28 };
     for (const [name, items] of Object.entries(itemSets)) {
-      assert.equal(items.length, 24, name);
+      assert.equal(items.length, expected[name] ?? 24, name);
+      assert.equal(items.length % 4, 0, `${name}: not whole pages of 4`);
       assert.equal(new Set(items.map((i) => i.id)).size, items.length, `${name}: duplicate ids`);
     }
   });
