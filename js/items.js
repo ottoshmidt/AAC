@@ -193,8 +193,8 @@ export const itemSets = {};
   const item = inFolder('transport');
   itemSets.transport = [
     // Page 1
-    item('car', 'მანქანა', 'Car', 'Машина'),
-    item('taxi', 'ტაქსი', 'Taxi', 'Такси'),
+    item('car', 'მანქანა', 'Car', 'Машина', 'webp'),
+    item('taxi', 'ტაქსი', 'Taxi', 'Такси', 'webp'),
     item('bus', 'ავტობუსი', 'Bus', 'Автобус'),
     item('minibus', 'მიკროავტობუსი', 'Minibus', 'Маршрутка'),
     // Page 2

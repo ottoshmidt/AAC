@@ -29,7 +29,7 @@ const ICONS = {
   mixed: 'assets/icons/game-mixed.webp',
   fruit: 'assets/images/fruit/apple.webp',
   vegetables: 'assets/images/vegetables/carrot.webp',
-  transport: 'assets/images/transport/car.svg',
+  transport: 'assets/images/transport/car.webp',
   clothes: 'assets/images/clothes/t-shirt.svg',
   animals: 'assets/images/animals/rabbit.webp',
   birds: 'assets/images/birds/owl.svg',
