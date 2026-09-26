@@ -9,7 +9,7 @@
 // Downloaded voices live in a separate cache managed by js/piper.js
 // ('aac-voices-…'); it is left alone here so updates never re-download them.
 
-const CACHE_NAME = 'aac-app-v75';
+const CACHE_NAME = 'aac-app-v76';
 const VOICE_CACHE_PREFIX = 'aac-voices-';
 
 const PRECACHE = [
@@ -164,22 +164,22 @@ const PRECACHE = [
   'assets/images/star.svg',
   'assets/images/strawberry.webp',
   'assets/images/sun.svg',
-  'assets/images/transport/airplane.svg',
+  'assets/images/transport/airplane.webp',
   'assets/images/transport/ambulance.svg',
-  'assets/images/transport/bicycle.svg',
+  'assets/images/transport/bicycle.webp',
   'assets/images/transport/bus.webp',
   'assets/images/transport/cable-car.svg',
   'assets/images/transport/car.webp',
   'assets/images/transport/fire-engine.svg',
   'assets/images/transport/helicopter.svg',
-  'assets/images/transport/kick-scooter.svg',
+  'assets/images/transport/kick-scooter.webp',
   'assets/images/transport/metro.webp',
   'assets/images/transport/minibus.webp',
-  'assets/images/transport/motorcycle.svg',
+  'assets/images/transport/motorcycle.webp',
   'assets/images/transport/police-car.svg',
   'assets/images/transport/rocket.svg',
   'assets/images/transport/sailboat.svg',
-  'assets/images/transport/scooter.svg',
+  'assets/images/transport/scooter.webp',
   'assets/images/transport/ship.svg',
   'assets/images/transport/speedboat.svg',
   'assets/images/transport/taxi.webp',
@@ -187,7 +187,7 @@ const PRECACHE = [
   'assets/images/transport/train.webp',
   'assets/images/transport/tram.webp',
   'assets/images/transport/trolleybus.webp',
-  'assets/images/transport/truck.svg',
+  'assets/images/transport/truck.webp',
   'assets/images/tree.webp',
   'assets/images/vegetables/beans.webp',
   'assets/images/vegetables/beet.webp',

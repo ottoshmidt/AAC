@@ -203,14 +203,14 @@ export const itemSets = {};
     item('train', 'მატარებელი', 'Train', 'Поезд', 'webp'),
     item('metro', 'მეტრო', 'Metro', 'Метро', 'webp'),
     // Page 3
-    item('truck', 'სატვირთო მანქანა', 'Truck', 'Грузовик'),
+    item('truck', 'სატვირთო მანქანა', 'Truck', 'Грузовик', 'webp'),
     item('tractor', 'ტრაქტორი', 'Tractor', 'Трактор', 'webp'),
-    item('motorcycle', 'მოტოციკლი', 'Motorcycle', 'Мотоцикл'),
-    item('scooter', 'მოპედი', 'Scooter', 'Скутер'),
+    item('motorcycle', 'მოტოციკლი', 'Motorcycle', 'Мотоцикл', 'webp'),
+    item('scooter', 'მოპედი', 'Scooter', 'Скутер', 'webp'),
     // Page 4
-    item('bicycle', 'ველოსიპედი', 'Bicycle', 'Велосипед'),
-    item('kick-scooter', 'ფეხის სკუტერი', 'Kick scooter', 'Самокат'),
-    item('airplane', 'თვითმფრინავი', 'Airplane', 'Самолёт'),
+    item('bicycle', 'ველოსიპედი', 'Bicycle', 'Велосипед', 'webp'),
+    item('kick-scooter', 'ფეხის სკუტერი', 'Kick scooter', 'Самокат', 'webp'),
+    item('airplane', 'თვითმფრინავი', 'Airplane', 'Самолёт', 'webp'),
     item('helicopter', 'ვერტმფრენი', 'Helicopter', 'Вертолёт'),
     // Page 5
     item('rocket', 'რაკეტა', 'Rocket', 'Ракета'),
