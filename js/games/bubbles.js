@@ -270,7 +270,15 @@ class BubbleGame {
 
   /** A press anywhere: in scanning mode it starts holding the lit bubble. */
   press() {
-    if (!this.scanInput || this.highlight < 0) return;
+    if (!this.scanInput) return;
+    // Paused after rounds with no choice: the press is what wakes the scan,
+    // as the "click to continue" on screen says. Nothing is lit while
+    // paused, so this has to come before the check below.
+    if (this.scanner.state === 'paused') {
+      this.scanner.press();
+      return;
+    }
+    if (this.highlight < 0) return;
     const now = performance.now();
     if (now - this.lastPressAt < this.ctx.settings().debounceMs) return;
     this.lastPressAt = now;

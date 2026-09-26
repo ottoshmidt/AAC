@@ -239,7 +239,7 @@ class MatchGame {
     });
     this.scanner.addEventListener('highlight', (event) => {
       this.highlight = this.scanTargets[/** @type {CustomEvent} */ (event).detail.index] ?? -1;
-      this.render();
+      this.paintHighlight();
       const settings = ctx.settings();
       // In the slot row there is nothing new to name: the child is holding
       // the shape whose name was just spoken, so only the tick plays.
@@ -251,7 +251,7 @@ class MatchGame {
       const target = this.scanTargets[/** @type {CustomEvent} */ (event).detail.index];
       if (target === undefined) return;
       if (this.phase === 'shapes') this.take(target);
-      else this.put(target);
+      else this.put(target, true);
     });
     this.scanner.addEventListener('pause', () => this.showPaused(true));
     this.scanner.addEventListener('resume', () => this.showPaused(false));
@@ -328,8 +328,11 @@ class MatchGame {
    * Put the held shape into `slot`. A wrong slot sends it back to the top
    * row, which is a retry, not a mistake: nothing is marked or counted.
    * @param {number} slot
+   * @param {boolean} [byScanner]  placed by a scanning press, rather than by
+   *   a drag or a tap (which, with dragging and scanning both on, happen
+   *   while the scanner is running and so leave its targets out of date)
    */
-  put(slot) {
+  put(slot, byScanner = false) {
     const held = this.round.picked;
     if (held === null) return;
     const correct = this.round.place(slot);
@@ -340,20 +343,36 @@ class MatchGame {
     }
     // The click of the shape seating into its slot.
     this.ctx.speech.snap();
-    if (this.round.done) this.finish();
+    if (this.round.done) this.finish(byScanner);
+    // A shape placed by hand while scanning: the scan starts again over what
+    // is left, rather than lighting up a shape that is already in its slot.
+    else if (this.scanInput && !byScanner) this.scanner.start();
   }
 
-  /** The round is complete: praise it, then deal a new one. */
-  finish() {
+  /**
+   * The round is complete: praise it, then deal a new one.
+   * @param {boolean} byScanner  whether the last shape was placed by scanning
+   */
+  finish(byScanner) {
     const { ctx } = this;
     ctx.say(ctx.t('wellDone'));
     const board = this.board;
     board?.classList.add('done');
-    if (this.scanInput) return; // the next scanning round deals, after the cooldown
+    // Placed by scanning: the scanner's own next round deals, after the
+    // cooldown that follows every selection.
+    if (byScanner) return;
+    // Placed by hand: nothing is due from the scanner, so the new round is
+    // dealt here, after the same pause. Scanning, if it is on, rests
+    // meanwhile instead of lighting up an empty board.
+    if (this.scanInput) this.scanner.stop();
     setTimeout(() => {
       if (board !== this.board) return; // the game was left or restarted
-      this.round.deal();
-      this.render();
+      if (this.scanInput) {
+        this.scanner.start(); // its first round sees the finished board and deals
+      } else {
+        this.round.deal();
+        this.render();
+      }
     }, ctx.settings().cooldownMs);
   }
 
@@ -493,6 +512,10 @@ class MatchGame {
     const { lang, labelFor } = this.ctx;
     const board = this.board;
     if (!board || !this.shapeRow || !this.slotRow) return;
+    // Never rebuild under a drag: the shape in hand would be thrown away, and
+    // the release that ends the drag would go nowhere. Every way a drag ends
+    // redraws the board itself.
+    if (this.drag) return;
     board.classList.toggle('done', this.round.done);
     board.dataset.count = String(this.round.top.length);
     board.dataset.layout = this.ctx.settings().matchLayout === 'beside' ? 'beside' : 'below';
@@ -536,6 +559,19 @@ class MatchGame {
     );
   }
 
+  /**
+   * Move the scan highlight without rebuilding the board, so a scan step
+   * never disturbs a shape being dragged at the same time.
+   */
+  paintHighlight() {
+    for (const cell of /** @type {HTMLElement[]} */ ([...(this.shapeRow?.children ?? [])])) {
+      cell.classList.toggle('highlighted', this.phase === 'shapes' && Number(cell.dataset.index) === this.highlight);
+    }
+    for (const cell of this.slotElements()) {
+      cell.classList.toggle('highlighted', this.phase === 'slots' && Number(cell.dataset.index) === this.highlight);
+    }
+  }
+
   slotElements() {
     return /** @type {HTMLElement[]} */ ([...(this.slotRow?.children ?? [])]);
   }
@@ -545,7 +581,7 @@ class MatchGame {
     if (this.pauseOverlay) this.pauseOverlay.hidden = !paused;
     if (paused) {
       this.highlight = -1;
-      this.render();
+      this.paintHighlight();
     }
   }
 }
