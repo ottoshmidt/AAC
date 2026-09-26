@@ -10,6 +10,22 @@ describe('i18n', () => {
     assert.deepEqual(missingKeys(), []);
   });
 
+  it('spells out the abbreviation in each title with its subtitle', () => {
+    // The initials of the subtitle's words, leaving out "and", are the
+    // abbreviation in the title: AAC, ადკ, АДК. Changing one without the
+    // other would leave the heading saying something its subtitle does not.
+    const and = { en: 'and', ka: 'და', ru: 'и' };
+    for (const lang of Object.keys(LANGUAGES)) {
+      const initials = t(lang, 'subtitle')
+        .split(/\s+/)
+        .filter((word) => word.toLowerCase() !== and[lang])
+        .map((word) => word[0])
+        .join('')
+        .toUpperCase();
+      assert.ok(t(lang, 'title').toUpperCase().includes(initials), `${lang}: "${t(lang, 'title')}" should contain ${initials}`);
+    }
+  });
+
   it('fills placeholders', () => {
     assert.equal(t('en', 'voiceReady', { name: 'Natia' }), 'Voice Natia is ready.');
     assert.equal(t('ka', 'voiceReady', { name: 'Natia' }), 'ხმა „Natia“ მზადაა.');

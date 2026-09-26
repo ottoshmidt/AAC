@@ -221,15 +221,16 @@ window.addEventListener('popstate', () => {
 // `pointerdown` also covers touch screens and pens.
 ui.elements.gameScreen.addEventListener('pointerdown', (event) => {
   event.preventDefault(); // no text selection, no middle-click autoscroll
-  running?.press();
+  running?.press(event);
 });
 ui.elements.gameScreen.addEventListener('contextmenu', (event) => event.preventDefault());
 
 // Letting go matters to games built on holding (Bubbles). It is taken from
 // the whole document, so a press that ends off the game screen, or is taken
-// away by the system, still counts as letting go.
+// away by the system, still counts as letting go. The event goes along, so a
+// game can tell the finger that is holding from another one lifted nearby.
 for (const type of ['pointerup', 'pointercancel']) {
-  document.addEventListener(type, () => running?.release?.());
+  document.addEventListener(type, (event) => running?.release?.(event));
 }
 
 // Keyboard is for the caregiver: Escape returns to the intro screen, other

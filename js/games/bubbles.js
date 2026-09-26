@@ -197,8 +197,13 @@ class BubbleGame {
     this.frame = null;
     /** @type {ReturnType<typeof setTimeout> | null} */
     this.refillTimer = null;
-    /** Whether a press is down right now (touch mode). */
-    this.pressing = false;
+    /**
+     * The finger (pointer) holding right now, or null. Only that one's moves
+     * and release count, so a second finger resting on the screen, or lifted
+     * nearby, neither steals the hold nor ends it.
+     * @type {number | null}
+     */
+    this.pointer = null;
     /** Highlighted bubble while scanning, or -1. */
     this.highlight = -1;
     /** Scan index -> bubble index. @type {number[]} */
@@ -258,7 +263,7 @@ class BubbleGame {
 
   stop() {
     this.scanner.stop();
-    this.pressing = false;
+    this.pointer = null;
     window.removeEventListener('resize', this.onResize);
     this.cancelHold();
     this.stopFrames();
@@ -268,8 +273,11 @@ class BubbleGame {
     this.ctx.controls.replaceChildren();
   }
 
-  /** A press anywhere: in scanning mode it starts holding the lit bubble. */
-  press() {
+  /**
+   * A press anywhere: in scanning mode it starts holding the lit bubble.
+   * @param {PointerEvent} [event]
+   */
+  press(event) {
     if (!this.scanInput) return;
     // Paused after rounds with no choice: the press is what wakes the scan,
     // as the "click to continue" on screen says. Nothing is lit while
@@ -282,15 +290,21 @@ class BubbleGame {
     const now = performance.now();
     if (now - this.lastPressAt < this.ctx.settings().debounceMs) return;
     this.lastPressAt = now;
+    this.pointer = event?.pointerId ?? null;
     // Scanning stops for the hold, so the bubble stays where it is until the
     // press ends, however long that takes.
     this.scanner.stop();
     this.startHold(this.highlight);
   }
 
-  /** The press ended (shell forwards pointerup/pointercancel). */
-  release() {
-    this.pressing = false;
+  /**
+   * A press ended (shell forwards pointerup/pointercancel from anywhere).
+   * @param {PointerEvent} [event]
+   */
+  release(event) {
+    // Another finger lifted: the one holding is still down.
+    if (event && this.pointer !== null && event.pointerId !== this.pointer) return;
+    this.pointer = null;
     if (!this.hold) return;
     this.cancelHold();
     if (this.scanInput && !this.field.empty) this.scanner.start();
@@ -435,13 +449,23 @@ class BubbleGame {
     // bubble, wherever the pointer happens to be, so none of this applies.
     if (!this.scanInput) {
       this.board.addEventListener('pointerdown', (event) => {
-        this.pressing = true;
-        // Keeps the moves coming even if the finger leaves the board.
-        this.board?.setPointerCapture(event.pointerId);
+        // A finger holding a bubble keeps it; another one landing meanwhile is
+        // ignored. With nothing held, the newest finger takes over, so a
+        // release that never arrived can never lock the game.
+        if (this.pointer !== null && this.hold) return;
+        this.pointer = event.pointerId;
+        // Keeps the moves coming even if the finger leaves the board. A
+        // pointer the browser has already dropped cannot be captured; the
+        // hold still starts, it just will not follow the finger off the board.
+        try {
+          this.board?.setPointerCapture(event.pointerId);
+        } catch {
+          // nothing to follow
+        }
         this.holdAt(event.clientX, event.clientY);
       });
       this.board.addEventListener('pointermove', (event) => {
-        if (this.pressing) this.holdAt(event.clientX, event.clientY);
+        if (event.pointerId === this.pointer) this.holdAt(event.clientX, event.clientY);
       });
     }
     this.pauseOverlay = document.createElement('div');

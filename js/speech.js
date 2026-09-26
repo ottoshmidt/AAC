@@ -106,7 +106,12 @@ export class Speech {
           }
           this.#say(text, lang, '');
         })
-        .catch((error) => console.warn('[speech] in-app voice failed:', error));
+        .catch((error) => {
+          console.warn('[speech] in-app voice failed:', error);
+          // Say it with the device voice rather than not at all: a word the
+          // child chose must always be heard.
+          if (generation === this.generation) this.#say(text, lang, '');
+        });
       return;
     }
     this.#say(text, lang, voice);

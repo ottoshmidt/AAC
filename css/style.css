@@ -65,10 +65,24 @@ body {
   text-align: center;
 }
 
+.title-block {
+  margin: 0;
+}
+
 .subtitle {
   margin: 0;
   font-size: clamp(0.95rem, 2.2vw, 1.25rem);
   color: var(--muted);
+}
+
+/* The instruction under the heading is what to do, not more of the heading:
+   full-strength text and a little heavier, so it never reads as a second
+   subtitle, and set apart from the heading by more than the usual gap. */
+.choose-game {
+  margin-top: 0.75rem;
+  color: var(--text);
+  font-size: 1.15rem;
+  font-weight: 600;
 }
 
 /* ---- Intro screen ---------------------------------------------------------- */

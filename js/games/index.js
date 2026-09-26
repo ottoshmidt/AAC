@@ -34,9 +34,10 @@ import { trainGames } from './train.js';
  * @typedef {object} Game
  * @property {() => void} start  show the game in `root` and begin
  * @property {() => void} stop   stop timers and sounds and clear `root`
- * @property {() => void} press  the user pressed (click, tap, switch)
- * @property {() => void} [release]  the user let go; only games built on
- *   holding (js/games/bubbles.js) need it
+ * @property {(event?: PointerEvent) => void} press  the user pressed (click, tap, switch)
+ * @property {(event?: PointerEvent) => void} [release]  the user let go; only games
+ *   built on holding (js/games/bubbles.js) need it. The event tells which
+ *   finger it was, so lifting another one does not end a hold.
  * @property {(event: KeyboardEvent) => boolean} key  a caregiver key; return true if used
  */
 

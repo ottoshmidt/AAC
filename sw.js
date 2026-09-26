@@ -9,7 +9,7 @@
 // Downloaded voices live in a separate cache managed by js/piper.js
 // ('aac-voices-…'); it is left alone here so updates never re-download them.
 
-const CACHE_NAME = 'aac-app-v76';
+const CACHE_NAME = 'aac-app-v77';
 const VOICE_CACHE_PREFIX = 'aac-voices-';
 
 const PRECACHE = [
@@ -263,24 +263,58 @@ function revalidating(request) {
     : new Request(request, { cache: 'no-cache' });
 }
 
+/**
+ * How long to wait for the network before answering from the cache instead.
+ * A connection that stalls rather than failing (weak mobile signal, a captive
+ * Wi-Fi portal) would otherwise leave pictures and sounds hanging for as long
+ * as the browser keeps trying; with a cached copy at hand there is no reason
+ * to make a child wait for it.
+ */
+const NETWORK_TIMEOUT_MS = 4000;
+
+/**
+ * Keep a fresh copy of a response for offline use. Only whole responses:
+ * audio is often fetched in parts (206), and the cache refuses those.
+ * @param {Request} request
+ * @param {Response} response
+ */
+function store(request, response) {
+  if (response.status !== 200) return;
+  const copy = response.clone();
+  caches
+    .open(CACHE_NAME)
+    .then((cache) => cache.put(request, copy))
+    .catch(() => {}); // a full disk or a refused response: the network copy still stands
+}
+
+/** @param {Request} request */
+function cached(request) {
+  return caches
+    .match(request, { ignoreSearch: true })
+    .then((hit) => hit ?? (request.mode === 'navigate' ? caches.match('index.html') : undefined));
+}
+
 self.addEventListener('fetch', (event) => {
   const { request } = event;
   if (request.method !== 'GET' || new URL(request.url).origin !== self.location.origin) return;
 
+  // Network first, so an online device always gets the latest files. The
+  // network also keeps going after a timeout, so the cache is refreshed for
+  // next time even when this answer came from it.
+  const network = fetch(revalidating(request)).then((response) => {
+    store(request, response);
+    return response;
+  });
+  // Only a request that has a cached copy is worth giving up on early.
+  const fallback = new Promise((resolve) => setTimeout(resolve, NETWORK_TIMEOUT_MS))
+    .then(() => cached(request))
+    .then((hit) => hit ?? network);
+
   event.respondWith(
-    fetch(revalidating(request))
-      .then((response) => {
-        if (response.ok) {
-          const copy = response.clone();
-          caches.open(CACHE_NAME).then((cache) => cache.put(request, copy));
-        }
-        return response;
-      })
-      .catch(() =>
-        caches
-          .match(request, { ignoreSearch: true })
-          .then((cached) => cached ?? (request.mode === 'navigate' ? caches.match('index.html') : undefined))
-          .then((cached) => cached ?? Response.error()),
-      ),
+    Promise.race([network, fallback])
+      .catch(() => cached(request))
+      .then((response) => response ?? Response.error()),
   );
+  // Let the refresh finish even if the page was answered from the cache.
+  event.waitUntil(network.then(() => {}, () => {}));
 });
