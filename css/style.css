@@ -55,6 +55,22 @@ body {
   font-size: clamp(2rem, 6vw, 3.5rem);
 }
 
+/* The title and what its abbreviation stands for sit close together, as one
+   heading, rather than at the screen's usual spacing. */
+.title-block {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.35rem;
+  text-align: center;
+}
+
+.subtitle {
+  margin: 0;
+  font-size: clamp(0.95rem, 2.2vw, 1.25rem);
+  color: var(--muted);
+}
+
 /* ---- Intro screen ---------------------------------------------------------- */
 
 .intro-screen {

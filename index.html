@@ -16,7 +16,11 @@
     <!-- Start screen: language and a menu of games. Text comes from js/i18n.js via data-i18n. -->
     <section id="start-screen" class="start-screen">
       <div id="language-switch" class="language-switch" role="group" aria-label="Language / ენა / Язык"></div>
-      <h1 data-i18n="title"></h1>
+      <header class="title-block">
+        <h1 data-i18n="title"></h1>
+        <!-- What the abbreviation stands for, in each language's own form (AAC, ადკ, АДК). -->
+        <p class="subtitle" data-i18n="subtitle"></p>
+      </header>
       <p class="hint" data-i18n="chooseGame"></p>
       <div id="game-menu" class="game-menu"></div>
     </section>

@@ -23,6 +23,7 @@ export const LANGUAGES = {
 const STRINGS = {
   en: {
     title: 'AAC Games',
+    subtitle: 'Augmentative and Alternative Communication',
     chooseGame: 'Choose a game',
     escHint: 'To come back here during the game, tap ‹ Back, press Esc or use the phone’s Back button.',
     back: 'Back',
@@ -126,7 +127,8 @@ const STRINGS = {
     noSpeech: 'This browser does not support text-to-speech. Recorded clips still work.',
   },
   ka: {
-    title: 'AAC თამაშები',
+    title: 'ადკ თამაშები',
+    subtitle: 'ალტერნატიული და დამატებითი კომუნიკაცია',
     chooseGame: 'აირჩიეთ თამაში',
     escHint: 'თამაშის დროს აქ დასაბრუნებლად დააჭირეთ ‹ უკან-ს, Esc-ს ან ტელეფონის „უკან“ ღილაკს.',
     back: 'უკან',
@@ -230,7 +232,8 @@ const STRINGS = {
     noSpeech: 'ეს ბრაუზერი ტექსტის გახმოვანებას არ უჭერს მხარს. ჩანაწერები მაინც იმუშავებს.',
   },
   ru: {
-    title: 'AAC Игры',
+    title: 'Игры АДК',
+    subtitle: 'Альтернативная и дополнительная коммуникация',
     chooseGame: 'Выберите игру',
     escHint: 'Чтобы вернуться сюда во время игры, нажмите ‹ Назад, Esc или кнопку «Назад» телефона.',
     back: 'Назад',
