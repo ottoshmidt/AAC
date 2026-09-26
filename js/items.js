@@ -201,10 +201,10 @@ export const itemSets = {};
     item('trolleybus', 'ტროლეიბუსი', 'Trolleybus', 'Троллейбус', 'webp'),
     item('tram', 'ტრამვაი', 'Tram', 'Трамвай', 'webp'),
     item('train', 'მატარებელი', 'Train', 'Поезд', 'webp'),
-    item('metro', 'მეტრო', 'Metro', 'Метро'),
+    item('metro', 'მეტრო', 'Metro', 'Метро', 'webp'),
     // Page 3
     item('truck', 'სატვირთო მანქანა', 'Truck', 'Грузовик'),
-    item('tractor', 'ტრაქტორი', 'Tractor', 'Трактор'),
+    item('tractor', 'ტრაქტორი', 'Tractor', 'Трактор', 'webp'),
     item('motorcycle', 'მოტოციკლი', 'Motorcycle', 'Мотоцикл'),
     item('scooter', 'მოპედი', 'Scooter', 'Скутер'),
     // Page 4
