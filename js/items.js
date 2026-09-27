@@ -211,17 +211,17 @@ export const itemSets = {};
     item('bicycle', 'ველოსიპედი', 'Bicycle', 'Велосипед', 'webp'),
     item('kick-scooter', 'ფეხის სკუტერი', 'Kick scooter', 'Самокат', 'webp'),
     item('airplane', 'თვითმფრინავი', 'Airplane', 'Самолёт', 'webp'),
-    item('helicopter', 'ვერტმფრენი', 'Helicopter', 'Вертолёт'),
+    item('helicopter', 'ვერტმფრენი', 'Helicopter', 'Вертолёт', 'webp'),
     // Page 5
-    item('rocket', 'რაკეტა', 'Rocket', 'Ракета'),
-    item('ship', 'გემი', 'Ship', 'Корабль'),
-    item('sailboat', 'იალქნიანი ნავი', 'Sailboat', 'Парусник'),
-    item('speedboat', 'კატარღა', 'Speedboat', 'Катер'),
+    item('rocket', 'რაკეტა', 'Rocket', 'Ракета', 'webp'),
+    item('ship', 'გემი', 'Ship', 'Корабль', 'webp'),
+    item('sailboat', 'იალქნიანი ნავი', 'Sailboat', 'Парусник', 'webp'),
+    item('speedboat', 'კატარღა', 'Speedboat', 'Катер', 'webp'),
     // Page 6
-    item('ambulance', 'სასწრაფო დახმარება', 'Ambulance', 'Скорая помощь'),
-    item('fire-engine', 'სახანძრო მანქანა', 'Fire engine', 'Пожарная машина'),
-    item('police-car', 'პოლიციის მანქანა', 'Police car', 'Полицейская машина'),
-    item('cable-car', 'საბაგირო', 'Cable car', 'Канатная дорога'),
+    item('ambulance', 'სასწრაფო დახმარება', 'Ambulance', 'Скорая помощь', 'webp'),
+    item('fire-engine', 'სახანძრო მანქანა', 'Fire engine', 'Пожарная машина', 'webp'),
+    item('police-car', 'პოლიციის მანქანა', 'Police car', 'Полицейская машина', 'webp'),
+    item('cable-car', 'საბაგირო', 'Cable car', 'Канатная дорога', 'webp'),
   ];
 }
 
