@@ -302,7 +302,7 @@ export const itemSets = {};
   itemSets.birds = [
     // Page 1
     item('sparrow', 'ბეღურა', 'Sparrow', 'Воробей', 'webp'),
-    item('dove', 'მტრედი', 'Dove', 'Голубь'),
+    item('dove', 'მტრედი', 'Dove', 'Голубь', 'webp'),
     item('eagle', 'არწივი', 'Eagle', 'Орёл'),
     item('duck', 'იხვი', 'Duck', 'Утка'),
     // Page 2

@@ -9,7 +9,7 @@
 // Downloaded voices live in a separate cache managed by js/piper.js
 // ('aac-voices-…'); it is left alone here so updates never re-download them.
 
-const CACHE_NAME = 'aac-app-v78';
+const CACHE_NAME = 'aac-app-v79';
 const VOICE_CACHE_PREFIX = 'aac-voices-';
 
 const PRECACHE = [
@@ -75,7 +75,7 @@ const PRECACHE = [
   'assets/images/birds/chick.svg',
   'assets/images/birds/chicken.svg',
   'assets/images/birds/crow.webp',
-  'assets/images/birds/dove.svg',
+  'assets/images/birds/dove.webp',
   'assets/images/birds/duck.svg',
   'assets/images/birds/eagle.svg',
   'assets/images/birds/flamingo.svg',
