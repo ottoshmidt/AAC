@@ -32,7 +32,7 @@ const ICONS = {
   transport: 'assets/images/transport/minibus.webp',
   clothes: 'assets/images/clothes/t-shirt.svg',
   animals: 'assets/images/animals/rabbit.webp',
-  birds: 'assets/images/birds/owl.svg',
+  birds: 'assets/images/birds/duck.webp',
 };
 
 /**

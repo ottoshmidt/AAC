@@ -303,15 +303,15 @@ export const itemSets = {};
     // Page 1
     item('sparrow', 'ბეღურა', 'Sparrow', 'Воробей', 'webp'),
     item('dove', 'მტრედი', 'Dove', 'Голубь', 'webp'),
-    item('eagle', 'არწივი', 'Eagle', 'Орёл'),
-    item('duck', 'იხვი', 'Duck', 'Утка'),
+    item('eagle', 'არწივი', 'Eagle', 'Орёл', 'webp'),
+    item('duck', 'იხვი', 'Duck', 'Утка', 'webp'),
     // Page 2
-    item('swan', 'გედი', 'Swan', 'Лебедь'),
-    item('owl', 'ბუ', 'Owl', 'Сова'),
-    item('flamingo', 'ფლამინგო', 'Flamingo', 'Фламинго'),
-    item('peacock', 'ფარშევანგი', 'Peacock', 'Павлин'),
+    item('swan', 'გედი', 'Swan', 'Лебедь', 'webp'),
+    item('owl', 'ბუ', 'Owl', 'Сова', 'webp'),
+    item('flamingo', 'ფლამინგო', 'Flamingo', 'Фламинго', 'webp'),
+    item('peacock', 'ფარშევანგი', 'Peacock', 'Павлин', 'webp'),
     // Page 3
-    item('parrot', 'თუთიყუში', 'Parrot', 'Попугай'),
+    item('parrot', 'თუთიყუში', 'Parrot', 'Попугай', 'webp'),
     item('penguin', 'პინგვინი', 'Penguin', 'Пингвин'),
     item('chicken', 'ქათამი', 'Chicken', 'Курица'),
     item('rooster', 'მამალი', 'Rooster', 'Петух'),
@@ -326,8 +326,8 @@ export const itemSets = {};
     item('woodpecker', 'კოდალა', 'Woodpecker', 'Дятел', 'webp'),
     item('hummingbird', 'კოლიბრი', 'Hummingbird', 'Колибри', 'webp'),
     // Page 6
-    item('ostrich', 'სირაქლემა', 'Ostrich', 'Страус'),
-    item('magpie', 'კაჭკაჭი', 'Magpie', 'Сорока'),
+    item('ostrich', 'სირაქლემა', 'Ostrich', 'Страус', 'webp'),
+    item('magpie', 'კაჭკაჭი', 'Magpie', 'Сорока', 'webp'),
     item('swallow', 'მერცხალი', 'Swallow', 'Ласточка'),
     item('heron', 'ყანჩა', 'Heron', 'Цапля'),
   ];

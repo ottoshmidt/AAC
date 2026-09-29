@@ -9,7 +9,7 @@
 // Downloaded voices live in a separate cache managed by js/piper.js
 // ('aac-voices-…'); it is left alone here so updates never re-download them.
 
-const CACHE_NAME = 'aac-app-v79';
+const CACHE_NAME = 'aac-app-v80';
 const VOICE_CACHE_PREFIX = 'aac-voices-';
 
 const PRECACHE = [
@@ -76,24 +76,24 @@ const PRECACHE = [
   'assets/images/birds/chicken.svg',
   'assets/images/birds/crow.webp',
   'assets/images/birds/dove.webp',
-  'assets/images/birds/duck.svg',
-  'assets/images/birds/eagle.svg',
-  'assets/images/birds/flamingo.svg',
+  'assets/images/birds/duck.webp',
+  'assets/images/birds/eagle.webp',
+  'assets/images/birds/flamingo.webp',
   'assets/images/birds/goose.svg',
   'assets/images/birds/heron.svg',
   'assets/images/birds/hummingbird.webp',
-  'assets/images/birds/magpie.svg',
-  'assets/images/birds/ostrich.svg',
-  'assets/images/birds/owl.svg',
-  'assets/images/birds/parrot.svg',
-  'assets/images/birds/peacock.svg',
+  'assets/images/birds/magpie.webp',
+  'assets/images/birds/ostrich.webp',
+  'assets/images/birds/owl.webp',
+  'assets/images/birds/parrot.webp',
+  'assets/images/birds/peacock.webp',
   'assets/images/birds/penguin.svg',
   'assets/images/birds/rooster.svg',
   'assets/images/birds/seagull.webp',
   'assets/images/birds/sparrow.webp',
   'assets/images/birds/stork.webp',
   'assets/images/birds/swallow.svg',
-  'assets/images/birds/swan.svg',
+  'assets/images/birds/swan.webp',
   'assets/images/birds/turkey.svg',
   'assets/images/birds/woodpecker.webp',
   'assets/images/book.webp',
