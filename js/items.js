@@ -312,9 +312,9 @@ export const itemSets = {};
     item('peacock', 'ფარშევანგი', 'Peacock', 'Павлин', 'webp'),
     // Page 3
     item('parrot', 'თუთიყუში', 'Parrot', 'Попугай', 'webp'),
-    item('penguin', 'პინგვინი', 'Penguin', 'Пингвин'),
+    item('penguin', 'პინგვინი', 'Penguin', 'Пингвин', 'webp'),
     item('chicken', 'ქათამი', 'Chicken', 'Курица'),
-    item('rooster', 'მამალი', 'Rooster', 'Петух'),
+    item('rooster', 'მამალი', 'Rooster', 'Петух', 'webp'),
     // Page 4
     item('chick', 'წიწილა', 'Chick', 'Цыплёнок'),
     item('turkey', 'ინდაური', 'Turkey', 'Индюк'),
