@@ -229,7 +229,7 @@ export const itemSets = {};
   const item = inFolder('clothes');
   itemSets.clothes = [
     // Page 1
-    item('t-shirt', 'მაისური', 'T-shirt', 'Футболка'),
+    item('t-shirt', 'მაისური', 'T-shirt', 'Футболка', 'webp'),
     item('blouse', 'ბლუზა', 'Blouse', 'Блузка'),
     item('jeans', 'ჯინსი', 'Jeans', 'Джинсы'),
     item('shorts', 'შორტები', 'Shorts', 'Шорты'),
