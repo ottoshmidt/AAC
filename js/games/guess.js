@@ -30,7 +30,7 @@ const ICONS = {
   fruit: 'assets/images/fruit/apple.webp',
   vegetables: 'assets/images/vegetables/carrot.webp',
   transport: 'assets/images/transport/minibus.webp',
-  clothes: 'assets/images/clothes/t-shirt.svg',
+  clothes: 'assets/images/clothes/t-shirt.webp',
   animals: 'assets/images/animals/rabbit.webp',
   birds: 'assets/images/birds/duck.webp',
 };
