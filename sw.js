@@ -9,7 +9,7 @@
 // Downloaded voices live in a separate cache managed by js/piper.js
 // ('aac-voices-…'); it is left alone here so updates never re-download them.
 
-const CACHE_NAME = 'aac-app-v85';
+const CACHE_NAME = 'aac-app-v86';
 const VOICE_CACHE_PREFIX = 'aac-voices-';
 
 const PRECACHE = [
@@ -103,25 +103,25 @@ const PRECACHE = [
   'assets/images/carrot.webp',
   'assets/images/cat.webp',
   'assets/images/clothes/backpack.svg',
-  'assets/images/clothes/blouse.svg',
+  'assets/images/clothes/blouse.webp',
   'assets/images/clothes/boots.svg',
   'assets/images/clothes/cap.svg',
-  'assets/images/clothes/coat.svg',
-  'assets/images/clothes/dress.svg',
+  'assets/images/clothes/coat.webp',
+  'assets/images/clothes/dress.webp',
   'assets/images/clothes/glasses.svg',
-  'assets/images/clothes/gloves.svg',
+  'assets/images/clothes/gloves.webp',
   'assets/images/clothes/handbag.svg',
   'assets/images/clothes/hat.svg',
   'assets/images/clothes/high-heels.svg',
   'assets/images/clothes/hiking-boots.svg',
-  'assets/images/clothes/jeans.svg',
+  'assets/images/clothes/trousers.webp',
   'assets/images/clothes/necktie.svg',
   'assets/images/clothes/sandals.svg',
-  'assets/images/clothes/scarf.svg',
+  'assets/images/clothes/scarf.webp',
   'assets/images/clothes/shoes.svg',
-  'assets/images/clothes/shorts.svg',
+  'assets/images/clothes/shorts.webp',
   'assets/images/clothes/sneakers.svg',
-  'assets/images/clothes/socks.svg',
+  'assets/images/clothes/socks.webp',
   'assets/images/clothes/sun-hat.svg',
   'assets/images/clothes/sunglasses.svg',
   'assets/images/clothes/t-shirt.webp',

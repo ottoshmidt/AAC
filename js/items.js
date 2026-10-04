@@ -230,16 +230,16 @@ export const itemSets = {};
   itemSets.clothes = [
     // Page 1
     item('t-shirt', 'მაისური', 'T-shirt', 'Футболка', 'webp'),
-    item('blouse', 'ბლუზა', 'Blouse', 'Блузка'),
-    item('jeans', 'ჯინსი', 'Jeans', 'Джинсы'),
-    item('shorts', 'შორტები', 'Shorts', 'Шорты'),
+    item('blouse', 'ბლუზა', 'Blouse', 'Блузка', 'webp'),
+    item('trousers', 'შარვალი', 'Trousers', 'Брюки', 'webp'),
+    item('shorts', 'შორტები', 'Shorts', 'Шорты', 'webp'),
     // Page 2
-    item('dress', 'კაბა', 'Dress', 'Платье'),
-    item('coat', 'პალტო', 'Coat', 'Пальто'),
-    item('scarf', 'შარფი', 'Scarf', 'Шарф'),
-    item('gloves', 'ხელთათმანები', 'Gloves', 'Перчатки'),
+    item('dress', 'კაბა', 'Dress', 'Платье', 'webp'),
+    item('coat', 'პალტო', 'Coat', 'Пальто', 'webp'),
+    item('scarf', 'შარფი', 'Scarf', 'Шарф', 'webp'),
+    item('gloves', 'ხელთათმანები', 'Gloves', 'Перчатки', 'webp'),
     // Page 3
-    item('socks', 'წინდები', 'Socks', 'Носки'),
+    item('socks', 'წინდები', 'Socks', 'Носки', 'webp'),
     item('necktie', 'ჰალსტუხი', 'Necktie', 'Галстук'),
     item('boots', 'ჩექმები', 'Boots', 'Сапоги'),
     item('sneakers', 'ბოტასები', 'Sneakers', 'Кроссовки'),
