@@ -255,7 +255,7 @@ export const itemSets = {};
     item('glasses', 'სათვალე', 'Glasses', 'Очки'),
     // Page 6
     item('sunglasses', 'მზის სათვალე', 'Sunglasses', 'Солнечные очки'),
-    item('backpack', 'ზურგჩანთა', 'Backpack', 'Рюкзак'),
+    item('backpack', 'ზურგჩანთა', 'Backpack', 'Рюкзак', 'webp'),
     item('handbag', 'ჩანთა', 'Handbag', 'Сумка'),
     item('umbrella', 'ქოლგა', 'Umbrella', 'Зонт'),
   ];
