@@ -59,7 +59,7 @@ export const wishGames = [{
   category: 'wish',
   textId: 'guess',
   settingsCategory: 'guess',
-  icon: 'assets/images/wish/eat.svg',
+  icon: 'assets/images/wish/eat.webp',
   items: itemSets.wish,
   create: (ctx) => new GuessGame(ctx, itemSets.wish),
 }];

@@ -336,10 +336,10 @@ export const itemSets = {};
 {
   // Wishes: the child points at what they want. Placeholder pictures until
   // the owner's photos arrive (play is the Mixed game icon, drink and read
-  // are the Mixed set's water and book).
+  // is the Mixed set's book).
   const item = inFolder('wish');
   itemSets.wish = [
-    item('eat', 'ჭამა', 'Eat', 'Кушать'),
+    item('eat', 'ჭამა', 'Eat', 'Кушать', 'webp'),
     item('drink', 'დალევა', 'Drink', 'Пить', 'webp'),
     item('toilet', 'ტუალეტი', 'Toilet', 'Туалет'),
     item('outside', 'გასეირნება', 'Go outside', 'Гулять'),
