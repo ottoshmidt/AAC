@@ -333,6 +333,24 @@ export const itemSets = {};
   ];
 }
 
+{
+  // Wishes: the child points at what they want. Placeholder pictures until
+  // the owner's photos arrive (play is the Mixed game icon, drink and read
+  // are the Mixed set's water and book).
+  const item = inFolder('wish');
+  itemSets.wish = [
+    item('eat', 'ჭამა', 'Eat', 'Кушать'),
+    item('drink', 'დალევა', 'Drink', 'Пить', 'webp'),
+    item('toilet', 'ტუალეტი', 'Toilet', 'Туалет'),
+    item('outside', 'გასეირნება', 'Go outside', 'Гулять'),
+    item('cartoon', 'მულტფილმი', 'Cartoon', 'Мультик'),
+    item('music', 'მუსიკა', 'Music', 'Музыка'),
+    item('play', 'თამაში', 'Play', 'Играть', 'webp'),
+    item('read', 'წიგნის კითხვა', 'Read a book', 'Читать книгу', 'webp'),
+    item('video-call', 'ვიდეოზარი', 'Video call', 'Видеозвонок'),
+  ];
+}
+
 /**
  * An item's label in `lang`, falling back to English, then to its id.
  * @param {Item} item

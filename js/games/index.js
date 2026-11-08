@@ -10,7 +10,7 @@
  */
 
 import { bubbleGames } from './bubbles.js';
-import { guessGames } from './guess.js';
+import { guessGames, wishGames } from './guess.js';
 import { letterGames } from './letters.js';
 import { matchGames } from './match.js';
 import { trainGames } from './train.js';
@@ -53,7 +53,7 @@ import { trainGames } from './train.js';
  */
 
 /** Category ids in menu order. */
-export const CATEGORIES = ['guess', 'letters', 'match', 'hold'];
+export const CATEGORIES = ['guess', 'wish', 'letters', 'match', 'hold'];
 
 /** @type {GameInfo[]} */
-export const games = [...trainGames, ...guessGames, ...letterGames, ...matchGames, ...bubbleGames];
+export const games = [...trainGames, ...guessGames, ...wishGames, ...letterGames, ...matchGames, ...bubbleGames];

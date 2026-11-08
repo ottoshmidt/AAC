@@ -50,6 +50,21 @@ export const guessGames = Object.entries(ICONS).map(([set, icon]) => ({
 }));
 
 /**
+ * Wishes: the child picks what they want (eat, drink, toilet…). For now it
+ * plays like Guess, with Guess's help text and settings.
+ * @type {import('./index.js').GameInfo[]}
+ */
+export const wishGames = [{
+  id: 'wish',
+  category: 'wish',
+  textId: 'guess',
+  settingsCategory: 'guess',
+  icon: 'assets/images/wish/eat.svg',
+  items: itemSets.wish,
+  create: (ctx) => new GuessGame(ctx, itemSets.wish),
+}];
+
+/**
  * The guessing game. Used with pictures (Guess) and with letters
  * (Alphabet, see ./letters.js): an item with `text` is drawn as the letter
  * itself instead of a picture.

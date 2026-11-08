@@ -13,6 +13,7 @@ describe('game registry', () => {
     const sets = ['mixed', 'fruit', 'vegetables', 'transport', 'clothes', 'animals', 'birds'];
     const ids = (category) => games.filter((g) => g.category === category).map((g) => g.id);
     assert.deepEqual(ids('guess'), ['train', ...sets.map((s) => `guess-${s}`)], 'Training comes first');
+    assert.deepEqual(ids('wish'), ['wish']);
     assert.equal(new Set(games.map((g) => g.id)).size, games.length);
     for (const game of games) assert.ok(CATEGORIES.includes(game.category), `${game.id}: unknown category`);
   });
