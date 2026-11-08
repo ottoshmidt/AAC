@@ -345,6 +345,7 @@ export const itemSets = {};
     item('outside', 'გასეირნება', 'Go outside', 'Гулять', 'webp'),
     item('cartoon', 'მულტფილმი', 'Cartoon', 'Мультик', 'webp'),
     item('music', 'მუსიკა', 'Music', 'Музыка', 'webp'),
+    item('dance', 'ცეკვა', 'Dancing', 'Танцы', 'webp'),
     item('play', 'თამაში', 'Play', 'Играть', 'webp'),
     item('read', 'წიგნის კითხვა', 'Read a book', 'Читать книгу', 'webp'),
     item('video-call', 'ვიდეოზარი', 'Video call', 'Видеозвонок'),

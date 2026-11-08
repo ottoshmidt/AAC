@@ -13,7 +13,7 @@ describe('picture sets', () => {
     assert.deepEqual(Object.keys(itemSets), ['mixed', 'fruit', 'vegetables', 'transport', 'clothes', 'animals', 'birds', 'wish']);
     // Pages are cut from a set in fours, so a set that is not a multiple of
     // four would end on a short page.
-    const expected = { fruit: 28, wish: 9 };
+    const expected = { fruit: 28, wish: 10 };
     for (const [name, items] of Object.entries(itemSets)) {
       assert.equal(items.length, expected[name] ?? 24, name);
       if (name !== 'wish') assert.equal(items.length % 4, 0, `${name}: not whole pages of 4`);
