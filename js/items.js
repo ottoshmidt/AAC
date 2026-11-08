@@ -339,8 +339,8 @@ export const itemSets = {};
   // is the Mixed set's book).
   const item = inFolder('wish');
   itemSets.wish = [
-    item('eat', 'ჭამა', 'Eat', 'Кушать', 'webp'),
-    item('drink', 'დალევა', 'Drink', 'Пить', 'webp'),
+    item('meal', 'საჭმელი', 'Meal', 'Еда', 'webp'),
+    item('drink', 'წყლის დალევა', 'Drink water', 'Пить воду', 'webp'),
     item('toilet', 'ტუალეტი', 'Toilet', 'Туалет'),
     item('outside', 'გასეირნება', 'Go outside', 'Гулять'),
     item('cartoon', 'მულტფილმი', 'Cartoon', 'Мультик'),

@@ -50,7 +50,7 @@ export const guessGames = Object.entries(ICONS).map(([set, icon]) => ({
 }));
 
 /**
- * Wishes: the child picks what they want (eat, drink, toilet…). For now it
+ * Wishes: the child picks what they want (meal, water, toilet…). For now it
  * plays like Guess, with Guess's help text and settings.
  * @type {import('./index.js').GameInfo[]}
  */
@@ -59,7 +59,7 @@ export const wishGames = [{
   category: 'wish',
   textId: 'guess',
   settingsCategory: 'guess',
-  icon: 'assets/images/wish/eat.webp',
+  icon: 'assets/images/wish/meal.webp',
   items: itemSets.wish,
   create: (ctx) => new GuessGame(ctx, itemSets.wish),
 }];
