@@ -117,7 +117,7 @@ Then open <http://localhost:8080>.
 | Speak the chosen picture | on | Recorded clip if there is one, otherwise the voice |
 | Speak each picture as highlighted | off | Auditory scanning; replaces the tick |
 | Tick when the highlight moves | on | Generated sound, no file needed |
-| Voice | Georgian: Natia (in-app); Russian, English: browser default | Chosen separately per language; recorded voices appear here once words are recorded |
+| Voice | Georgian: recorded female voice; Russian, English: browser default | Chosen separately per language; recorded voices appear here once words are recorded |
 | Go fullscreen on start | on | Leaving fullscreen ends the game |
 | Language | browser language (ka, ru), else English | Buttons at the top of the menu |
 
@@ -129,40 +129,19 @@ browser (localStorage) per device.
 
 ## Georgian speech
 
-Phones and computers almost never include a Georgian voice, so the app has a
-built-in one: **Natia**, a [Piper](https://github.com/rhasspy/piper) neural
-voice that runs entirely in the browser.
+Phones and computers almost never include a Georgian voice, so Georgian
+speaks with **recorded words** by default: every Georgian word in the app is
+recorded in a female voice (see Recording words below), shipped with the app
+and available offline. Settings → Voice also offers the male recordings (when
+there are any) and any Georgian voice the device does have (for example
+`espeak-ng` or RHVoice through speech-dispatcher on Linux). A word that has
+no recording yet falls back to the device's default voice, which for
+Georgian is usually silent, so record new words when adding pictures.
 
-- **First use downloads about 96 MB** (the voice model, ONNX Runtime and
-  espeak-ng data) from jsDelivr and Hugging Face. A status line under the
-  game's page shows progress. After that it is kept in the browser's Cache
-  Storage and works offline.
-- **It runs in a Web Worker** (`js/piper-worker.js`, engine in
-  `js/piper-engine.js`), so neither the download nor synthesis blocks the
-  interface: the main thread stalls about 15 ms per word instead of the
-  150 ms the synthesis itself takes on a fast machine.
-- **Every spoken word is cached** in Cache Storage, so a word is synthesised
-  once ever rather than once per app start. If all of a game's words are
-  already cached, the 96 MB model is not loaded at all, and a cached word
-  plays even while the model is still downloading.
-- The picture labels of the chosen game are prepared in the background, so
-  speech plays instantly during the game (about 0.1–0.2 s per new word).
-- Until Natia is ready and for words not yet cached, speech falls back to a
-  device voice, which for Georgian is usually silent.
-- The Voice setting also lists any Georgian voices the device does have
-  (for example `espeak-ng` or RHVoice through speech-dispatcher on Linux).
-
-**License:** the Natia model is a [Piper](https://github.com/rhasspy/piper)
-voice trained on the RHVoice Natia recordings, which have a custom license,
-not a Creative Commons one. According to the
-[RHVoice license page](https://github.com/RHVoice/RHVoice/wiki/License/325174d13f5dd3517d0d15d7bd4fc174355c0e89),
-"The Georgian voice can be used free of charge only by individuals for
-personal use." Organizations and manufacturers need explicit permission from
-the copyright holders before copying, modifying, distributing, selling or
-using it. The contacts listed there are Beqa Gozalishvili
-(beqaprogger@gmail.com) and Vladimer Urdulashvili
-(vladimerurdulashvili@gmail.com). Recorded clips (below) avoid the
-restriction entirely and usually sound best.
+Earlier versions used **Natia**, an in-app Piper voice. It was removed: its
+license allows only personal use, and the recordings sound better. A saved
+Natia setting turns into the recorded female voice, and the service worker
+deletes the downloaded Natia model (about 63 MB) from the browser.
 
 ## Recording words
 
@@ -190,7 +169,7 @@ overwrites it, **Delete** removes it. Words that appear in several sets
 In the app, Settings → Voice then offers "Recorded female voice" / "Recorded
 male voice" for that language (with how many of the game's words are
 recorded); words without a recording fall back to the language's default
-voice (Natia for Georgian).
+voice (the device's for Georgian).
 
 The server also rewrites `js/clips.js` (the word → file registry the app
 reads) and the `clips:begin` … `clips:end` block of `sw.js` so the clips
@@ -250,9 +229,21 @@ Most devices already have a Russian voice (Windows, macOS, iOS, Android,
 and Chrome's online "Google русский"), so Russian uses the device voice by
 default. For offline use, or where there is no Russian voice (e.g. Firefox on
 Linux without speech-dispatcher), choose the in-app **Denis** voice in
-Settings → Voice. It downloads like Natia; if Natia is already downloaded,
-only Denis's own 63 MB model is new. Denis is licensed **CC0**, free for any
+Settings → Voice, a [Piper](https://github.com/rhasspy/piper) neural voice
+that runs entirely in the browser. Denis is licensed **CC0**, free for any
 use.
+
+- **First use downloads about 96 MB** (the voice model, ONNX Runtime and
+  espeak-ng data) from jsDelivr and Hugging Face. A status line under the
+  game's page shows progress. After that it is kept in the browser's Cache
+  Storage and works offline.
+- **It runs in a Web Worker** (`js/piper-worker.js`, engine in
+  `js/piper-engine.js`), so neither the download nor synthesis blocks the
+  interface.
+- **Every spoken word is cached**, so a word is synthesised once ever. If all
+  of a game's words are already cached, the model is not loaded at all.
+- The picture labels of the chosen game are prepared in the background, so
+  speech plays instantly during the game.
 
 ## Changing the pictures
 

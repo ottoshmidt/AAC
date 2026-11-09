@@ -60,22 +60,6 @@ const PIPER_VOICES_BASE =
 
 /** @type {Record<string, PiperVoiceInfo>} */
 export const PIPER_VOICES = {
-  'ka_GE-natia-medium': {
-    name: 'Natia',
-    lang: 'ka',
-    license: 'RHVoice, CC BY-NC-SA 4.0',
-    nonCommercial: true,
-    model: {
-      url: `${PIPER_VOICES_BASE}/ka/ka_GE/natia/medium/ka_GE-natia-medium.onnx`,
-      bytes: 63201294,
-      type: 'application/octet-stream',
-    },
-    config: {
-      url: `${PIPER_VOICES_BASE}/ka/ka_GE/natia/medium/ka_GE-natia-medium.onnx.json`,
-      bytes: 4842,
-      type: 'application/json',
-    },
-  },
   // Russian devices usually have a voice already; this is the offline option.
   'ru_RU-denis-medium': {
     name: 'Denis',

@@ -9,7 +9,7 @@
 // Downloaded voices live in a separate cache managed by js/piper.js
 // ('aac-voices-…'); it is left alone here so updates never re-download them.
 
-const CACHE_NAME = 'aac-app-v96';
+const CACHE_NAME = 'aac-app-v94';
 const VOICE_CACHE_PREFIX = 'aac-voices-';
 
 const PRECACHE = [
@@ -467,9 +467,28 @@ self.addEventListener('activate', (event) => {
             .map((n) => caches.delete(n)),
         ),
       )
+      .then(dropRetiredVoices)
       .then(() => self.clients.claim()),
   );
 });
+
+/**
+ * Free the space of voices removed from the app (the Georgian Natia voice,
+ * about 63 MB): its model, config and synthesised words.
+ */
+async function dropRetiredVoices() {
+  try {
+    for (const name of await caches.keys()) {
+      if (!name.startsWith(VOICE_CACHE_PREFIX)) continue;
+      const cache = await caches.open(name);
+      for (const request of await cache.keys()) {
+        if (/natia/i.test(request.url)) await cache.delete(request);
+      }
+    }
+  } catch {
+    // Not worth failing activation over.
+  }
+}
 
 /**
  * The same request, but checked with the server instead of the HTTP cache.

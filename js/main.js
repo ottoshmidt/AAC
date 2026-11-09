@@ -45,7 +45,9 @@ function spokenVoiceFor(language = lang()) {
   const voice = voiceFor(language);
   if (!recordedVoiceOf(voice)) return voice;
   const key = /** @type {Record<string, string>} */ (VOICE_KEYS)[language];
-  return key ? /** @type {Record<string, any>} */ (DEFAULTS)[key] : '';
+  const fallback = key ? /** @type {Record<string, any>} */ (DEFAULTS)[key] : '';
+  // The default may itself be a recorded voice (Georgian); then the device's.
+  return recordedVoiceOf(fallback) ? '' : fallback;
 }
 
 /** Words of `language` (of the chosen game, or all) and how many have a clip in `voice`. */

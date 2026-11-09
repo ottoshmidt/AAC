@@ -57,8 +57,10 @@ describe('sanitize', () => {
     assert.equal(sanitize({ language: 'xx' }).language, DEFAULTS.language);
   });
 
-  it('defaults Georgian to the in-app voice', () => {
-    assert.equal(DEFAULTS.voiceKa, 'piper:ka_GE-natia-medium');
+  it('defaults Georgian to the recorded female voice, also for the removed Natia voice', () => {
+    assert.equal(DEFAULTS.voiceKa, 'recorded:female');
+    assert.equal(sanitize({ voiceKa: 'piper:ka_GE-natia-medium' }).voiceKa, 'recorded:female');
+    assert.equal(sanitize({ voiceKa: 'recorded:male' }).voiceKa, 'recorded:male');
   });
 
   it('carries the old single voiceName over to English', () => {

@@ -44,6 +44,9 @@ const STORAGE_KEY = 'aac.settings.v1';
  * fall back to the language's default voice.
  */
 
+/** In-app voices that were removed (the Georgian Natia voice); a saved one becomes the default. */
+const RETIRED_VOICES = ['piper:ka_GE-natia-medium'];
+
 /** Settings key holding the voice for each language. */
 export const VOICE_KEYS = Object.freeze({ en: 'voiceEn', ka: 'voiceKa', ru: 'voiceRu' });
 
@@ -81,8 +84,9 @@ export const DEFAULTS = Object.freeze({
   fullscreen: true,
   language: detectLanguage(globalThis.navigator?.language),
   voiceEn: '',
-  // Devices almost never ship a Georgian voice, so default to the in-app one.
-  voiceKa: 'piper:ka_GE-natia-medium',
+  // Devices almost never ship a Georgian voice, so default to the words
+  // recorded in a female voice (all of them are recorded).
+  voiceKa: 'recorded:female',
   // Russian voices are common on devices; the in-app Denis voice is optional.
   voiceRu: '',
 });
@@ -122,6 +126,8 @@ export function sanitize(raw) {
   const input = raw && typeof raw === 'object' ? { .../** @type {any} */ (raw) } : {};
   // Before languages existed there was a single `voiceName`, used for English.
   if (typeof input.voiceName === 'string' && input.voiceEn === undefined) input.voiceEn = input.voiceName;
+  // Voices that were removed from the app go back to the default.
+  for (const key of Object.values(VOICE_KEYS)) if (RETIRED_VOICES.includes(/** @type {any} */ (input[key]))) delete input[key];
 
   /** @type {Record<string, unknown>} */
   const out = { ...DEFAULTS };
