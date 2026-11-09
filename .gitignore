@@ -8,3 +8,4 @@ certs/
 rootCA.pem
 rootCA.crt
 rootCA.mobileconfig
+.pending-recordings/
