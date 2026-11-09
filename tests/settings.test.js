@@ -24,10 +24,10 @@ describe('sanitize', () => {
   });
 
   it('allows only 2 or 4 pictures per round, defaulting to 4', () => {
-    assert.equal(DEFAULTS.choicesPerRound, 4);
-    assert.equal(sanitize({ choicesPerRound: 2 }).choicesPerRound, 2);
-    assert.equal(sanitize({ choicesPerRound: 3 }).choicesPerRound, 4);
-    assert.equal(sanitize({ choicesPerRound: '2' }).choicesPerRound, 4);
+    assert.equal(DEFAULTS.choicesPerRound, 2);
+    assert.equal(sanitize({ choicesPerRound: 4 }).choicesPerRound, 4);
+    assert.equal(sanitize({ choicesPerRound: 3 }).choicesPerRound, 2);
+    assert.equal(sanitize({ choicesPerRound: '4' }).choicesPerRound, 2);
   });
 
   it('detects the language from the browser, defaulting to English', () => {

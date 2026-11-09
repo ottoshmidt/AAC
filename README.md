@@ -13,9 +13,9 @@ games that differ only in their pictures: **Mixed**, **Fruit**,
 **Vegetables**, **Transport**, **Clothes**, **Animals** and **Birds**, 24
 pictures each (Fruit has 28).
 
-In a Guess game, four pictures are shown in a 2×2 grid (or two side by
-side); the highlight moves through them and a click chooses the highlighted
-one, which is spoken aloud. The pictures are split into pages of 4 (6 pages).
+In a Guess game, two pictures are shown side by side (or four in a 2×2
+grid); the highlight moves through them and a click chooses the highlighted
+one, which is spoken aloud. The pictures are split into pages of 2 (12 pages).
 When every picture on a page has been chosen, the game moves to the next
 page, and after the last one it starts over. The caregiver can also turn
 pages with the arrow keys.
@@ -99,7 +99,7 @@ Then open <http://localhost:8080>.
 
 | Setting | Default | Notes |
 |---|---|---|
-| Pictures at a time | 4 | Page size: 4 (2×2 grid, 6 pages) or 2 (side by side, 12 pages) |
+| Pictures at a time | 2 | Page size: 2 (side by side, 12 pages) or 4 (2×2 grid, 6 pages) |
 | How to choose (Guess) | Touch | Tap the picture itself, or Scanning: the highlight moves and a click anywhere takes the lit one |
 | Shapes at a time (Matching) | 2 | 2, 3 or 4 shapes per round |
 | Slots (Matching) | Below the shapes | Below, or beside them as two columns; beside gives bigger shapes on a tall screen, below on a wide one |
