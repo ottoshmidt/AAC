@@ -195,10 +195,54 @@ voice (Natia for Georgian).
 The server also rewrites `js/clips.js` (the word → file registry the app
 reads) and the `clips:begin` … `clips:end` block of `sw.js` so the clips
 work offline. Commit those two files together with the WAVs and bump
-`CACHE_NAME`. Recording needs a secure origin, so use `localhost` on the
-computer; on a phone, `adb reverse tcp:8888 tcp:8888` makes
-`http://localhost:8888` reach it. It uses port 8888, so it can run next to
-`npm start`.
+`CACHE_NAME`. It uses port 8888, so it can run next to `npm start`.
+
+### Recording from another device
+
+A browser only opens the microphone on a secure origin. `localhost` counts,
+so recording on the computer itself needs nothing; a phone or a second
+computer reaching `http://192.168.0.x:8888` does not, and **Record** fails
+there with "No microphone access". Three ways around it:
+
+- **Another computer:** `ssh -L 8888:localhost:8888 <user>@<this-machine>`,
+  then open `http://localhost:8888/record.html` on it. Nothing to install.
+- **Android:** `adb reverse tcp:8888 tcp:8888`, same idea.
+- **iPhone, iPad, or anything else:** give the server HTTPS with a
+  locally-trusted certificate (below). This is the only way for iOS Safari,
+  which has no port forwarding.
+
+For HTTPS, make a certificate with [mkcert](https://github.com/FiloSottile/mkcert)
+(`pacman -S mkcert nss`) for this machine's address, and put it in `certs/`
+(git-ignored); the server serves HTTPS whenever `certs/cert.pem` and
+`certs/key.pem` are both there, and prints the LAN address to open:
+
+```sh
+mkcert -install                      # once: create the local CA
+mkdir -p certs
+mkcert -cert-file certs/cert.pem -key-file certs/key.pem 192.168.0.200 localhost
+npm run record                       # now https://192.168.0.200:8888/record.html
+```
+
+The phone has to trust that CA, or Safari will refuse the page (and will not
+open the microphone even if the warning is clicked through):
+
+1. Copy `"$(mkcert -CAROOT)"/rootCA.pem` into the project and open it on the
+   phone at `https://192.168.0.200:8888/rootCA.pem` — Safari warns that the
+   certificate is not trusted (that is the point of this step), so tap
+   **Show Details → visit this website** once, and it offers to download a
+   configuration profile. AirDrop or mail works too and skips the warning.
+2. Install it: **Settings → General → VPN & Device Management → Downloaded
+   Profile → Install**.
+3. Trust it: **Settings → General → About → Certificate Trust Settings**, and
+   turn the switch on for the mkcert CA. This step is separate and easy to
+   miss; without it the certificate is installed but still not trusted.
+4. Delete `rootCA.pem` from the project again. It is the public half of the
+   CA, so it is not a secret, but it does not belong in the repo. (The
+   private key never leaves `$(mkcert -CAROOT)`.)
+
+Then open `https://192.168.0.200:8888/record.html` on the phone and allow the
+microphone. Clips save into the repo exactly as they do on the computer.
+Pass `RECORD_CERT` and `RECORD_KEY` to use certificates from elsewhere.
 
 ## Russian speech
 

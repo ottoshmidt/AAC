@@ -4,3 +4,7 @@ node_modules/
 Thumbs.db
 .vscode/
 .idea/
+certs/
+rootCA.pem
+rootCA.crt
+rootCA.mobileconfig
