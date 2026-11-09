@@ -23,7 +23,7 @@ describe('sanitize', () => {
     assert.equal(sanitize({ maxCycles: -3 }).maxCycles, 0);
   });
 
-  it('allows only 2 or 4 pictures per round, defaulting to 4', () => {
+  it('allows only 2 or 4 pictures per round, defaulting to 2', () => {
     assert.equal(DEFAULTS.choicesPerRound, 2);
     assert.equal(sanitize({ choicesPerRound: 4 }).choicesPerRound, 4);
     assert.equal(sanitize({ choicesPerRound: 3 }).choicesPerRound, 2);
