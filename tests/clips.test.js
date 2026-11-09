@@ -27,6 +27,19 @@ describe('clip registry', () => {
     assert.ok(wordsFor('en').some((w) => w.label === 'W'));
   });
 
+  it('includes the Matching shapes, in every language', () => {
+    for (const [lang, circle] of [
+      ['ka', 'წრე'],
+      ['en', 'Circle'],
+      ['ru', 'Круг'],
+    ]) {
+      const word = wordsFor(lang).find((w) => w.label === circle);
+      assert.equal(word?.id, 'circle', `the circle is recordable in ${lang}`);
+      assert.ok(word?.shape && !word.image, 'a shape has no picture file');
+    }
+    assert.ok(wordsFor('en').some((w) => w.label === 'Star'));
+  });
+
   it('maps existing files to labels and ignores unknown ids', () => {
     const registry = buildRegistry({ ka: { female: ['apple', 'no-such-item'], male: [] }, en: { female: [] } });
     assert.deepEqual(registry, { ka: { female: { ვაშლი: 'assets/audio/ka/female/apple.wav' } } });

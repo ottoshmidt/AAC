@@ -5,6 +5,8 @@
  * record server (npm run record). Words are the distinct labels of all
  * picture sets; items sharing a word share the clip. Each word can be
  * recorded in two voices (female, male); the app's Voice setting picks one.
+ * Words are every picture, every Matching shape and the letters of the
+ * language's own alphabet.
  *
  * Each recording is trimmed of silence, peak-normalized, resampled to
  * 16 kHz and stored as a mono WAV next to the pictures.
@@ -13,6 +15,7 @@
 import { LANGUAGES } from './i18n.js';
 import { itemSets, labelFor, RECORDED_VOICES } from './items.js';
 import { letterSets } from './letters.js';
+import { SHAPES } from './shapes.js';
 import { encodeWav } from './wav.js';
 
 const SAMPLE_RATE = 16000;
@@ -39,7 +42,7 @@ const ui = {
   list: $('#record-list'),
 };
 
-/** @typedef {{ id: string, label: string, image: string, text?: string }} Word */
+/** @typedef {{ id: string, label: string, image: string, text?: string, shape?: import('./shapes.js').Shape }} Word */
 
 const state = {
   lang: 'ka',
@@ -67,11 +70,15 @@ let player = null;
 function wordsFor(lang) {
   /** @type {Map<string, Word>} */
   const byLabel = new Map();
-  // The pictures first, then the letters of that language's own alphabet.
-  for (const item of [...Object.values(itemSets).flat(), ...(letterSets[lang] ?? [])]) {
-    const label = labelFor(item, lang);
-    if (!byLabel.has(label)) byLabel.set(label, { id: item.id, label, image: item.image ?? '', text: item.text });
-  }
+  const add = (/** @type {Word} */ word) => {
+    if (!byLabel.has(word.label)) byLabel.set(word.label, word);
+  };
+  // The pictures first, then the Matching shapes, then the letters of that
+  // language's own alphabet. Same order as scripts/clips-registry.mjs, so a
+  // clip keeps its file name.
+  for (const item of Object.values(itemSets).flat()) add({ id: item.id, label: labelFor(item, lang), image: item.image ?? '' });
+  for (const shape of SHAPES) add({ id: shape.id, label: labelFor(shape, lang), image: '', shape });
+  for (const letter of letterSets[lang] ?? []) add({ id: letter.id, label: labelFor(letter, lang), image: '', text: letter.text });
   return [...byLabel.values()];
 }
 
@@ -271,6 +278,22 @@ async function removeCurrent() {
 
 // ---- UI ----------------------------------------------------------------------
 
+/**
+ * A Matching shape drawn as it is in the game, so it is recognisable here.
+ * @param {import('./shapes.js').Shape} shape
+ */
+function shapeSvg(shape) {
+  const NS = 'http://www.w3.org/2000/svg';
+  const svg = document.createElementNS(NS, 'svg');
+  svg.setAttribute('viewBox', shape.box);
+  svg.setAttribute('aria-hidden', 'true');
+  const path = document.createElementNS(NS, 'path');
+  path.setAttribute('d', shape.path);
+  path.setAttribute('fill', shape.color);
+  svg.append(path);
+  return svg;
+}
+
 /** @param {string} text */
 function setStatus(text) {
   ui.status.textContent = text;
@@ -332,6 +355,8 @@ function render() {
   if (word.image) {
     ui.image.src = word.image;
     ui.image.alt = word.label;
+  } else if (word.shape) {
+    ui.glyph.replaceChildren(shapeSvg(word.shape));
   } else {
     ui.glyph.textContent = word.text ?? word.label;
   }
