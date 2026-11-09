@@ -8,20 +8,23 @@
  * Words are every picture, every Matching shape and the letters of the
  * language's own alphabet.
  *
- * Each recording is trimmed of silence, peak-normalized, resampled to
- * 16 kHz and stored as a mono WAV next to the pictures.
+ * Saving a clip stays on the same word unless "Next word after saving" is
+ * ticked, so a recording can be heard and redone right away.
+ *
+ * Each recording is trimmed of the silence around the word (keeping its
+ * quiet tail), peak-normalized, resampled to 16 kHz and stored as a mono WAV
+ * next to the pictures.
  */
 
 import { LANGUAGES } from './i18n.js';
 import { itemSets, labelFor, RECORDED_VOICES } from './items.js';
 import { letterSets } from './letters.js';
 import { SHAPES } from './shapes.js';
-import { encodeWav } from './wav.js';
+import { encodeWav, trimSilence } from './wav.js';
 
 const SAMPLE_RATE = 16000;
 const MIC_KEY = 'aac.record.mic';
-const SILENCE = 0.01; // about -40 dBFS
-const PAD_MS = 80;
+const ADVANCE_KEY = 'aac.record.advance';
 const PEAK = 0.9;
 
 const $ = (/** @type {string} */ selector) => /** @type {HTMLElement} */ (document.querySelector(selector));
@@ -29,6 +32,7 @@ const ui = {
   langs: $('#record-langs'),
   voices: $('#record-voices'),
   mic: /** @type {HTMLSelectElement} */ ($('#record-mic')),
+  advance: /** @type {HTMLInputElement} */ ($('#record-advance')),
   progress: $('#record-progress'),
   image: /** @type {HTMLImageElement} */ ($('#record-image')),
   glyph: $('#record-glyph'),
@@ -135,14 +139,9 @@ async function toWav(blob) {
     for (let i = 0; i < mono.length; i++) mono[i] += data[i] / decoded.numberOfChannels;
   }
 
-  // Trim leading and trailing silence, keeping a little padding.
-  const pad = Math.round((decoded.sampleRate * PAD_MS) / 1000);
-  let start = 0;
-  while (start < mono.length && Math.abs(mono[start]) < SILENCE) start++;
-  let end = mono.length;
-  while (end > start && Math.abs(mono[end - 1]) < SILENCE) end--;
-  if (end <= start) throw new Error('Nothing was recorded (only silence).');
-  const trimmed = mono.subarray(Math.max(0, start - pad), Math.min(mono.length, end + pad));
+  // Trim the silence around the word (js/wav.js), keeping its quiet tail.
+  const trimmed = trimSilence(mono, decoded.sampleRate);
+  if (trimmed.length === 0) throw new Error('Nothing was recorded (only silence).');
 
   // Normalize the peak.
   let peak = 0;
@@ -163,6 +162,18 @@ async function toWav(blob) {
 }
 
 // ---- Recording ---------------------------------------------------------------
+
+/**
+ * Whether saving a clip moves on to the next unrecorded word. Off by
+ * default: staying on the word makes it easy to listen and record it again.
+ */
+function advances() {
+  try {
+    return localStorage.getItem(ADVANCE_KEY) === 'yes';
+  } catch {
+    return false;
+  }
+}
 
 /** The chosen microphone's device id ('' = system default). */
 function chosenMic() {
@@ -246,8 +257,10 @@ async function recordCurrent() {
     setStatus(`Saved ${clipOf(word)} (${Math.round(wav.byteLength / 1024)} KB).`);
     render();
     await play(word);
-    const next = state.words.findIndex((w, i) => i > state.index && !clipOf(w));
-    if (next >= 0) go(next);
+    if (advances()) {
+      const next = state.words.findIndex((w, i) => i > state.index && !clipOf(w));
+      if (next >= 0) go(next);
+    }
   } finally {
     state.busy = false;
     render();
@@ -413,6 +426,16 @@ ui.voices.replaceChildren(
     return button;
   }),
 );
+
+ui.advance.checked = advances();
+ui.advance.addEventListener('change', () => {
+  try {
+    localStorage.setItem(ADVANCE_KEY, ui.advance.checked ? 'yes' : 'no');
+  } catch {
+    // Not remembered, but still used for this session.
+  }
+  ui.advance.blur(); // so Space goes back to recording, not to the checkbox
+});
 
 ui.mic.addEventListener('change', () => {
   try {
