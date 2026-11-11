@@ -503,6 +503,9 @@ body {
 /* A letter is drawn instead of a picture and fills the card. */
 .choice.letter {
   justify-content: center;
+  /* The letter is sized by the card's height as well as its width, so it
+     also fits a short, wide card (four at a time on a landscape screen). */
+  container-type: size;
 }
 
 .choice .glyph {
@@ -512,8 +515,10 @@ body {
   justify-content: center;
   width: 100%;
   min-height: 0;
-  /* cqi is the card's own width: the letter scales with the card. */
-  font-size: clamp(2rem, 88cqi, 26rem);
+  /* cqi / cqb are the card's own width / height: the letter scales with the
+     card and stays inside it, leaving room for Georgian ascenders and
+     descenders, which reach past a 1em line box. */
+  font-size: clamp(2rem, min(88cqi, 75cqb), 26rem);
   font-weight: 700;
   line-height: 1;
 }
