@@ -71,10 +71,11 @@ dependencies.
 Browsers restrict pages opened straight from disk, so serve the folder:
 
 ```sh
-npm start            # or: python3 -m http.server 8080
+npm start            # or any static server, e.g. python3 -m http.server 8080
 ```
 
-Then open <http://localhost:8080>.
+Then open <http://localhost:8080> (`PORT=<n> npm start` picks another port).
+`npm start` needs only Node.js, the same as the tests.
 
 1. The caregiver picks the language and a game on the menu.
 2. On the game's page the caregiver adjusts **Settings** if needed and
@@ -357,6 +358,8 @@ js/items.js           the picture sets
 vendor/               small third-party JS glue for Piper (see vendor/README.md)
 sw.js                 service worker for offline use
 manifest.webmanifest  makes the app installable
+scripts/serve.mjs     development server (npm start)
+scripts/record-server.mjs  recording server (npm run record)
 tests/                unit tests (node --test)
 ```
 
