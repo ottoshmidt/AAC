@@ -75,6 +75,8 @@ npm start            # or any static server, e.g. python3 -m http.server 8080
 ```
 
 Then open <http://localhost:8080> (`PORT=<n> npm start` picks another port).
+Only this computer can open it; `HOST=0.0.0.0 npm start` also lets phones and
+tablets on the same network in, at `http://<this computer's address>:8080`.
 `npm start` needs only Node.js, the same as the tests.
 
 1. The caregiver picks the language and a game on the menu.
