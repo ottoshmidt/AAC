@@ -1,7 +1,7 @@
 // @ts-check
 /**
  * Development server for recording words: serves the project like
- * `python3 -m http.server`, and saves clips posted by record.html.
+ * `npm start`, and saves clips posted by record.html.
  *
  *   npm run record            then open http://localhost:8888/record.html
  *
@@ -18,9 +18,10 @@ import { createServer } from 'node:http';
 import { createServer as createSecureServer } from 'node:https';
 import { networkInterfaces } from 'node:os';
 import { mkdir, readdir, readFile, unlink, writeFile } from 'node:fs/promises';
-import { extname, join, normalize } from 'node:path';
+import { join } from 'node:path';
 import { fileURLToPath } from 'node:url';
 import { buildRegistry, clipPath, renderClipsModule, updateServiceWorker } from './clips-registry.mjs';
+import { serveStatic } from './static.mjs';
 import { LANGUAGES } from '../js/i18n.js';
 import { RECORDED_VOICES } from '../js/items.js';
 
@@ -31,30 +32,6 @@ const PORT = Number(process.env.PORT ?? 8888);
 // See README (Recording from another device) for making these with mkcert.
 const CERT = process.env.RECORD_CERT ?? join(ROOT, 'certs/cert.pem');
 const KEY = process.env.RECORD_KEY ?? join(ROOT, 'certs/key.pem');
-
-const MIME = {
-  '.html': 'text/html; charset=utf-8',
-  '.js': 'text/javascript; charset=utf-8',
-  '.mjs': 'text/javascript; charset=utf-8',
-  '.css': 'text/css; charset=utf-8',
-  '.json': 'application/json; charset=utf-8',
-  '.webmanifest': 'application/manifest+json',
-  '.svg': 'image/svg+xml',
-  '.png': 'image/png',
-  '.jpg': 'image/jpeg',
-  '.jpeg': 'image/jpeg',
-  '.webp': 'image/webp',
-  '.wav': 'audio/wav',
-  '.mp3': 'audio/mpeg',
-  '.wasm': 'application/wasm',
-  '.onnx': 'application/octet-stream',
-  '.md': 'text/markdown; charset=utf-8',
-  // So a phone offers to install the local CA rather than downloading it.
-  '.pem': 'application/x-x509-ca-cert',
-  '.crt': 'application/x-x509-ca-cert',
-  '.mobileconfig': 'application/x-apple-aspen-config',
-  '.txt': 'text/plain; charset=utf-8',
-};
 
 /** Existing clip files: lang -> voice -> ids. */
 async function scanClips() {
@@ -135,33 +112,6 @@ async function handleApi(req, res) {
   return json(res, 405, { error: 'method not allowed' });
 }
 
-/**
- * @param {import('node:http').IncomingMessage} req
- * @param {import('node:http').ServerResponse} res
- */
-async function handleStatic(req, res) {
-  const url = new URL(req.url ?? '/', 'http://localhost');
-  let pathname = decodeURIComponent(url.pathname);
-  if (pathname.endsWith('/')) pathname += 'index.html';
-  const file = normalize(join(ROOT, pathname));
-  if (!file.startsWith(ROOT)) {
-    res.writeHead(403);
-    return res.end();
-  }
-  try {
-    const data = await readFile(file);
-    res.writeHead(200, {
-      'Content-Type': MIME[extname(file)] ?? 'application/octet-stream',
-      'Content-Length': data.length,
-      'Cache-Control': 'no-store',
-    });
-    res.end(data);
-  } catch {
-    res.writeHead(404, { 'Content-Type': 'text/plain' });
-    res.end('Not found');
-  }
-}
-
 /** The certificate and key, if both are there; otherwise plain HTTP. */
 async function certificate() {
   try {
@@ -196,7 +146,7 @@ async function serve(handler) {
 serve(async (req, res) => {
   try {
     if (req.url?.startsWith('/api/')) await handleApi(req, res);
-    else await handleStatic(req, res);
+    else await serveStatic(ROOT, req, res);
   } catch (error) {
     console.error(error);
     if (!res.headersSent) json(res, 500, { error: String(error) });
