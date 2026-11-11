@@ -50,11 +50,20 @@ function spokenVoiceFor(language = lang()) {
   return recordedVoiceOf(fallback) ? '' : fallback;
 }
 
-/** Words of `language` (of the chosen game, or all) and how many have a clip in `voice`. */
+/**
+ * Words of `language` (of the chosen game, or all) and how many have a clip
+ * in `voice`. An item carrying its own language (a letter of an alphabet) is
+ * counted against that language's clips, which is where it is spoken from.
+ */
 function recordedWords(language, voice) {
   const items = (selected ?? games[0]).items ?? [];
-  const labels = new Set(items.map((item) => labelFor(item, language)));
-  const done = [...labels].filter((label) => items.some((item) => labelFor(item, language) === label && clipFor(item, language, voice)));
+  const labels = new Set(items.map((item) => labelFor(item, item.lang ?? language)));
+  const done = [...labels].filter((label) =>
+    items.some((item) => {
+      const itemLanguage = item.lang ?? language;
+      return labelFor(item, itemLanguage) === label && clipFor(item, itemLanguage, voice);
+    }),
+  );
   return { done: done.length, total: labels.size };
 }
 
@@ -133,6 +142,7 @@ function openIntro(id) {
   if (!selected) return;
   ui.fillIntro(selected, lang());
   prepareInAppVoice();
+  refreshVoiceSelect(); // the recorded count is of this game's words
   ui.showScreen('intro');
   window.scrollTo(0, 0);
   ui.elements.startButton.focus({ preventScroll: true });
@@ -141,6 +151,7 @@ function openIntro(id) {
 function closeIntro() {
   const id = selected?.id;
   selected = null;
+  refreshVoiceSelect();
   ui.showScreen('start');
   if (id) ui.focusMenu(id);
 }
