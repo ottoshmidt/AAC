@@ -124,7 +124,7 @@ const STRINGS = {
     voiceLicense: 'Voice {name}: {license}. Free for personal, non-commercial use only.',
     voiceLicenseFree: 'Voice {name}: {license}, free to use for any purpose.',
     noVoices: 'No speech voices found on this device. On Linux, install speech-dispatcher and a voice such as espeak-ng.',
-    noVoiceForLanguage: 'This device has no voice for this language. Choose another voice in the list, or record the words.',
+    noVoiceForLanguage: 'This device has no voice for this language. Choose another voice in the list.',
     noSpeech: 'This browser does not support text-to-speech. Recorded clips still work.',
   },
   ka: {
@@ -230,7 +230,7 @@ const STRINGS = {
     voiceLicense: 'ხმა „{name}“: {license}. უფასოა მხოლოდ პირადი, არაკომერციული გამოყენებისთვის.',
     voiceLicenseFree: 'ხმა „{name}“: {license}, შეიძლება თავისუფლად გამოყენება ნებისმიერი მიზნით.',
     noVoices: 'ამ მოწყობილობაზე ხმები ვერ მოიძებნა. Linux-ზე დააყენეთ speech-dispatcher და ხმა, მაგალითად espeak-ng.',
-    noVoiceForLanguage: 'ამ მოწყობილობას ამ ენისთვის ხმა არ აქვს. აირჩიეთ სხვა ხმა სიიდან ან ჩაწერეთ სიტყვები.',
+    noVoiceForLanguage: 'ამ მოწყობილობას ამ ენისთვის ხმა არ აქვს. აირჩიეთ სხვა ხმა სიიდან.',
     noSpeech: 'ეს ბრაუზერი ტექსტის გახმოვანებას არ უჭერს მხარს. ჩანაწერები მაინც იმუშავებს.',
   },
   ru: {
@@ -336,7 +336,7 @@ const STRINGS = {
     voiceLicense: 'Голос «{name}»: {license}. Бесплатно только для личного некоммерческого использования.',
     voiceLicenseFree: 'Голос «{name}»: {license}, можно свободно использовать для любых целей.',
     noVoices: 'На этом устройстве не найдено голосов. В Linux установите speech-dispatcher и голос, например espeak-ng.',
-    noVoiceForLanguage: 'На этом устройстве нет голоса для этого языка. Выберите другой голос из списка или запишите слова.',
+    noVoiceForLanguage: 'На этом устройстве нет голоса для этого языка. Выберите другой голос из списка.',
     noSpeech: 'Этот браузер не поддерживает синтез речи. Записи всё равно будут работать.',
   },
 };
