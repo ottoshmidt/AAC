@@ -67,6 +67,14 @@ function recordedWords(language, voice) {
   return { done: done.length, total: labels.size };
 }
 
+/** True when a recorded voice is chosen and every word of the game has a clip. */
+function recordedFully(language = lang()) {
+  const recorded = recordedVoiceOf(voiceFor(language));
+  if (!recorded) return false;
+  const { done, total } = recordedWords(language, recorded);
+  return done === total;
+}
+
 /** @param {import('./items.js').Item} item */
 function utteranceFor(item) {
   // A letter carries its own language, so the Georgian alphabet is read in
@@ -142,7 +150,9 @@ function openIntro(id) {
   if (!selected) return;
   ui.fillIntro(selected, lang());
   prepareInAppVoice();
-  refreshVoiceSelect(); // the recorded count is of this game's words
+  // The recorded counts in the voice list and status are of this game's words.
+  refreshVoiceSelect();
+  refreshVoiceStatus();
   ui.showScreen('intro');
   window.scrollTo(0, 0);
   ui.elements.startButton.focus({ preventScroll: true });
@@ -152,6 +162,7 @@ function closeIntro() {
   const id = selected?.id;
   selected = null;
   refreshVoiceSelect();
+  refreshVoiceStatus();
   ui.showScreen('start');
   if (id) ui.focusMenu(id);
 }
@@ -340,6 +351,7 @@ function refreshVoiceSelect() {
   let note = '';
   if (!speech.speechSupported) note = t(language, 'noSpeech');
   else if (speech.piperVoice(spokenVoiceFor(language))) note = '';
+  else if (recordedFully(language)) note = ''; // every word has a recording
   else if (deviceVoicesSettled && matching.length === 0) {
     note = t(language, deviceVoices.length === 0 ? 'noVoices' : 'noVoiceForLanguage');
   }

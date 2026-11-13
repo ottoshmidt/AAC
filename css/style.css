@@ -296,6 +296,8 @@ body {
   margin: 1rem 0 0;
   padding: 0;
   display: grid;
+  /* One column no wider than the panel, so a long voice name can't widen it. */
+  grid-template-columns: minmax(0, 1fr);
   gap: 0.75rem;
 }
 
@@ -313,6 +315,15 @@ body {
   flex-wrap: wrap;
   align-items: center;
   gap: 0.5rem;
+}
+
+/* A checkbox stays beside its text, which wraps next to it. */
+.settings-form label.check {
+  flex-wrap: nowrap;
+}
+
+.settings-form label.check input {
+  flex: none;
 }
 
 .settings-form .field {
